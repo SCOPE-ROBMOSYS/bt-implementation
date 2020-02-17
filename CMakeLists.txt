@@ -18,7 +18,8 @@ yarp_idl_to_dir(INPUT_FILES     "${CMAKE_CURRENT_SOURCE_DIR}/thrift/BT_wrappers.
 include_directories(include/ ${BT_WRAP_INCLUDE_DIRS})
 
 set(SRC_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/yarp_action.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/yarp_node.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/yarp_condition.cpp
 )
 
 add_executable(bt_example main.cpp ${SRC_FILES} ${BT_WRAP_SOURCES} )

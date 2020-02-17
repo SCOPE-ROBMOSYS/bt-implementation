@@ -5,13 +5,13 @@
  *                                                                            *
  ******************************************************************************/
 /**
- * @file yarp_action.cpp
+ * @file YARPNode.cpp
  * @authors: Michele Colledanchise <michele.colledanchise@iit.it>
  */
 
 
 
-#include <yarp_action.h>
+#include <yarp_node.h>
 #include <behaviortree_cpp_v3/action_node.h>
 #include <BT_request.h>
 #include <iostream>
@@ -25,12 +25,12 @@ using namespace std;
 using namespace BT;
 
 
-YARP_Action::YARP_Action(string name, string server_port_name) : ActionNodeBase(name, {}), m_client_port_name("/"+name+"/BT_rpc/client"), m_server_port_name(server_port_name)
+YARPNode::YARPNode(string name, string server_port_name) : ActionNodeBase(name, {}), m_client_port_name("/"+name+"/BT_rpc/client"), m_server_port_name(server_port_name)
 {
 
 }
 
-bool YARP_Action::init()
+bool YARPNode::init()
 {
     yarp::os::Network yarp;
 
@@ -59,7 +59,7 @@ bool YARP_Action::init()
     return true;
 }
 
-NodeStatus YARP_Action::tick()
+NodeStatus YARPNode::tick()
 {
     yDebug() << "Node" << name() << "ticked";
 
@@ -75,7 +75,7 @@ NodeStatus YARP_Action::tick()
     switch (status) {
     case BT_RUNNING:
         yDebug() << "Node" << name() << "returns running";
-        return NodeStatus::RUNNING;// two different enums (thrift and BT library). Making sure that the return status are the correct ones
+        return NodeStatus::RUNNING;// may be two different enums (thrift and BT library). Making sure that the return status are the correct ones
     case BT_SUCCESS:
         yDebug() << "Node" << name() << "returns success";
         return NodeStatus::SUCCESS;
@@ -89,7 +89,29 @@ NodeStatus YARP_Action::tick()
     return NodeStatus::RUNNING;
 }
 
-void YARP_Action::halt()
+
+NodeStatus YARPNode::status() const
+{
+
+    yDebug() << "Node" << name() << "getting status";
+    ReturnStatus status = m_bt_request.request_status();
+    switch (status) {
+    case BT_RUNNING:
+        yDebug() << "Node" << name() << "returns running";
+        return NodeStatus::RUNNING;// may be two different enums (thrift and BT library). Making sure that the return status are the correct ones
+    case BT_SUCCESS:
+        yDebug() << "Node" << name() << "returns success";
+        return NodeStatus::SUCCESS;
+    case BT_FAILURE:
+        yDebug() << "Node" << name() << "returns failure";
+        return NodeStatus::FAILURE;
+    default:
+        yError() << "Invalid return status for received by node " << name();
+        break;
+    }
+}
+
+void YARPNode::halt()
 {
     yDebug() << "Node" << name() << "halted";
     m_bt_request.request_halt();

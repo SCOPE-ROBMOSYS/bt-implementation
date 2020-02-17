@@ -20,17 +20,18 @@
 using namespace std;
 using namespace BT;
 
-class YARP_Action : public ActionNodeBase
+class YARPNode : public ActionNodeBase
 {
 public:
-    YARP_Action(string name, string server_port_name);
+    YARPNode(string name, string server_port_name);
     void halt() override;
     NodeStatus tick() override;
+    NodeStatus status() const;
     bool init();
 private:
     string m_client_port_name, m_server_port_name;
     yarp::os::RpcClient m_rpc_client;
-    BT_request m_bt_request;
+    mutable BT_request m_bt_request;
 
 
 };
