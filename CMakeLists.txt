@@ -8,6 +8,10 @@ find_package(YARP REQUIRED)
 
 set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}")
 
+#configure_file(./xmls/test_action_BT.xml test_action_BT.xml COPYONLY)
+
+
+
 yarp_idl_to_dir(INPUT_FILES     "${CMAKE_CURRENT_SOURCE_DIR}/thrift/BT_wrappers.thrift"
                 OUTPUT_DIR      "${CMAKE_CURRENT_SOURCE_DIR}/generated_files"
                 SOURCES_VAR      BT_WRAP_SOURCES
@@ -23,6 +27,12 @@ set(SRC_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/yarp_action.cpp
 )
 
-add_executable(bt_example main.cpp ${SRC_FILES} ${BT_WRAP_SOURCES} )
-target_link_libraries(bt_example YARP::YARP_OS YARP::YARP_init BehaviorTree::behaviortree_cpp_v3)
+#add_executable(bt_example main.cpp ${SRC_FILES} ${BT_WRAP_SOURCES} )
+#target_link_libraries(bt_example YARP::YARP_OS YARP::YARP_init BehaviorTree::behaviortree_cpp_v3)
+
+
+add_executable(from_xml_example from_xml_example.cpp ${SRC_FILES} ${BT_WRAP_SOURCES} )
+target_link_libraries(from_xml_example YARP::YARP_OS YARP::YARP_init BehaviorTree::behaviortree_cpp_v3)
+
+
 

@@ -20,11 +20,11 @@
 using namespace std;
 using namespace BT;
 
-class YARPNode : public LeafNode
+class YARPNode //: public LeafNode
 {
 public:
     YARPNode(string name, string server_port_name);
-    NodeStatus tick() override;
+    NodeStatus tick();
     NodeStatus status() const;
     bool init();
 private:
@@ -32,5 +32,6 @@ private:
     yarp::os::RpcClient m_rpc_client;
 protected:
     mutable BT_request m_bt_request; // mutable because status() is const
+
 };
 

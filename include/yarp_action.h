@@ -9,17 +9,20 @@
  * @authors: Michele Colledanchise <michele.colledanchise@iit.it>
  */
 
-
 #pragma once
+
 
 #include <yarp_node.h>
 #include <string>
 
-class YARPAction : public YARPNode
+class YARPAction :  public ActionNodeBase, public YARPNode
+        // public virtual ActionNodeBase because the BT factory accepts only classes that explicitly inherits from ActionNodeBase or ConditionNode
 {
 public:
-    YARPAction(string name, string server_port_name);
-    virtual NodeType type() const override final;
-    virtual void halt() override final;
+    YARPAction(string name, const NodeConfiguration &config);
+    void halt() override;
+    NodeStatus tick() override;
+
+    static PortsList providedPorts();
 };
 

@@ -12,24 +12,20 @@
 
 #include <yarp_condition.h>
 #include <yarp/os/LogStream.h>
-YARPCondition::YARPCondition(string name, string server_port_name) : YARPNode(name,server_port_name)
+YARPCondition::YARPCondition(string name, const NodeConfiguration& config) :  ConditionNode(name, config), YARPNode(name,name)
+
 {
 
 }
 
-
-
-
-NodeType YARPCondition::type() const
+NodeStatus YARPCondition::tick()
 {
-    return NodeType::CONDITION;
+    return YARPNode::tick();
 }
 
-void YARPCondition::halt()
+PortsList YARPCondition::providedPorts()
 {
-    yWarning() << "The condition " << name() << " received an halt. You may want to check your code.";
-    // just in case, but it should not be needed
-    setStatus(NodeStatus::IDLE);
+    // This action has a single input port called "message"
+    // Any port must have a name. The type is optional.
+    return { InputPort<std::string>("port_name") };
 }
-
-
