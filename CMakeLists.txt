@@ -8,8 +8,10 @@ find_package(YARP REQUIRED)
 
 set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}")
 
-#configure_file(./xmls/test_action_BT.xml test_action_BT.xml COPYONLY)
-
+file(GLOB BTS_XML
+  "xmls/*.xml"
+)
+file(COPY ${BTS_XML} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 
 yarp_idl_to_dir(INPUT_FILES     "${CMAKE_CURRENT_SOURCE_DIR}/thrift/BT_wrappers.thrift"
