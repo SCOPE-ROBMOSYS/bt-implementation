@@ -32,7 +32,5 @@ private:
     yarp::os::RpcClient m_rpc_client;
 protected:
     mutable BT_request m_bt_request; // mutable because status() is const
-
-
 };
 

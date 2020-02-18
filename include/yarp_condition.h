@@ -21,5 +21,4 @@ public:
     YARPCondition(string name, string server_port_name);
     virtual NodeType type() const override final;
     virtual void halt() override final;
-
 };

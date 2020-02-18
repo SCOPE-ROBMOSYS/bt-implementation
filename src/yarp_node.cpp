@@ -30,13 +30,11 @@ bool YARPNode::init()
 {
     yarp::os::Network yarp;
 
-
     if (!m_rpc_client.open(m_client_port_name))
     {
         yError() << "Could not open port " << m_client_port_name;
         return false;
     }
-
 
     if (!yarp.connect(m_client_port_name, m_server_port_name))
     {
@@ -65,7 +63,6 @@ NodeStatus YARPNode::tick()
     {
         status = m_bt_request.request_status();
         std::this_thread::sleep_for (std::chrono::milliseconds(100));
-
     }
 
     switch (status) {
@@ -84,7 +81,6 @@ NodeStatus YARPNode::tick()
     }
     return NodeStatus::RUNNING;
 }
-
 
 NodeStatus YARPNode::status() const
 {

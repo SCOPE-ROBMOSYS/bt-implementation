@@ -10,28 +10,27 @@
  */
 
 
-
-
 #include <iostream>
 #include <behaviortree_cpp_v3/behavior_tree.h>
 #include <yarp_condition.h>
+#include <yarp_action.h>
 #include <thread>         // std::this_thread::sleep_for
 #include <chrono>         // std::chrono::seconds
-
+#include <yarp/os/LogStream.h>
 using namespace std;
 using namespace BT;
 
-
-class AlwaysSuccessCondition : public ConditionNode
+class FlipFlopSuccessCondition : public ConditionNode
 {
-  public:
-    AlwaysSuccessCondition(const std::string& name) :
+
+public:
+    FlipFlopSuccessCondition(const std::string& name) :
         ConditionNode(name, {} )
     {
         setRegistrationID("AlwaysSuccess");
     }
 
-  private:
+private:
     int n = 0;
     virtual BT::NodeStatus tick() override
     {
@@ -53,24 +52,34 @@ class AlwaysSuccessCondition : public ConditionNode
 int main()
 {
     ReactiveSequence seq("ciao");
-    AlwaysSuccessCondition cond("Cond");
-    YARPCondition act("name", "/goto_skill/BT_request/server");
+//    YARPCondition yarp_condion("ConditionName", "/ConditionName_skill/BT_request/server");
+    FlipFlopSuccessCondition ff_condition("FlipFlopCondition");
+    YARPAction yarp_action("ActionName", "/goto_skill/BT_request/server");
 
-    act.init();
+    bool ok = yarp_action.init();
 
+    if(!ok)
+    {
+        yError() << "Something went wrong.";
+        return 1;
+    }
 
-    seq.addChild(&cond);
-    seq.addChild(&act);
+//    ok = yarp_condion.init();
 
+//    if(!ok)
+//    {
+//        yError() << "Something went wrong.";
+//        return 1;
+//    }
 
-
+//    seq.addChild(&yarp_condion);
+    seq.addChild(&ff_condition);
+    seq.addChild(&yarp_action);
 
     while(true)
     {
-
-    seq.executeTick();
-    std::this_thread::sleep_for (std::chrono::milliseconds(1000));
-
+        seq.executeTick();
+        std::this_thread::sleep_for (std::chrono::milliseconds(1000));
     }
     return 0;
 }
