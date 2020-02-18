@@ -20,11 +20,11 @@
 using namespace std;
 using namespace BT;
 
-class YARPNode : public ActionNodeBase
+class YARPNode : public LeafNode
 {
 public:
     YARPNode(string name, string server_port_name);
-    void halt() override;
+    //void halt() override;
     NodeStatus tick() override;
     NodeStatus status() const;
     bool init();

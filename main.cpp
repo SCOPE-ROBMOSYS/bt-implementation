@@ -14,7 +14,7 @@
 
 #include <iostream>
 #include <behaviortree_cpp_v3/behavior_tree.h>
-#include <yarp_node.h>
+#include <yarp_condition.h>
 #include <thread>         // std::this_thread::sleep_for
 #include <chrono>         // std::chrono::seconds
 
@@ -54,7 +54,7 @@ int main()
 {
     ReactiveSequence seq("ciao");
     AlwaysSuccessCondition cond("Cond");
-    YARPNode act("name", "/goto_skill/BT_request/server");
+    YARPCondition act("name", "/goto_skill/BT_request/server");
 
     act.init();
 
