@@ -10,7 +10,6 @@
  */
 
 
-
 #include <yarp_node.h>
 #include <behaviortree_cpp_v3/leaf_node.h>
 #include <BT_request.h>
@@ -24,10 +23,8 @@
 using namespace std;
 using namespace BT;
 
-
 YARPNode::YARPNode(string name, string server_port_name) : LeafNode(name, {}), m_client_port_name("/"+name+"/BT_rpc/client"), m_server_port_name(server_port_name)
-{
-}
+{}
 
 bool YARPNode::init()
 {
@@ -110,10 +107,4 @@ NodeStatus YARPNode::status() const
     }
 }
 
-//void YARPNode::halt()
-//{
-//    yDebug() << "Node" << name() << "halted";
-//    m_bt_request.request_halt();
-//    // send halt request to server
-//}
 

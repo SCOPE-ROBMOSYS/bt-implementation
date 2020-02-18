@@ -20,7 +20,9 @@ include_directories(include/ ${BT_WRAP_INCLUDE_DIRS})
 set(SRC_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/yarp_node.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/yarp_condition.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/yarp_action.cpp
 )
 
 add_executable(bt_example main.cpp ${SRC_FILES} ${BT_WRAP_SOURCES} )
 target_link_libraries(bt_example YARP::YARP_OS YARP::YARP_init BehaviorTree::behaviortree_cpp_v3)
+

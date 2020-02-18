@@ -1,3 +1,15 @@
+/******************************************************************************
+ *                                                                            *
+ * Copyright (C) 2020 Fondazione Istituto Italiano di Tecnologia (IIT)        *
+ * All Rights Reserved.                                                       *
+ *                                                                            *
+ ******************************************************************************/
+/**
+ * @file yarp_condition.h
+ * @authors: Michele Colledanchise <michele.colledanchise@iit.it>
+ */
+
+
 #include <yarp_condition.h>
 #include <yarp/os/LogStream.h>
 YARPCondition::YARPCondition(string name, string server_port_name) : YARPNode(name,server_port_name)
