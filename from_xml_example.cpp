@@ -60,20 +60,22 @@ int main()
     bt_factory.registerNodeType<YARPCondition>("YARPCondition");
 
     BT::Tree tree = bt_factory.createTreeFromFile("./test_action_BT.xml");
-
+    bool is_ok = true;
     vector<TreeNode::Ptr> all_nodes_prt = tree.nodes;
 
     for (TreeNode::Ptr node_prt : all_nodes_prt)
     {
         TreeNode* node = node_prt.get();
-        yInfo() << node->name();
-
         YARPAction* as_yarp_action = static_cast<YARPAction*>(node);
-        YARPCondition* as_yarp_condition = static_cast<YARPCondition*>(node);
+        //YARPCondition* as_yarp_condition = static_cast<YARPCondition*>(node);
 
-        if(as_yarp_action = nullptr)
+        if(as_yarp_action != nullptr)
         {
-            as_yarp_action->init();
+            is_ok = as_yarp_action->init();
+            if(!is_ok)
+            {
+                return 0;
+            }
         }
     }
 

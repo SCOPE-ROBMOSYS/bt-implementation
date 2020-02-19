@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <ReactiveSequence>
+            <AlwaysSuccess/>
+            <Action ID="YARPAction" name="GoTo" port_name="goTo"/>
+        </ReactiveSequence>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="YARPAction">
+            <input_port name="port_name">Will be used to construct the RPC Port Name (Server Site of the RPC)</input_port>
+        </Action>
+        <Action ID="YARPCondition">
+            <input_port name="name">Will be used to construct the RPC Port Name (Server Site of the RPC)</input_port>
+        </Action>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>
+
