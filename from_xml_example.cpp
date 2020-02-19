@@ -9,6 +9,9 @@
  * @authors: Michele Colledanchise <michele.colledanchise@iit.it>
  */
 
+#ifdef ZMQ_FOUND
+#include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
+#endif
 
 #include <iostream>
 #include <behaviortree_cpp_v3/behavior_tree.h>
@@ -23,6 +26,8 @@
 
 using namespace std;
 using namespace BT;
+
+
 
 //class FlipFlopSuccessCondition : public ConditionNode
 //{
@@ -60,24 +65,34 @@ int main()
     bt_factory.registerNodeType<YARPCondition>("YARPCondition");
 
     BT::Tree tree = bt_factory.createTreeFromFile("./test_action_BT.xml");
+
+#ifdef ZMQ_FOUND
+    PublisherZMQ publisher_zmq(tree);
+#endif
+
     bool is_ok = true;
     vector<TreeNode::Ptr> all_nodes_prt = tree.nodes;
 
-    for (TreeNode::Ptr node_prt : all_nodes_prt)
-    {
-        TreeNode* node = node_prt.get();
-        YARPAction* as_yarp_action = static_cast<YARPAction*>(node);
-        //YARPCondition* as_yarp_condition = static_cast<YARPCondition*>(node);
+    // TODO I will make the code below properly
+//    for (TreeNode::Ptr node_prt : all_nodes_prt)
+//    {
+//        TreeNode* node = node_prt.get();
 
-        if(as_yarp_action != nullptr)
-        {
-            is_ok = as_yarp_action->init();
-            if(!is_ok)
-            {
-                return 0;
-            }
-        }
-    }
+//        YARPAction* as_yarp_action = static_cast<YARPAction*>(node);
+//        //YARPCondition* as_yarp_condition = static_cast<YARPCondition*>(node);
+
+//        if(as_yarp_action != NULL)
+//        {
+
+//            is_ok = as_yarp_action->init();
+
+//            if(!is_ok)
+//            {
+//                yError() << "Something went wrong in the node init() of " << as_yarp_action->name();
+//                return 0;
+//            }
+//        }
+//    }
 
     while(true)
     {

@@ -48,7 +48,7 @@ bool YARPNode::init()
         yError() << "Could not attach as client to " << m_server_port_name;
         return false;
     }
-    yDebug() << "Node" <<  "initialized correctly";
+    yDebug() << "Node initialized correctly";
 
     return true;
 }

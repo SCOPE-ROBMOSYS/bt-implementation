@@ -20,7 +20,7 @@ YARPAction::YARPAction(string name, const NodeConfiguration& config) :  ActionNo
 
     if(!ok)
     {
-        yError() << "Something went wront";
+       yError() << "Something went wrong in the node init() of " << name;
     }
 }
 
