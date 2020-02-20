@@ -3,17 +3,15 @@
     <!-- ////////// -->
     <BehaviorTree ID="BehaviorTree">
         <ReactiveSequence>
-            <AlwaysSuccess/>
+            <Condition ID="FlipFlopCondition"/>
             <Action ID="YARPAction" name="GoTo" port_name="goTo"/>
         </ReactiveSequence>
     </BehaviorTree>
     <!-- ////////// -->
     <TreeNodesModel>
+        <Condition ID="FlipFlopCondition"/>
         <Action ID="YARPAction">
-            <input_port name="port_name">Will be used to construct the RPC Port Name (Server Site of the RPC)</input_port>
-        </Action>
-        <Action ID="YARPCondition">
-            <input_port name="name">Will be used to construct the RPC Port Name (Server Site of the RPC)</input_port>
+            <input_port name="port_name" type="std::string"/>
         </Action>
     </TreeNodesModel>
     <!-- ////////// -->

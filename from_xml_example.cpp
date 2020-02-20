@@ -29,33 +29,33 @@ using namespace BT;
 
 
 
-//class FlipFlopSuccessCondition : public ConditionNode
-//{
+class FlipFlopCondition : public ConditionNode
+{
 
-//public:
-//    FlipFlopSuccessCondition(const std::string& name) :
-//        ConditionNode(name, {} )
-//    {
-//        setRegistrationID("AlwaysSuccess");
-//    }
+public:
+    FlipFlopCondition(const std::string& name) :
+        ConditionNode(name, {} )
+    {
+        setRegistrationID("FlipFlopCondition");
+    }
 
-//private:
-//    int n = 0;
-//    virtual BT::NodeStatus tick() override
-//    {
-//        if(n++ < 3)
-//        {
-//            cout << "condition true" << endl;
-//            return NodeStatus::SUCCESS;
-//        }
-//        else
-//        {
-//            n = 0;
-//            cout << "condition false" << endl;
-//            return NodeStatus::FAILURE;
-//        }
-//    }
-//};
+private:
+    int n = 0;
+    virtual BT::NodeStatus tick() override
+    {
+        if(n++ < 3)
+        {
+            cout << "condition true" << endl;
+            return NodeStatus::SUCCESS;
+        }
+        else
+        {
+            n = 0;
+            cout << "condition false" << endl;
+            return NodeStatus::FAILURE;
+        }
+    }
+};
 
 
 int main()
@@ -63,6 +63,7 @@ int main()
     BehaviorTreeFactory bt_factory;
     bt_factory.registerNodeType<YARPAction>("YARPAction");
     bt_factory.registerNodeType<YARPCondition>("YARPCondition");
+    bt_factory.registerNodeType<FlipFlopCondition>("FlipFlopCondition");
 
     BT::Tree tree = bt_factory.createTreeFromFile("./test_action_BT.xml");
 
