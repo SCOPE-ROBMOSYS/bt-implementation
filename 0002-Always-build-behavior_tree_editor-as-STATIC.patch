@@ -1,0 +1,25 @@
+From 16021b1a09a2ce4664a9b9ca56d96053124b72d5 Mon Sep 17 00:00:00 2001
+From: "Daniele E. Domenichelli" <daniele.domenichelli@iit.it>
+Date: Thu, 20 Feb 2020 23:46:55 +0100
+Subject: [PATCH 2/2] Always build behavior_tree_editor as STATIC
+
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c5210cc..bf86b3b 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -121,7 +121,7 @@ endif()
+ 
+ QT5_WRAP_UI(FORMS_HEADERS ${FORMS_UI})
+ 
+-add_library(behavior_tree_editor
++add_library(behavior_tree_editor STATIC
+     ${APP_CPPS}
+     ${FORMS_HEADERS}
+ )
+-- 
+2.25.0
+

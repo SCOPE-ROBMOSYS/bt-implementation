@@ -1,0 +1,222 @@
+version: "3.7"
+
+x-base: &base
+  environment:
+    - DISPLAY=${DISPLAY}
+    - XAUTHORITY=/home/scope/.Xauthority
+    - YARP_FORWARD_LOG_ENABLE=1
+    - QT_X11_NO_MITSHM=1
+  volumes:
+    - "/tmp/.X11-unix:/tmp/.X11-unix:rw"
+    - "${XAUTHORITY}:/home/scope/.Xauthority:rw"
+    - "${HOME}/.config/yarp:/home/scope/.config/yarp"
+    - "${HOME}/.local/share/yarp:/home/scope/.local/share/yarp"
+  network_mode: host
+  ipc: host
+
+x-yarp-base: &yarp-base
+  <<: *base
+  image: yarp
+
+x-qscxml-base: &qscxml-base
+  <<: *base
+  image: qscxml
+
+x-navigation-base: &navigation-base
+  <<: *base
+  image: navigation
+
+services:
+  qscxml:
+    build:
+      dockerfile: Dockerfile.qscxml
+      context: .
+      args:
+        username: scope
+    image: qscxml:latest
+    network_mode: host
+
+  navigation:
+    build:
+      dockerfile: Dockerfile.navigation
+      context: .
+      args:
+        username: scope
+    image: navigation:latest
+    network_mode: host
+
+  yarp-server:
+    <<: *qscxml-base
+    container_name: yarp-server
+    command: yarp server --read
+
+  transformServer:
+    <<: *navigation-base
+    container_name: transformServer
+    command: sh -c "
+      yarp wait /root;
+      yarpdev --device transformServer --ROS \"(enable_ros_publisher 0)\" \"(enable_ros_subscriber 0)\""
+    depends_on:
+      - yarp-server
+
+  fakeMotionControl:
+    <<: *navigation-base
+    container_name: fakeMotionControl
+    command: sh -c "
+      yarp wait /root;
+      yarpdev --device fakeMotionControl --name /robot_2wheels/mobile_base --GENERAL::Joints 2"
+    depends_on:
+      - yarp-server
+
+  baseControl:
+    <<: *navigation-base
+    container_name: baseControl
+    command: sh -c "
+      yarp wait /root;
+      yarp wait /robot_2wheels/mobile_base/command:i;
+      baseControl --context baseControl_SIM --from robot_2wheels.ini --skip_robot_interface_check"
+    depends_on:
+      - yarp-server
+      - fakeMotionControl
+
+  map2DServer:
+    <<: *navigation-base
+    container_name: map2DServer
+    command: sh -c "
+      yarp wait /root;
+      yarpdev --device map2DServer --mapCollectionContext mapsExample"
+    depends_on:
+      - yarp-server
+
+  localization2DServer:
+    <<: *navigation-base
+    container_name: localization2DServer
+    command: sh -c "
+      yarp wait /root;
+      yarp wait /baseControl/odometry:o;
+      yarpdev --device localization2DServer --subdevice odomLocalizer --context robotPathPlannerExamples --from odomLocalizer.ini"
+    depends_on:
+      - yarp-server
+      - baseControl
+
+  Rangefinder2DWrapper:
+    <<: *navigation-base
+    container_name: Rangefinder2DWrapper
+    command: sh -c "
+      yarp wait /root;
+      yarp wait /localizationServer/rpc;
+      yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /robot_2wheels/laser:o --test use_mapfile --map_file /usr/local/share/navigation/contexts/mapsExample/map_test.map --localization_client"
+    depends_on:
+      - yarp-server
+      - localization2DServer
+
+  navigation2DServer:
+    <<: *navigation-base
+    container_name: navigation2DServer
+    command: sh -c "
+      yarp wait /root;
+      yarp wait /localizationServer/rpc;
+      yarpdev --device navigation2DServer --subdevice robotPathPlannerDev --context robotPathPlannerExamples --from robotPathPlanner_robot_2wheels.ini"
+    depends_on:
+      - yarp-server
+      - localization2DServer
+
+  navigationGUI:
+    <<: *navigation-base
+    container_name: navigationGUI
+    command: sh -c "
+      yarp wait /root;
+      yarp wait /localizationServer/rpc;
+      yarp wait /navigationServer/rpc;
+      navigationGUI --context navigationGUI --from navigationGUI_robot_2wheels.ini"
+    depends_on:
+      - yarp-server
+      - localization2DServer
+
+  yarpview:
+    <<: *navigation-base
+    container_name: yarpview
+    command: sh -c "
+      yarp wait /root;
+      yarpview --autosize --name /navView:i --out /mapClick:o"
+    depends_on:
+      - yarp-server
+
+  robotPathPlannerExample:
+    <<: *navigation-base
+    container_name: robotPathPlannerExample
+    command: sh -c "
+      yarp wait /root;
+      yarp wait /localizationServer/rpc;
+      robotPathPlannerExample --navServer_name /navigationServer"
+    depends_on:
+      - yarp-server
+      - localization2DServer
+
+  connect:
+    <<: *navigation-base
+    container_name: connect
+    command: sh -c "
+      yarp wait /root;
+      yarp wait /robotGoto/control:o;
+      yarp wait /baseControl/control:i;
+      yarp wait /navigationGui/map:o;
+      yarp wait /navView:i;
+      yarp wait /robotPathPlanner/commands:o;
+      yarp wait /robotGoto/rpc;
+      yarp wait /mapClick:o
+      yarp wait /navigationGui/yarpviewTarget:i;
+      yarp connect /robotGoto/control:o /baseControl/control:i udp;
+      yarp connect /navigationGui/map:o /navView:i udp;
+      yarp connect /robotPathPlanner/commands:o /robotGoto/rpc tcp;
+      yarp connect /mapClick:o /navigationGui/yarpviewTarget:i tcp;"
+    depends_on:
+      - yarp-server
+      - navigation2DServer
+      - baseControl
+      - navigationGUI
+      - yarpview
+      - robotPathPlannerExample
+
+  GoToComponent:
+    <<: *qscxml-base
+    container_name: GoToComponent
+    command: sh -c "
+      yarp wait /root;
+      yarp wait /navigationServer/rpc;
+      yarp wait /mapServer/rpc;
+      yarp wait /localizationServer/rpc;
+      /usr/local/src/bt-implementation/build/bin/GoToComponent"
+    depends_on:
+      - yarp-server
+      - navigation2DServer
+      - map2DServer
+      - localization2DServer
+
+  GoToSkill:
+    <<: *qscxml-base
+    container_name: GoToSkill
+    command: sh -c "
+      yarp wait /GoToComponent;
+      gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill"
+    depends_on:
+      - yarp-server
+      - GoToComponent
+
+  BehaviorTree:
+    <<: *qscxml-base
+    container_name: BehaviorTree
+    command: sh -c "
+      yarp wait /GoTo/BT_rpc/server;
+      cd /usr/local/src/bt-implementation/build/bin && ./from_xml_example"
+    depends_on:
+      - yarp-server
+      - GoToSkill
+
+  groot:
+    <<: *qscxml-base
+    container_name: groot
+    command: /usr/local/src/Groot/build/Groot --mode monitor
+    ## FIXME /usr/local/src/Groot/build/
+    depends_on:
+      - BehaviorTree
