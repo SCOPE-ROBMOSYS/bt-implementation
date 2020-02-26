@@ -4,7 +4,9 @@ add_subdirectory(BT_protocol)
 
 # Protocol used between Skill and Component
 add_subdirectory(GoTo_protocol)
+add_subdirectory(battery_protocol)
 
 add_subdirectory(BT)
 add_subdirectory(GoTo_skill)
 add_subdirectory(GoTo_component)
+add_subdirectory(battery_component)

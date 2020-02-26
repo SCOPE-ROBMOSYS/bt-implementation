@@ -58,20 +58,47 @@ private:
 };
 
 
+class AlwaysRunning : public ActionNodeBase
+{
+
+public:
+    AlwaysRunning(const std::string& name) :
+        ActionNodeBase(name, {} )
+    {
+        setRegistrationID("AlwaysRunning");
+    }
+
+private:
+    virtual BT::NodeStatus tick() override
+    {
+        cout << "Action Ticked" << endl;
+            return NodeStatus::RUNNING;
+    }
+
+    virtual void halt() override
+    {
+        cout << "Action halted" << endl;
+
+    }
+};
+
+
 int main()
 {
     BehaviorTreeFactory bt_factory;
     bt_factory.registerNodeType<YARPAction>("YARPAction");
     bt_factory.registerNodeType<YARPCondition>("YARPCondition");
-    bt_factory.registerNodeType<FlipFlopCondition>("FlipFlopCondition");
+    bt_factory.registerNodeType<AlwaysRunning>("AlwaysRunning");
 
-    BT::Tree tree = bt_factory.createTreeFromFile("./test_action_BT.xml");
+   // bt_factory.registerNodeType<FlipFlopCondition>("FlipFlopCondition");
+
+    BT::Tree tree = bt_factory.createTreeFromFile("./test_battery_BT.xml");
 
 #ifdef ZMQ_FOUND
     PublisherZMQ publisher_zmq(tree);
 #endif
 
-    bool is_ok = true;
+    //bool is_ok = true;
     vector<TreeNode::Ptr> all_nodes_prt = tree.nodes;
 
     // TODO I will make the code below properly

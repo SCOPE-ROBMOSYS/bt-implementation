@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <ReactiveSequence>
+            <ReactiveFallback>
+                <ReactiveSequence>
+                    <Condition ID="YARPCondition" name="BatteryAbove20"/>
+                    <Condition ID="YARPCondition" name="BatteryNotCharging"/>
+                </ReactiveSequence>
+                <ReactiveSequence>
+                    <Action ID="YARPAction" name="GoToChargingStation" port_name=""/>
+                    <Action ID="AlwaysRunning" name="Wait"/>
+                </ReactiveSequence>
+            </ReactiveFallback>
+            <Action ID="YARPAction" name="GoToDestination" port_name="goTo"/>
+        </ReactiveSequence>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="AlwaysRunning"/>
+        <Condition ID="FlipFlopCondition"/>
+        <Action ID="YARPAction">
+            <input_port name="port_name" type="std::string"/>
+        </Action>
+        <Condition ID="YARPCondition"/>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>
+
