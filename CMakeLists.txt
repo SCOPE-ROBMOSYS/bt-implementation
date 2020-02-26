@@ -43,7 +43,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS 1)
 include(AddUninstallTarget)
 
 
-#find_package(Qt5 COMPONENTS Scxml REQUIRED)
+find_package(Qt5 COMPONENTS Scxml REQUIRED)
 set(CMAKE_AUTOMOC ON)
 
 find_package(YARP COMPONENTS os idl_tools dev REQUIRED)
