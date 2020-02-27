@@ -4,13 +4,15 @@
 #include <QDebug>
 #include <QTime>
 
-#include <yarp/os/Network.h>
+#define DEBUG_STATE_MACHINE
 
-
-GoToSkill::GoToSkill()
+GoToSkill::GoToSkill(std::string name, std::string location) :
+        dataModel(std::move(location)),
+        name(std::move(name))
 {
     stateMachine.setDataModel(&dataModel);
 
+#ifdef DEBUG_STATE_MACHINE
     stateMachine.connectToState("wrapper", [](bool active) {
         qDebug() << QTime::currentTime().toString() << (active ? "entered" : "exited") << "the wrapper state";
     });
@@ -102,6 +104,7 @@ GoToSkill::GoToSkill()
     stateMachine.connectToEvent("RESET", [](const QScxmlEvent &){
         qDebug() << QTime::currentTime().toString() << "----> RESET!";
     });
+#endif
 }
 
 bool GoToSkill::start()
@@ -111,7 +114,7 @@ bool GoToSkill::start()
         return false;
     }
 
-    if (!port.open("/GoTo/BT_rpc/server")) {
+    if (!port.open("/" + name + "/BT_rpc/server")) {
         qWarning("Error! Cannot open YARP port");
         return false;
     }
@@ -166,13 +169,17 @@ ReturnStatus GoToSkill::request_status()
 
 ReturnStatus GoToSkill::request_tick()
 {
+#ifdef DEBUG_STATE_MACHINE
     qDebug() << QTime::currentTime().toString() << "Event TICK submitted";
+#endif
     stateMachine.submitEvent("TICK");
     return request_status();
 }
 
 void GoToSkill::request_halt()
 {
+#ifdef DEBUG_STATE_MACHINE
     qDebug() << QTime::currentTime().toString() << "Event HALT submitted";
+#endif
     stateMachine.submitEvent("HALT");
 }

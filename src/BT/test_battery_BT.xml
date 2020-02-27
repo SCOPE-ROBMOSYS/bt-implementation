@@ -5,8 +5,8 @@
         <ReactiveSequence>
             <ReactiveFallback>
                 <ReactiveSequence>
-                    <Condition ID="YARPCondition" name="BatteryAbove20"/>
-                    <Condition ID="YARPCondition" name="BatteryNotCharging"/>
+                    <Condition ID="YARPCondition" name="BatteryLevel" port_name="BatteryLevelSkill"/>
+                    <Condition ID="YARPCondition" name="BatteryNotCharging" port_name="BatteryNotChargingSkill"/>
                 </ReactiveSequence>
                 <ReactiveSequence>
                     <Action ID="YARPAction" name="GoToChargingStation" port_name=""/>

@@ -2,11 +2,13 @@
 # Protocol used between BT and Skill
 add_subdirectory(BT_protocol)
 
-# Protocol used between Skill and Component
+# Protocols used between Skill and Component
 add_subdirectory(GoTo_protocol)
-add_subdirectory(battery_protocol)
+add_subdirectory(Battery_protocol)
 
 add_subdirectory(BT)
 add_subdirectory(GoTo_skill)
 add_subdirectory(GoTo_component)
-add_subdirectory(battery_component)
+add_subdirectory(BatteryLevel_skill)
+add_subdirectory(BatteryNotCharging_skill)
+add_subdirectory(Battery_component)

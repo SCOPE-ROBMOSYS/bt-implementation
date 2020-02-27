@@ -1,5 +1,5 @@
-#ifndef GOTO_SKILL_GOTODATAMODEL_H
-#define GOTO_SKILL_GOTODATAMODEL_H
+#ifndef BATTERYLEVEL_SKILL_BATTERYLEVELDATAMODEL_H
+#define BATTERYLEVEL_SKILL_BATTERYLEVELDATAMODEL_H
 
 #include <QScxmlCppDataModel>
 #include <QVariantMap>
@@ -8,7 +8,7 @@
 #include <QTimer>
 #include <QDebug>
 
-#include "GoTo.h"
+#include "BatteryReader.h"
 #include <yarp/os/Network.h>
 #include <yarp/os/RpcClient.h>
 
@@ -20,14 +20,14 @@ struct Connector
             m_carrier(std::move(carrier))
     {
         if (!yarp::os::Network::connect(m_from, m_to, carrier)) {
-            qFatal("Error! Could not connect to server");
+            qFatal("Error! Could not connect to server /fakeBattery");
         }
     }
 
     ~Connector()
     {
         if (!yarp::os::Network::disconnect(m_from, m_to)) {
-            qFatal("Error! Could not disconnect from server");
+            qFatal("Error! Could not disconnect from server /fakeBattery");
         }
     }
 
@@ -36,23 +36,21 @@ struct Connector
     std::string m_carrier;
 };
 
-class GoToSkillDataModel: public QScxmlCppDataModel
+class BatteryLevelSkillDataModel: public QScxmlCppDataModel
 {
     Q_OBJECT
     Q_SCXML_DATAMODEL
 
 public:
-    GoToSkillDataModel(std::string location);
+    BatteryLevelSkillDataModel();
 
     bool setup(const QVariantMap& initialDataValues) override;
 
     yarp::os::Network yarp;
     yarp::os::RpcClient client_port;
-    GoTo goTo;
-
-    const std::string location;
+    BatteryReader batteryReader;
 };
 
-Q_DECLARE_METATYPE(::GoToSkillDataModel*)
+Q_DECLARE_METATYPE(::BatteryLevelSkillDataModel*)
 
-#endif // GOTO_SKILL_GOTODATAMODEL_H
+#endif // BATTERYLEVEL_SKILL_BATTERYLEVELDATAMODEL_H

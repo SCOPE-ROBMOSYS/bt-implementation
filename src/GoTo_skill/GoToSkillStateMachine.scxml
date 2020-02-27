@@ -29,7 +29,7 @@
                 <log label="wrapper.sendrequest" expr='"Inside sendrequest"'/>
                 <script>
                     Connector connection(client_port.getName(), "/GoToComponent", "tcp");
-                    goTo.goTo();
+                    goTo.goTo(location);
                     QTimer::singleShot(0, stateMachine(), [&amp;](){
                         qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; "Event REQUEST_SENT submitted";
                         stateMachine()->submitEvent("REQUEST_SENT");
@@ -48,7 +48,7 @@
                 <script>
                     Connector connection(client_port.getName(), "/GoToComponent", "tcp");
 
-                    GoToStatus ret = goTo.getStatus();
+                    GoToStatus ret = goTo.getStatus(location);
 
                     switch(ret) {
                     case RUNNING:
@@ -127,7 +127,7 @@
             <log label="halted" expr='"Inside halted"'/>
             <script>
                 Connector connection(client_port.getName(), "/GoToComponent", "tcp");
-                goTo.halt();
+                goTo.halt(location);
             </script>
             <send event="RESET" delay="2s"/>
         </onentry>

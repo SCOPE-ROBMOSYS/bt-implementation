@@ -7,7 +7,7 @@ enum GoToStatus
 }
 
 service GoTo {
-  void goTo();
-  GoToStatus getStatus();
-  void halt();
+  void goTo(1: string destination);
+  GoToStatus getStatus(1: string destination);
+  void halt(1: string destination);
 }

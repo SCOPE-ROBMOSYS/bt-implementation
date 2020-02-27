@@ -15,11 +15,16 @@
 YARPCondition::YARPCondition(string name, const NodeConfiguration& config) :  ConditionNode(name, config), YARPNode(name,name)
 
 {
-
+    bool ok = init();
+    if(!ok)
+    {
+       yError() << "Something went wrong in the node init() of " << name;
+    }
 }
 
 NodeStatus YARPCondition::tick()
 {
+    yDebug() << "Node" << YARPNode::name << "sending tick to skill";
     return YARPNode::tick();
 }
 

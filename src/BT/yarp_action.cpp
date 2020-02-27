@@ -26,6 +26,7 @@ YARPAction::YARPAction(string name, const NodeConfiguration& config) :  ActionNo
 
 NodeStatus YARPAction::tick()
 {
+    yDebug() << "Node" << ActionNodeBase::name() << "sending tick to skill";
     return YARPNode::tick();
 }
 

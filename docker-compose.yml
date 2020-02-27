@@ -193,25 +193,81 @@ services:
       - map2DServer
       - localization2DServer
 
-  GoToSkill:
+  GoToDestination:
     <<: *qscxml-base
-    container_name: GoToSkill
+    container_name: GoToDestination
     command: sh -c "
       yarp wait /GoToComponent;
-      gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill"
+      gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --skill-name GoToDestination --location living_room"
     depends_on:
       - yarp-server
       - GoToComponent
 
+  GoToChargingStation:
+    <<: *qscxml-base
+    container_name: GoToChargingStation
+    command: sh -c "
+      yarp wait /GoToComponent;
+      gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --skill-name GoToChargingStation --location office"
+    depends_on:
+      - yarp-server
+      - GoToComponent
+
+  fakeBattery:
+    <<: *qscxml-base
+    container_name: fakeBattery
+    command: sh -c "
+      yarp wait /root;
+      yarpdev --device fakeBattery --name /fakeBattery"
+    depends_on:
+      - yarp-server
+
+  BatteryComponent:
+    <<: *qscxml-base
+    container_name: BatteryComponent
+    command: sh -c "
+      yarp wait /root;
+      yarp wait /fakeBattery/rpc:i;
+      /usr/local/src/bt-implementation/build/bin/BatteryComponent"
+    depends_on:
+      - yarp-server
+      - fakeBattery
+
+  BatteryLevelSkill:
+    <<: *qscxml-base
+    container_name: BatteryLevelSkill
+    command: sh -c "
+      yarp wait /BatteryComponent;
+      gammaray /usr/local/src/bt-implementation/build/bin/BatteryLevelSkill"
+    depends_on:
+      - yarp-server
+      - BatteryComponent
+
+  BatteryNotChargingSkill:
+    <<: *qscxml-base
+    container_name: BatteryNotChargingSkill
+    command: sh -c "
+      yarp wait /BatteryComponent;
+      gammaray /usr/local/src/bt-implementation/build/bin/BatteryNotChargingSkill"
+    depends_on:
+      - yarp-server
+      - BatteryComponent
+
+      #yarp wait /BatteryLevelSkill/BT_rpc/server;
+      #yarp wait /BatteryNotChargingSkill/BT_rpc/server;
   BehaviorTree:
     <<: *qscxml-base
     container_name: BehaviorTree
     command: sh -c "
-      yarp wait /GoTo/BT_rpc/server;
+      yarp wait /GoToDestination/BT_rpc/server;
+      yarp wait /GoToChargingStation/BT_rpc/server;
       cd /usr/local/src/bt-implementation/build/bin && ./from_xml_example"
     depends_on:
       - yarp-server
-      - GoToSkill
+      - GoToDestination
+      - GoToChargingStation
+      - BatteryLevelSkill
+      - BatteryNotChargingSkill
 
   groot:
     <<: *qscxml-base

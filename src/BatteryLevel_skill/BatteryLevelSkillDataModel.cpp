@@ -1,15 +1,13 @@
-#include "GoToSkillDataModel.h"
+#include "BatteryLevelSkillDataModel.h"
 #include <QDebug>
-#include <QTimer>
 #include <QScxmlStateMachine>
 
-GoToSkillDataModel::GoToSkillDataModel(std::string location) :
-        location(std::move(location))
+BatteryLevelSkillDataModel::BatteryLevelSkillDataModel()
 {
-    qDebug() << "GoToSkillDataModel::GoToSkillDataModel() called";
+    qDebug() << "BatteryLevelSkillDataModel::BatteryLevelSkillDataModel() called";
 }
 
-bool GoToSkillDataModel::setup(const QVariantMap &initialDataValues)
+bool BatteryLevelSkillDataModel::setup(const QVariantMap &initialDataValues)
 {
     Q_UNUSED(initialDataValues)
 
@@ -18,12 +16,12 @@ bool GoToSkillDataModel::setup(const QVariantMap &initialDataValues)
         return false;
     }
 
-    if (!client_port.open("/goToClient/" + location)) {
+    if (!client_port.open("/BatteryLevelClient")) {
         qWarning("Error! Cannot open YARP port");
         return false;
     }
 
-    if(!goTo.yarp().attachAsClient(client_port)) {
+    if(!batteryReader.yarp().attachAsClient(client_port)) {
         qWarning("Error! Could not attach as client");
         return false;
     }

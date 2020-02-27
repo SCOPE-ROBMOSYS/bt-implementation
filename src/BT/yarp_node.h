@@ -27,6 +27,7 @@ public:
     NodeStatus tick();
     NodeStatus status() const;
     bool init();
+    string name;
 private:
     string m_client_port_name;
     string m_server_port_name;

@@ -10,8 +10,6 @@
 
 #include <iostream>
 
-constexpr const char* target_name = "living_room";
-
 class GoToComponent : public GoTo
 {
 public:
@@ -52,21 +50,28 @@ public:
         ddnavclient.close();
     }
 
-    void goTo() override
+    void goTo(const std::string& destination) override
     {
-        yWarning("goTo called");
+        yWarning("goTo called with destination %s", destination.c_str());
 
         std::lock_guard<std::mutex> lock(mtx);
-        inav->gotoTargetByLocationName(target_name);
+        inav->gotoTargetByLocationName(destination);
+        current_destination = destination;
         running = true;
     }
 
-    GoToStatus getStatus() override
+    GoToStatus getStatus(const std::string& destination) override
     {
-        yWarning("getStatus called");
+        yWarning("getStatus called with destination %s", destination.c_str());
+
         yarp::dev::Nav2D::NavigationStatusEnum status;
 
         std::lock_guard<std::mutex> lock(mtx);
+
+        if(destination != current_destination) {
+            return NOT_STARTED;
+        }
+
         if (!inav->getNavigationStatus(status)) {
             return ABORT;
         }
@@ -74,7 +79,7 @@ public:
         switch(status) {
         case yarp::dev::Nav2D::navigation_status_idle:
             if (running) {
-                inav->checkInsideArea(target_name);
+                inav->checkInsideArea(destination);
                 return SUCCESS;
             } else {
                 return NOT_STARTED;
@@ -95,11 +100,17 @@ public:
         }
     }
 
-    void halt() override
+    void halt(const std::string& destination) override
     {
-        yWarning("halt called");
+        yWarning("halt called with destination %s", destination.c_str());
 
         std::lock_guard<std::mutex> lock(mtx);
+
+        if(running && destination != current_destination) {
+            running = false;
+            return;
+        }
+
         inav->stopNavigation();
         running = false;
     }
@@ -111,6 +122,7 @@ private:
 
     std::mutex mtx;
     bool running { false };
+    std::string current_destination;
 };
 
 int main()

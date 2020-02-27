@@ -5,7 +5,7 @@ target_sources(BatteryComponent
     BatteryComponent.cpp)
 target_link_libraries(BatteryComponent
   PRIVATE
-    battery_protocol
+    Battery_protocol
     YARP::YARP_os
     YARP::YARP_init
     YARP::YARP_dev)

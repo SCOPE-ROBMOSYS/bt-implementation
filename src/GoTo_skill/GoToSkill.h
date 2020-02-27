@@ -1,6 +1,10 @@
+#ifndef GOTO_SKILL_GOTOSKILL_H
+#define GOTO_SKILL_GOTOSKILL_H
+
 #include <BT_request.h>
 
 #include <yarp/os/RpcServer.h>
+#include <yarp/os/Network.h>
 
 #include "GoToSkillStateMachine.h"
 #include "GoToSkillDataModel.h"
@@ -9,7 +13,7 @@ class GoToSkill:
         public BT_request
 {
 public:
-    GoToSkill();
+    GoToSkill(std::string name, std::string location);
 
     bool start();
 
@@ -22,4 +26,8 @@ private:
     yarp::os::RpcServer port;
     GoToSkillDataModel dataModel;
     GoToSkillStateMachine stateMachine;
+
+    std::string name;
 };
+
+#endif // GOTO_SKILL_GOTOSKILL_H
