@@ -39,7 +39,7 @@ ReturnStatus BatteryNotChargingSkill::request_status()
             return BT_IDLE;
         }
         if (state == "get") {
-            return BT_RUNNING;
+            return BT_IDLE;
         }
         if (state == "success") {
             return BT_SUCCESS;
