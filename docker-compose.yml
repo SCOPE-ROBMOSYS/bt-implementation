@@ -222,6 +222,34 @@ services:
     depends_on:
       - yarp-server
 
+  fakeBatteryChargingStation:
+    <<: *qscxml-base
+    container_name: fakeBatteryChargingStation
+    command: sh -c "
+      yarp wait /root;
+      yarp wait /navigationServer/rpc;
+      yarp wait /mapServer/rpc;
+      yarp wait /localizationServer/rpc;
+      yarp wait /fakeBattery/rpc:i;
+      /usr/local/src/bt-implementation/build/bin/fakeBatteryChargingStation"
+    depends_on:
+      - yarp-server
+      - navigation2DServer
+      - map2DServer
+      - localization2DServer
+      - fakeBattery
+
+  yarpbatterygui:
+    <<: *qscxml-base
+    container_name: yarpbatterygui
+    command: sh -c "
+      yarp wait /root;
+      yarp wait /fakeBattery/rpc:i;
+      yarpbatterygui --remote /fakeBattery --refresh_period 1.0"
+    depends_on:
+      - yarp-server
+      - fakeBattery
+
   BatteryComponent:
     <<: *qscxml-base
     container_name: BatteryComponent
@@ -253,14 +281,14 @@ services:
       - yarp-server
       - BatteryComponent
 
-      #yarp wait /BatteryLevelSkill/BT_rpc/server;
-      #yarp wait /BatteryNotChargingSkill/BT_rpc/server;
   BehaviorTree:
     <<: *qscxml-base
     container_name: BehaviorTree
     command: sh -c "
       yarp wait /GoToDestination/BT_rpc/server;
       yarp wait /GoToChargingStation/BT_rpc/server;
+      yarp wait /BatteryLevel/BT_rpc/server;
+      yarp wait /BatteryNotCharging/BT_rpc/server;
       cd /usr/local/src/bt-implementation/build/bin && ./from_xml_example"
     depends_on:
       - yarp-server
@@ -272,7 +300,6 @@ services:
   groot:
     <<: *qscxml-base
     container_name: groot
-    command: /usr/local/src/Groot/build/Groot --mode monitor
-    ## FIXME /usr/local/src/Groot/build/
+    command: Groot --mode monitor
     depends_on:
       - BehaviorTree

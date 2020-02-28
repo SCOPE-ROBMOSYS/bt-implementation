@@ -12,3 +12,6 @@ add_subdirectory(GoTo_component)
 add_subdirectory(BatteryLevel_skill)
 add_subdirectory(BatteryNotCharging_skill)
 add_subdirectory(Battery_component)
+
+# will be in YARP
+add_subdirectory(fakeBatteryChargingStation)
