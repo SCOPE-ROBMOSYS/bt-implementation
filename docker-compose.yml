@@ -14,9 +14,9 @@ x-base: &base
   network_mode: host
   ipc: host
 
-x-yarp-base: &yarp-base
+x-yarp-mesa-base: &yarp-mesa-base
   <<: *base
-  image: yarp
+  image: yarp-mesa
 
 x-qscxml-base: &qscxml-base
   <<: *base
@@ -43,6 +43,15 @@ services:
       args:
         username: scope
     image: navigation:latest
+    network_mode: host
+
+  yarp-mesa:
+    build:
+      dockerfile: Dockerfile.yarp-mesa
+      context: .
+      args:
+        username: scope
+    image: yarp-mesa:latest
     network_mode: host
 
   yarp-server:
@@ -134,7 +143,7 @@ services:
       - localization2DServer
 
   yarpview:
-    <<: *navigation-base
+    <<: *yarp-mesa-base
     container_name: yarpview
     command: sh -c "
       yarp wait /root;
@@ -265,6 +274,7 @@ services:
     <<: *qscxml-base
     container_name: BatteryLevelSkill
     command: sh -c "
+      yarp wait /root;
       yarp wait /BatteryComponent;
       gammaray /usr/local/src/bt-implementation/build/bin/BatteryLevelSkill"
     depends_on:
