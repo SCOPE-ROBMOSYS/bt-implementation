@@ -20,19 +20,19 @@ x-build-base: &build-base
 
 x-yarp-mesa-base: &yarp-mesa-base
   <<: *base
-  image: yarp-mesa:latest
+  image: scoperobmosys/yarp-mesa:latest
 
 x-qscxml-base: &qscxml-base
   <<: *base
-  image: qscxml:latest
+  image: scoperobmosys/qscxml:latest
 
 x-navigation-base: &navigation-base
   <<: *base
-  image: navigation:latest
+  image: scoperobmosys/navigation:latest
 
 x-bt-implementation-base: &bt-implementation-base
   <<: *base
-  image: implementation-base:latest
+  image: bt-implementation:latest
 
 
 services:

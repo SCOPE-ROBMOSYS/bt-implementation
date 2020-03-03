@@ -1,4 +1,4 @@
-FROM qscxml:latest
+FROM scoperobmosys/qscxml:latest
 
 ARG username
 USER root

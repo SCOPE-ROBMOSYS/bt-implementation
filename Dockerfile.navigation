@@ -1,4 +1,4 @@
-FROM yarp-mesa
+FROM scoperobmosys/yarp-mesa
 
 ARG username
 USER root
