@@ -61,6 +61,8 @@ RUN apt-get update -qq && \
         coinor-libipopt-dev \
         bash-completion \
         mesa-utils \
+        iproute2 \
+        net-tools \
         vim \
         sudo \
         locate \

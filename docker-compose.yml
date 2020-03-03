@@ -14,46 +14,68 @@ x-base: &base
   network_mode: host
   ipc: host
 
+x-build-base: &build-base
+    network_mode: host
+    ipc: host
+
 x-yarp-mesa-base: &yarp-mesa-base
   <<: *base
-  image: yarp-mesa
+  image: yarp-mesa:latest
 
 x-qscxml-base: &qscxml-base
   <<: *base
-  image: qscxml
+  image: qscxml:latest
 
 x-navigation-base: &navigation-base
   <<: *base
-  image: navigation
+  image: navigation:latest
+
+x-bt-implementation-base: &bt-implementation-base
+  <<: *base
+  image: implementation-base:latest
+
 
 services:
+
+# Images
   qscxml:
+    <<: *build-base
     build:
       dockerfile: Dockerfile.qscxml
       context: .
       args:
         username: scope
-    image: qscxml:latest
-    network_mode: host
+    image: scoperobmosys/qscxml:latest
 
   navigation:
+    <<: *build-base
     build:
       dockerfile: Dockerfile.navigation
       context: .
       args:
         username: scope
-    image: navigation:latest
-    network_mode: host
+    image: scoperobmosys/navigation:latest
 
   yarp-mesa:
+    <<: *build-base
     build:
       dockerfile: Dockerfile.yarp-mesa
       context: .
       args:
         username: scope
-    image: yarp-mesa:latest
-    network_mode: host
+    image: scoperobmosys/yarp-mesa:latest
 
+  bt-implementation:
+    <<: *build-base
+    build:
+      dockerfile: Dockerfile.bt-implementation
+      context: .
+      args:
+        username: scope
+    image: bt-implementation:latest
+
+
+# Containers
   yarp-server:
     <<: *qscxml-base
     container_name: yarp-server
@@ -203,7 +225,7 @@ services:
       - localization2DServer
 
   GoToDestination:
-    <<: *qscxml-base
+    <<: *bt-implementation-base
     container_name: GoToDestination
     command: sh -c "
       yarp wait /GoToComponent;
@@ -213,7 +235,7 @@ services:
       - GoToComponent
 
   GoToChargingStation:
-    <<: *qscxml-base
+    <<: *bt-implementation-base
     container_name: GoToChargingStation
     command: sh -c "
       yarp wait /GoToComponent;
@@ -232,7 +254,7 @@ services:
       - yarp-server
 
   fakeBatteryChargingStation:
-    <<: *qscxml-base
+    <<: *bt-implementation-base
     container_name: fakeBatteryChargingStation
     command: sh -c "
       yarp wait /root;
@@ -260,7 +282,7 @@ services:
       - fakeBattery
 
   BatteryComponent:
-    <<: *qscxml-base
+    <<: *bt-implementation-base
     container_name: BatteryComponent
     command: sh -c "
       yarp wait /root;
@@ -271,7 +293,7 @@ services:
       - fakeBattery
 
   BatteryLevelSkill:
-    <<: *qscxml-base
+    <<: *bt-implementation-base
     container_name: BatteryLevelSkill
     command: sh -c "
       yarp wait /root;
@@ -282,7 +304,7 @@ services:
       - BatteryComponent
 
   BatteryNotChargingSkill:
-    <<: *qscxml-base
+    <<: *bt-implementation-base
     container_name: BatteryNotChargingSkill
     command: sh -c "
       yarp wait /BatteryComponent;
@@ -292,7 +314,7 @@ services:
       - BatteryComponent
 
   BehaviorTree:
-    <<: *qscxml-base
+    <<: *bt-implementation-base
     container_name: BehaviorTree
     command: sh -c "
       yarp wait /GoToDestination/BT_rpc/server;

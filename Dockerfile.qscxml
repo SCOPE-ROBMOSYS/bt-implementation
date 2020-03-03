@@ -94,6 +94,8 @@ RUN echo "deb-src http://deb.debian.org/debian/ testing main" >> /etc/apt/source
         libgraphviz-dev \
         bash-completion \
         mesa-utils \
+        iproute2 \
+        net-tools \
         vim \
         libczmq-dev \
         libgtest-dev \
@@ -224,18 +226,6 @@ RUN git clone --branch master https://github.com/robotology/yarp-unix-socket.git
     cmake --build /usr/local/src/yarp-unix-socket/build && \
     cmake --build /usr/local/src/yarp-unix-socket/build --target install && \
     chown -R $username /usr/local/src/yarp-unix-socket
-
-
-# Build bt-implementation project
-COPY . /usr/local/src/bt-implementation/
-RUN \
-    cmake \
-        -H/usr/local/src/bt-implementation \
-        -B/usr/local/src/bt-implementation/build \
-        -DCMAKE_INSTALL_PREFIX=/usr/local \
-        -DCMAKE_BUILD_TYPE=Debug && \
-    cmake --build /usr/local/src/bt-implementation/build && \
-    chown -R $username /usr/local/src/bt-implementation
 
 RUN update-alternatives --set editor /usr/bin/vim.basic
 RUN apt-get update -qq

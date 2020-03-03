@@ -1,0 +1,20 @@
+FROM qscxml:latest
+
+ARG username
+USER root
+
+# Build bt-implementation project
+COPY . /usr/local/src/bt-implementation/
+RUN \
+    cmake \
+        -H/usr/local/src/bt-implementation \
+        -B/usr/local/src/bt-implementation/build \
+        -DCMAKE_INSTALL_PREFIX=/usr/local \
+        -DCMAKE_BUILD_TYPE=Debug && \
+    cmake --build /usr/local/src/bt-implementation/build && \
+    chown -R $username /usr/local/src/bt-implementation
+
+RUN updatedb
+RUN ldconfig
+
+USER $username
