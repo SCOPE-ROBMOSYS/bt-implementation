@@ -210,7 +210,7 @@ services:
       - robotPathPlannerExample
 
   GoToComponent:
-    <<: *qscxml-base
+    <<: *bt-implementation-base
     container_name: GoToComponent
     command: sh -c "
       yarp wait /root;
