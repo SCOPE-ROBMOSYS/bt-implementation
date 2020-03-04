@@ -4,6 +4,8 @@ LABEL maintainer="daniele.domenichelli@iit.it"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+RUN export DISPLAY=:0.0
+
 # Install libqt5scxml5-private-dev, qt5remoteobjects, KDStateMachineEditor, and
 # GammaRay from pre-built .deb
 COPY deb/*.deb /tmp/
@@ -13,6 +15,7 @@ RUN echo "deb-src http://deb.debian.org/debian/ testing main" >> /etc/apt/source
     apt-get install -y \
         libqt5scxml5-dev \
         libqt5scxml5-bin \
+        qtcreator \
         build-essential \
         git \
         cmake \

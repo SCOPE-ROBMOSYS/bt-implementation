@@ -5,22 +5,21 @@
  *                                                                            *
  ******************************************************************************/
 
-#ifndef GOTO_SKILL_GOTOSKILL_H
-#define GOTO_SKILL_GOTOSKILL_H
+# pragma once
 
 #include <BT_request.h>
 
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/Network.h>
 
-#include "GoToSkillStateMachine.h"
-#include "GoToSkillDataModel.h"
+#include "@KEY_SKILL_NAME@SkillStateMachine.h"
+#include "@KEY_SKILL_NAME@SkillDataModel.h"
 
-class GoToSkill:
+class @KEY_SKILL_NAME@Skill:
         public BT_request
 {
 public:
-    GoToSkill(std::string name, std::string location);
+    @KEY_SKILL_NAME@Skill(std::string name @KEY_CONSTRUCTOR_ATTRIBUTES_p1@);
 
     bool start();
 
@@ -29,12 +28,9 @@ public:
     void request_halt() override;
 
 private:
+    std::string name;
     yarp::os::Network yarpnet;
     yarp::os::RpcServer port;
-    GoToSkillDataModel dataModel;
-    GoToSkillStateMachine stateMachine;
-
-    std::string name;
+    @KEY_SKILL_NAME@SkillDataModel dataModel;
+    @KEY_SKILL_NAME@SkillStateMachine stateMachine;
 };
-
-#endif // GOTO_SKILL_GOTOSKILL_H

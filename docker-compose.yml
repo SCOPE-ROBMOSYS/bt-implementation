@@ -265,6 +265,26 @@ services:
       - yarp-server
       - GoToComponent
 
+  IsAtDestination:
+    <<: *bt-implementation-base
+    container_name: IsAtDestination
+    command: sh -c "
+      yarp wait /GoToComponent;
+      gammaray /usr/local/src/bt-implementation/build/bin/IsAtSkill --skill-name IsAtDestination --location kitchen"
+    depends_on:
+      - yarp-server
+      - GoToComponent
+
+  IsAtChargingStation:
+    <<: *bt-implementation-base
+    container_name: IsAtChargingStation
+    command: sh -c "
+      yarp wait /GoToComponent;
+      gammaray /usr/local/src/bt-implementation/build/bin/IsAtSkill --skill-name IsAtChargingStation --location charging_station"
+    depends_on:
+      - yarp-server
+      - GoToComponent
+
   fakeBattery:
     <<: *yarp-mesa-base
     container_name: fakeBattery

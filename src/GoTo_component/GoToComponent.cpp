@@ -134,6 +134,19 @@ public:
         running = false;
     }
 
+    bool isAtLocation(const std::string& destination) override
+    {
+        yWarning("checkInsideArea called with destination %s", destination.c_str());
+
+        std::lock_guard<std::mutex> lock(mtx);
+
+        if (inav->checkInsideArea(destination)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 private:
     yarp::dev::PolyDriver ddnavclient;
     yarp::dev::Nav2D::INavigation2D* inav { nullptr };

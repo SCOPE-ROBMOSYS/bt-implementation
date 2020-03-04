@@ -17,10 +17,33 @@ add_subdirectory(GoTo_protocol)
 add_subdirectory(Battery_protocol)
 add_subdirectory(Blackboard_protocol)
 
+# Code Generator
+add_subdirectory(skill-code-gen)
+
+<<<<<<< HEAD
+add_subdirectory(BT)
+
+
+#include(SkillAutogen)
+
+
+#Skills
+add_subdirectory(GoTo_skill)
+
+add_subdirectory(BatteryLevel_skill)
+
+add_subdirectory(BatteryNotCharging_skill)
+add_subdirectory(IsAt_skill)
+
+#add_subdirectory(BatteryLevel_skill)
+#add_subdirectory(BatteryNotCharging_skill)
+=======
 #Skills
 add_subdirectory(GoTo_skill)
 add_subdirectory(BatteryLevel_skill)
 add_subdirectory(BatteryNotCharging_skill)
+>>>>>>> c109c12... further generalizations
+
 
 #components
 add_subdirectory(Id_component)

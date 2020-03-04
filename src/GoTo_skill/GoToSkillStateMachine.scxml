@@ -9,7 +9,33 @@
     name="GoToSkillStateMachine"
     initial="wrapper"
     datamodel="cplusplus:GoToSkillDataModel:GoToSkillDataModel.h"
+    xmlns:scope="http://www.scope.org/scope"
+    xmlns:scope_yarp="http://www.scope.org/scope_yarp"
 >
+
+<datamodel>
+
+<!--  Services:  -->
+
+    <data id="goTo"
+          scope_yarp:service_type="GoTo"
+          scope_yarp:connect_type="tcp"
+          scope_yarp:thrift_protocol="GoTo"
+          scope_yarp:service_function="multiple"
+          scope_yarp:port_name_attribute="location"
+          />
+
+<!--  Attributes:  -->
+
+    <data id="location"
+          scope:cpp_type="const std::string"
+          expr="none"
+          scope:init_source="define_in_class_constructor"
+          />
+
+</datamodel>
+
+
     <state id="wrapper" initial="idle">
         <onentry>
             <log label="wrapper" expr='"Inside wrapper"'/>
@@ -33,7 +59,7 @@
             <onentry>
                 <log label="wrapper.sendrequest" expr='"Inside sendrequest"'/>
                 <script>
-                    Connector connection(client_port.getName(), "/GoToComponent", "tcp");
+<!--                    Connector connection(client_port.getName(), "/GoToComponent", "tcp");-->
                     goTo.goTo(location);
                     QTimer::singleShot(0, stateMachine(), [&amp;](){
                         qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; "Event REQUEST_SENT submitted";

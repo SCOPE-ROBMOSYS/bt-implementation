@@ -15,7 +15,7 @@
  *   time step, but the task is not yet complete;
  * - "BT_IDLE" indicates that the node hasn't run yet.
  */
-enum ReturnStatus {BT_IDLE, BT_RUNNING, BT_SUCCESS, BT_FAILURE}
+enum ReturnStatus {BT_IDLE, BT_RUNNING, BT_SUCCESS, BT_FAILURE, BT_UNDEFINED}
 
 service BT_request {
 

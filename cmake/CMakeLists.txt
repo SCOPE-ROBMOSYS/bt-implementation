@@ -5,11 +5,8 @@
 #                                                                              #
 ################################################################################
 
-# Create the skill (state machine executable)
-
-include(SkillAutogen)
-
-add_executable(BatteryNotChargingSkill)
-generate_skills(SOURCES_FILES LIBRARIES BatteryNotChargingSkillStateMachine.scxml)
-target_sources(BatteryNotChargingSkill PRIVATE ${SOURCES_FILES})
-target_link_libraries(BatteryNotChargingSkill PRIVATE ${LIBRARIES})
+# YARP CMake Modules
+set(CMAKE_FILES SkillAutogen.cmake)
+install(FILES ${CMAKE_FILES}
+        DESTINATION share/bt-implementation/cmake
+        COMPONENT BT_IMPLEM_conf-dev)

@@ -5,17 +5,19 @@
  *                                                                            *
  ******************************************************************************/
 
-#include "BatteryNotChargingSkill.h"
+#include "@KEY_SKILL_NAME@Skill.h"
 
+#include <QTimer>
 #include <QDebug>
+#include <QTime>
 
-BatteryNotChargingSkill::BatteryNotChargingSkill(std::string name) :
-        name(std::move(name))
+@KEY_SKILL_NAME@Skill::@KEY_SKILL_NAME@Skill(std::string name @KEY_CONSTRUCTOR_ATTRIBUTES_p1@) :
+        name(std::move(name))@KEY_CONSTRUCTOR_ATTRIBUTES_p2@
 {
     stateMachine.setDataModel(&dataModel);
 }
 
-bool BatteryNotChargingSkill::start()
+bool @KEY_SKILL_NAME@Skill::start()
 {
     if (!yarp::os::NetworkBase::checkNetwork()) {
         qWarning("Error! YARP Network is not initialized");
@@ -37,35 +39,24 @@ bool BatteryNotChargingSkill::start()
     return true;
 }
 
-ReturnStatus BatteryNotChargingSkill::request_status()
+ReturnStatus @KEY_SKILL_NAME@Skill::request_status()
 {
-    while (true) {
-        auto states = stateMachine.activeStateNames();
+    auto states = stateMachine.activeStateNames();
 
-        for (const auto& state : states) {
-            if (state == "idle") {
-                return BT_IDLE;
-            }
-            if (state == "get") {
-                return BT_IDLE;
-            }
-            if (state == "success") {
-                return BT_SUCCESS;
-            }
-            if (state == "failure") {
-                return BT_FAILURE;
-            }
-        }
+    for (const auto& state : states) {
+@KEY_SKILL_STATES@
     }
+    // error
+    return BT_FAILURE;
 }
 
-ReturnStatus BatteryNotChargingSkill::request_tick()
+ReturnStatus @KEY_SKILL_NAME@Skill::request_tick()
 {
     stateMachine.submitEvent("TICK");
     return request_status();
 }
 
-void BatteryNotChargingSkill::request_halt()
+void @KEY_SKILL_NAME@Skill::request_halt()
 {
     stateMachine.submitEvent("HALT");
 }

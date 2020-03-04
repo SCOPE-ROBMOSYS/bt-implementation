@@ -5,8 +5,7 @@
  *                                                                            *
  ******************************************************************************/
 
-#ifndef GOTO_SKILL_GOTODATAMODEL_H
-#define GOTO_SKILL_GOTODATAMODEL_H
+#pragma once
 
 #include <QScxmlCppDataModel>
 #include <QVariantMap>
@@ -15,9 +14,10 @@
 #include <QTimer>
 #include <QDebug>
 
-#include "GoTo.h"
 #include <yarp/os/Network.h>
 #include <yarp/os/RpcClient.h>
+
+@INCLUDE_THRIFT_SERVICE@
 
 struct Connector
 {
@@ -27,14 +27,14 @@ struct Connector
             m_carrier(std::move(carrier))
     {
         if (!yarp::os::Network::connect(m_from, m_to, carrier)) {
-            qFatal("Error! Could not connect to server");
+            qFatal("Error! Could not connect to server /fakeBattery");
         }
     }
 
     ~Connector()
     {
         if (!yarp::os::Network::disconnect(m_from, m_to)) {
-            qFatal("Error! Could not disconnect from server");
+            qFatal("Error! Could not disconnect from server /fakeBattery");
         }
     }
 
@@ -43,23 +43,20 @@ struct Connector
     std::string m_carrier;
 };
 
-class GoToSkillDataModel: public QScxmlCppDataModel
+class @KEY_SKILL_NAME@SkillDataModel: public QScxmlCppDataModel
 {
     Q_OBJECT
     Q_SCXML_DATAMODEL
 
 public:
-    GoToSkillDataModel(std::string location);
+    @CONSTRUCTOR@
 
     bool setup(const QVariantMap& initialDataValues) override;
 
     yarp::os::Network yarp;
     yarp::os::RpcClient client_port;
-    GoTo goTo;
 
-    const std::string location;
+    @KEY_LIST_PUBLIC_ATTRIBUTES@
 };
 
-Q_DECLARE_METATYPE(::GoToSkillDataModel*)
-
-#endif // GOTO_SKILL_GOTODATAMODEL_H
+Q_DECLARE_METATYPE(::@KEY_SKILL_NAME@SkillDataModel*)

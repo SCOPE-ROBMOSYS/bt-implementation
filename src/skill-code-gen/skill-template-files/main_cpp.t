@@ -5,7 +5,7 @@
  *                                                                            *
  ******************************************************************************/
 
-#include "BatteryLevelSkill.h"
+#include "@KEY_SKILL_NAME@Skill.h"
 
 #include <QCoreApplication>
 #include <QCommandLineParser>
@@ -13,15 +13,15 @@
 int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
-    QCoreApplication::setApplicationName("BatteryLevelSkill");
+    QCoreApplication::setApplicationName("@KEY_SKILL_NAME@Skill");
     QCoreApplication::setApplicationVersion("0.1");
 
     QCommandLineParser parser;
-    parser.setApplicationDescription("BatteryLevel Skill Description");
+    parser.setApplicationDescription("@KEY_SKILL_NAME@ Skill Description");
     parser.addHelpOption();
     parser.addVersionOption();
 
-    parser.addOption({{"n", "skill-name"}, "The <name> of the skill (implies the port opened).", "name", "BatteryLevel"});
+    parser.addOption({{"n", "skill-name"}, "The <name> of the skill (implies the port opened).", "name", "@KEY_SKILL_NAME@"});
 
     // Process the actual command line arguments given by the user
     parser.process(app);
@@ -31,7 +31,9 @@ int main(int argc, char **argv)
 
     QString skillName = parser.value("skill-name");
 
-    BatteryLevelSkill bt(skillName.toStdString());
+    @KEY_LIST_PUBLIC_ATTRIBUTES_main@
+
+    @KEY_SKILL_NAME@Skill bt(skillName.toStdString() @KEY_CONSTRUCTOR_ATTRIBUTES_p1_PASSED_ARGS@);
     if (!bt.start()) {
         return 1;
     }

@@ -9,7 +9,27 @@
     name="BatteryNotChargingSkillStateMachine"
     initial="idle"
     datamodel="cplusplus:BatteryNotChargingSkillDataModel:BatteryNotChargingSkillDataModel.h"
+    xmlns:scope="http://www.scope.org/scope"
+    xmlns:scope_yarp="http://www.scope.org/scope_yarp"
 >
+
+<datamodel>
+
+<!--  Services:  -->
+
+    <data id="batteryReader"
+          scope_yarp:service_type="BatteryReader"
+          scope_yarp:connect_type="tcp"
+          scope_yarp:thrift_protocol="Battery"
+          scope_yarp:service_function="charging_status"
+          scope_yarp:port_name_attribute="default"
+          />
+
+<!--  Attributes:  -->
+
+
+</datamodel>
+
 
     <state id="idle">
         <transition event="TICK" target="get" />
@@ -18,7 +38,7 @@
     <state id="get">
         <onentry>
             <script>
-                Connector connection(client_port.getName(), "/BatteryComponent", "tcp");
+<!--                Connector connection(client_port.getName(), "/BatteryComponent", "tcp");-->
                 ChargingStatus status = batteryReader.charging_status();
                 QTimer::singleShot(0, stateMachine(), [=](){
                     stateMachine()->submitEvent((status == BATTERY_NOT_CHARGING) ? "STATUS_SUCCESS" : "STATUS_FAILED");

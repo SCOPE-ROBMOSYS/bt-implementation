@@ -28,7 +28,15 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_C_EXTENSIONS OFF)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set(PATH_ROOT_TO_PACKAGE_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+#set(SKILL_SCXML_FILES_DIR "${PATH_ROOT_TO_PACKAGE_ROOT_DIR}/src/skill-code-gen/input-files")
+
+# Pick up our CMake scripts - they are all in the cmake subdirectory.
+set(BT_IMPLEM_MODULE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${BT_IMPLEM_MODULE_DIR}")
+message(STATUS "Using:")
+message(STATUS "CMake modules directory: ${CMAKE_MODULE_PATH}")
+
 
 set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Build libraries as shared as opposed to static")
 
@@ -62,5 +70,8 @@ feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES)
 set(CMAKE_C_FLAGS "${YARP_C_FLAGS} ${CMAKE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${YARP_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
 
+# Make some custom header files containing compile settings.
+add_subdirectory(cmake)
 
+# Set up the main libraries and utilities.
 add_subdirectory(src)
