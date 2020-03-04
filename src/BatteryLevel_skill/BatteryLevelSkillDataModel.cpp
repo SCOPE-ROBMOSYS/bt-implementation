@@ -9,11 +9,6 @@
 #include <QDebug>
 #include <QScxmlStateMachine>
 
-BatteryLevelSkillDataModel::BatteryLevelSkillDataModel()
-{
-    qDebug() << "BatteryLevelSkillDataModel::BatteryLevelSkillDataModel() called";
-}
-
 bool BatteryLevelSkillDataModel::setup(const QVariantMap &initialDataValues)
 {
     Q_UNUSED(initialDataValues)
