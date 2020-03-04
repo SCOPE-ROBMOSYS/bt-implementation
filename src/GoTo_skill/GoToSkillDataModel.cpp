@@ -1,3 +1,10 @@
+/******************************************************************************
+ *                                                                            *
+ * Copyright (C) 2020 Fondazione Istituto Italiano di Tecnologia (IIT)        *
+ * All Rights Reserved.                                                       *
+ *                                                                            *
+ ******************************************************************************/
+
 #include "GoToSkillDataModel.h"
 #include <QDebug>
 #include <QTimer>

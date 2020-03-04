@@ -1,3 +1,10 @@
+################################################################################
+#                                                                              #
+# Copyright (C) 2020 Fondazione Istituto Italiano di Tecnologia (IIT)          #
+# All Rights Reserved.                                                         #
+#                                                                              #
+################################################################################
+
 # Create the BT_protocol C++ Library
 add_library(BT_protocol STATIC)
 yarp_add_idl(IDL_GEN_FILES BT_wrappers.thrift)

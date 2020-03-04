@@ -1,3 +1,10 @@
+################################################################################
+#                                                                              #
+# Copyright (C) 2020 Fondazione Istituto Italiano di Tecnologia (IIT)          #
+# All Rights Reserved.                                                         #
+#                                                                              #
+################################################################################
+
 # Create the component (navigation client)
 add_executable(GoToComponent)
 target_sources(GoToComponent

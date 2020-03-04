@@ -1,3 +1,10 @@
+################################################################################
+#                                                                              #
+# Copyright (C) 2020 Fondazione Istituto Italiano di Tecnologia (IIT)          #
+# All Rights Reserved.                                                         #
+#                                                                              #
+################################################################################
+
 # Create the yarp_bt_nodes library
 add_library(yarp_bt_nodes STATIC)
 target_sources(yarp_bt_nodes

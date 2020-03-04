@@ -1,3 +1,10 @@
+################################################################################
+#                                                                              #
+# Copyright (C) 2020 Fondazione Istituto Italiano di Tecnologia (IIT)          #
+# All Rights Reserved.                                                         #
+#                                                                              #
+################################################################################
+
 cmake_minimum_required(VERSION 3.12)
 project(SCOPE_GoTo_Skill
         VERSION 1.0.0

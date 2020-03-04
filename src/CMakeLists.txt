@@ -1,3 +1,9 @@
+################################################################################
+#                                                                              #
+# Copyright (C) 2020 Fondazione Istituto Italiano di Tecnologia (IIT)          #
+# All Rights Reserved.                                                         #
+#                                                                              #
+################################################################################
 
 # Protocol used between BT and Skill
 add_subdirectory(BT_protocol)

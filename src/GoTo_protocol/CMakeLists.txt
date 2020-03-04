@@ -1,3 +1,10 @@
+################################################################################
+#                                                                              #
+# Copyright (C) 2020 Fondazione Istituto Italiano di Tecnologia (IIT)          #
+# All Rights Reserved.                                                         #
+#                                                                              #
+################################################################################
+
 # Create the GoTo_protocol C++ Library
 add_library(GoTo_protocol STATIC)
 yarp_add_idl(IDL_GEN_FILES GoTo.thrift)

@@ -1,4 +1,9 @@
-// copyright
+/******************************************************************************
+ *                                                                            *
+ * Copyright (C) 2020 Fondazione Istituto Italiano di Tecnologia (IIT)        *
+ * All Rights Reserved.                                                       *
+ *                                                                            *
+ ******************************************************************************/
 
 #include <yarp/os/Network.h>
 #include <yarp/os/RpcServer.h>

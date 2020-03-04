@@ -1,3 +1,10 @@
+/******************************************************************************
+ *                                                                            *
+ * Copyright (C) 2020 Fondazione Istituto Italiano di Tecnologia (IIT)        *
+ * All Rights Reserved.                                                       *
+ *                                                                            *
+ ******************************************************************************/
+
 #ifndef BATTERYLEVEL_SKILL_BATTERYLEVELDATAMODEL_H
 #define BATTERYLEVEL_SKILL_BATTERYLEVELDATAMODEL_H
 

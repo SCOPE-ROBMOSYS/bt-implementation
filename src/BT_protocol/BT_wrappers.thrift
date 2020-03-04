@@ -1,4 +1,11 @@
-/**
+/******************************************************************************
+ *                                                                            *
+ * Copyright (C) 2020 Fondazione Istituto Italiano di Tecnologia (IIT)        *
+ * All Rights Reserved.                                                       *
+ *                                                                            *
+ ******************************************************************************/
+
+ /**
  * Enumerates the states every node can be in after execution during a particular
  * time step:
  * - "BT_SUCCESS" indicates that the node has completed running during this time step;

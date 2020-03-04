@@ -1,4 +1,10 @@
-# Create the component (navigation client)
+################################################################################
+#                                                                              #
+# Copyright (C) 2020 Fondazione Istituto Italiano di Tecnologia (IIT)          #
+# All Rights Reserved.                                                         #
+#                                                                              #
+################################################################################
+
 add_executable(BatteryComponent)
 target_sources(BatteryComponent
   PRIVATE

@@ -1,3 +1,10 @@
+################################################################################
+#                                                                              #
+# Copyright (C) 2020 Fondazione Istituto Italiano di Tecnologia (IIT)          #
+# All Rights Reserved.                                                         #
+#                                                                              #
+################################################################################
+
 # Create the battery_commands C++ Library
 add_library(Battery_protocol STATIC)
 yarp_add_idl(IDL_GEN_FILES battery_commands.thrift)

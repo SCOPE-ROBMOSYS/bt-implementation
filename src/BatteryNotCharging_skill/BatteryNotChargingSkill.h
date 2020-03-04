@@ -1,3 +1,10 @@
+/******************************************************************************
+ *                                                                            *
+ * Copyright (C) 2020 Fondazione Istituto Italiano di Tecnologia (IIT)        *
+ * All Rights Reserved.                                                       *
+ *                                                                            *
+ ******************************************************************************/
+
 #ifndef BATTERYNOTCHARGING_SKILL_BATTERYNOTCHARGINGSKILL_H
 #define BATTERYNOTCHARGING_SKILL_BATTERYNOTCHARGINGSKILL_H
 

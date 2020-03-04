@@ -1,3 +1,10 @@
+################################################################################
+#                                                                              #
+# Copyright (C) 2020 Fondazione Istituto Italiano di Tecnologia (IIT)          #
+# All Rights Reserved.                                                         #
+#                                                                              #
+################################################################################
+
 # Create the skill (state machine executable)
 add_executable(BatteryNotChargingSkill)
 target_include_directories(BatteryNotChargingSkill

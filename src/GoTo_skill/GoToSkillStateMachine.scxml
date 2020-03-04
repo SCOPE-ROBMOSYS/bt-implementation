@@ -1,3 +1,8 @@
+<!--
+ Copyright (C) 2020 Fondazione Istituto Italiano di Tecnologia (IIT)
+ All Rights Reserved.
+-->
+
 <scxml
     xmlns="http://www.w3.org/2005/07/scxml"
     version="1.0"
