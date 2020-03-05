@@ -19,15 +19,11 @@
     <state id="get" scope:bt_status="idle">
         <onentry>
             <script>
-                Connector connection(client_port.getName(), "/BatteryComponent", "tcp");
-                double level = batteryReader.level();
-                QTimer::singleShot(0, stateMachine(), [=](){
-                    stateMachine()->submitEvent((level > 20) ? "STATUS_SUCCESS" : "STATUS_FAILED");
-                });
+                level = batteryReader.level();
             </script>
         </onentry>
-        <transition event="STATUS_SUCCESS" target="success" />
-        <transition event="STATUS_FAILED" target="failure" />
+        <transition cond="level &gt; 20" target="success" />
+        <transition cond="level &lt;= 20" target="failure" />
     </state>
 
     <state id="success" scope:bt_status="success">

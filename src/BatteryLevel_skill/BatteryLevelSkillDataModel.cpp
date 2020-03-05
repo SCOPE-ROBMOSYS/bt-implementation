@@ -28,5 +28,10 @@ bool BatteryLevelSkillDataModel::setup(const QVariantMap &initialDataValues)
         return false;
     }
 
+    if (!yarp::os::Network::connect(client_port.getName(), "/BatteryComponent", "tcp")) {
+        qWarning("Error! Could not connect to server /fakeBattery");
+        return false;
+    }
+
     return true;
 }

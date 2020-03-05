@@ -5,6 +5,7 @@
 #                                                                              #
 ################################################################################
 
+ # Create the component (navigation client)
 add_executable(BatteryComponent)
 target_sources(BatteryComponent
   PRIVATE
