@@ -13,6 +13,9 @@ x-base: &base
     - "${HOME}/.local/share/yarp:/home/scope/.local/share/yarp"
   network_mode: host
   ipc: host
+  security_opt:
+    - apparmor:unconfined
+
 
 x-build-base: &build-base
     network_mode: host
