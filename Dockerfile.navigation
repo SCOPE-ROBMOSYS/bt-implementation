@@ -50,11 +50,13 @@ RUN git clone --branch master https://github.com/robotology/yarp-unix-socket.git
 #     chown -R $username /usr/local/src/YARP-BT-modules.CPP
 
 # Build and install navigation
-RUN git clone --branch amcl2_partial https://github.com/robotology/navigation.git /usr/local/src/navigation && \
+COPY maps/* /tmp/maps/
+RUN git clone --branch master https://github.com/robotology/navigation.git /usr/local/src/navigation && \
     echo >> /usr/local/src/navigation/app/robotPathPlannerExamples/conf/robotGoto_robot_2wheels.ini && \
     echo >> /usr/local/src/navigation/app/robotPathPlannerExamples/conf/robotGoto_robot_2wheels.ini && \
     echo [GENERAL] >> /usr/local/src/navigation/app/robotPathPlannerExamples/conf/robotGoto_robot_2wheels.ini && \
     sed -i '/odomLocalizer::getEstimatedOdometry is not yet implemented/d' /usr/local/src/navigation/src/localizationDevices/odomLocalizer/odomLocalizer.cpp && \
+    mv /tmp/maps/* /usr/local/src/navigation/app/mapsExample/ && \
     cmake \
         -H/usr/local/src/navigation \
         -B/usr/local/src/navigation/build \
