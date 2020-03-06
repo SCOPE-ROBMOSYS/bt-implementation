@@ -149,7 +149,6 @@ RUN git clone --branch master https://github.com/robotology/YARP.git /usr/local/
         -DYARP_USE_PYTHON_VERSION=3 && \
     cmake --build /usr/local/src/YARP/build && \
     cmake --build /usr/local/src/YARP/build --target install && \
-    install -m 644 /usr/local/src/YARP/scripts/yarp_completion /usr/share/bash-completion/completions/yarp && \
     chown -R $username /usr/local/src/YARP
 
 
