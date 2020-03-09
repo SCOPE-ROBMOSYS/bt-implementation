@@ -55,7 +55,7 @@ public:
         std::string fakeBattery_server = "/fakeBattery";
 
         // location_name
-        location_name = "office";
+        location_name = "charging_station";
 
         // linear_tolerance
         linear_tolerance = 0.5;
@@ -99,7 +99,7 @@ public:
         }
 
         // fakeBattery_client_port
-        if (!fakeBattery_client_port.open("/" + name + "/" + fakeBattery_server + "/control/rpc:o")) {
+        if (!fakeBattery_client_port.open("/" + name + "/" + fakeBattery_server + "control/rpc:o")) {
             yError("Error! Cannot open RPC port");
             return false;
         }

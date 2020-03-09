@@ -73,12 +73,12 @@ services:
 
 # Containers
   yarp-server:
-    <<: *qscxml-base
+    <<: *yarp-mesa-base
     container_name: yarp-server
     command: yarp server --read
 
   transformServer:
-    <<: *navigation-base
+    <<: *yarp-mesa-base
     container_name: transformServer
     command: sh -c "
       yarp wait /root;
@@ -87,7 +87,7 @@ services:
       - yarp-server
 
   fakeMotionControl:
-    <<: *navigation-base
+    <<: *yarp-mesa-base
     container_name: fakeMotionControl
     command: sh -c "
       yarp wait /root;
@@ -196,7 +196,7 @@ services:
       - localization2DServer
 
   connect:
-    <<: *navigation-base
+    <<: *yarp-mesa-base
     container_name: connect
     command: sh -c "
       yarp wait /root;
@@ -256,7 +256,7 @@ services:
       - GoToComponent
 
   fakeBattery:
-    <<: *qscxml-base
+    <<: *yarp-mesa-base
     container_name: fakeBattery
     command: sh -c "
       yarp wait /root;
@@ -284,7 +284,7 @@ services:
       - fakeBattery
 
   yarpbatterygui:
-    <<: *qscxml-base
+    <<: *yarp-mesa-base
     container_name: yarpbatterygui
     command: sh -c "
       yarp wait /root;
