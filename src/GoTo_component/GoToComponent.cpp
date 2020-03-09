@@ -60,7 +60,9 @@ public:
         yWarning("goTo called with destination %s", destination.c_str());
 
         std::lock_guard<std::mutex> lock(mtx);
-        inav->gotoTargetByLocationName(destination);
+        if(!inav->checkInsideArea(destination)) {
+            inav->gotoTargetByLocationName(destination);
+        }
         running = true;
     }
 
@@ -85,11 +87,9 @@ public:
             return ABORT;
         }
 
-
         switch(status) {
         case yarp::dev::Nav2D::navigation_status_idle:
-            if (running) {
-                inav->checkInsideArea(destination);
+            if (running && inav->checkInsideArea(destination)) {
                 return SUCCESS;
             } else {
                 return NOT_STARTED;
