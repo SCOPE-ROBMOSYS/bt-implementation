@@ -42,7 +42,6 @@ x-build-base: &build-base
 services:
 
 # Images
-
   yarp-mesa:
     <<: *yarp-mesa-base
     build:
@@ -102,6 +101,8 @@ services:
     command: sh -c "
       yarp wait /root;
       yarp wait /robot_2wheels/mobile_base/command:i;
+      yarp wait /robot_2wheels/mobile_base/rpc:i;
+      yarp wait /robot_2wheels/mobile_base/stateExt:o;
       baseControl --context baseControl_SIM --from robot_2wheels.ini --skip_robot_interface_check"
     depends_on:
       - yarp-server
@@ -143,12 +144,18 @@ services:
     container_name: navigation2DServer
     command: sh -c "
       yarp wait /root;
+      yarp wait /baseControl/control:i;
       yarp wait /localizationServer/rpc;
       yarp wait /robot_2wheels/laser:o;
+      yarp wait /robot_2wheels/laser:o/rpc:i;
+      yarp wait /mapServer/rpc;
       yarpdev --device navigation2DServer --subdevice robotPathPlannerDev --context robotPathPlannerExamples --from robotPathPlanner_robot_2wheels.ini"
     depends_on:
       - yarp-server
+      - baseControl
       - localization2DServer
+      - Rangefinder2DWrapper
+      - map2DServer
 
   navigationGUI:
     <<: *navigation-base
@@ -157,6 +164,9 @@ services:
       yarp wait /root;
       yarp wait /localizationServer/rpc;
       yarp wait /navigationServer/rpc;
+      yarp wait /robot_2wheels/laser:o/rpc:i;
+      yarp wait /robot_2wheels/laser:o;
+      yarp wait /mapServer/rpc;
       navigationGUI --context navigationGUI --from navigationGUI_robot_2wheels.ini"
     depends_on:
       - yarp-server
@@ -167,9 +177,12 @@ services:
     container_name: yarpview
     command: sh -c "
       yarp wait /root;
+      yarp view /navigationGui/map:o;
+      yarp view /navigationGui/yarpviewTarget:i;
       yarpview --autosize --name /navView:i --out /mapClick:o"
     depends_on:
       - yarp-server
+      - navigationGUI
 
   robotPathPlannerExample:
     <<: *navigation-base
@@ -260,6 +273,8 @@ services:
       yarp wait /mapServer/rpc;
       yarp wait /localizationServer/rpc;
       yarp wait /fakeBattery/rpc:i;
+      yarp wait /fakeBattery/data:o;
+      yarp wait /fakeBattery/control/rpc:i;
       /usr/local/src/bt-implementation/build/bin/fakeBatteryChargingStation"
     depends_on:
       - yarp-server
@@ -274,6 +289,7 @@ services:
     command: sh -c "
       yarp wait /root;
       yarp wait /fakeBattery/rpc:i;
+      yarp wait /fakeBattery/data:o;
       yarpbatterygui --remote /fakeBattery --refresh_period 1.0"
     depends_on:
       - yarp-server
@@ -285,6 +301,7 @@ services:
     command: sh -c "
       yarp wait /root;
       yarp wait /fakeBattery/rpc:i;
+      yarp wait /fakeBattery/data:o;
       /usr/local/src/bt-implementation/build/bin/BatteryComponent"
     depends_on:
       - yarp-server
