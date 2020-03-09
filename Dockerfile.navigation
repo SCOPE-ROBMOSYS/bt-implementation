@@ -3,6 +3,9 @@ FROM scoperobmosys/yarp-mesa
 ARG username
 USER root
 
+ARG cmake_parallel=8
+ENV CMAKE_BUILD_PARALLEL_LEVEL=${cmake_parallel}
+
 # Build and install icub-main
 RUN git clone --branch devel https://github.com/robotology/icub-main.git /usr/local/src/icub-main && \
     cmake \
@@ -12,16 +15,6 @@ RUN git clone --branch devel https://github.com/robotology/icub-main.git /usr/lo
     cmake --build /usr/local/src/icub-main/build && \
     cmake --build /usr/local/src/icub-main/build --target install && \
     chown -R $username /usr/local/src/icub-main
-
-# Build and install yarp-unix-socket
-RUN git clone --branch master https://github.com/robotology/yarp-unix-socket.git /usr/local/src/yarp-unix-socket && \
-    cmake \
-        -H/usr/local/src/yarp-unix-socket \
-        -B/usr/local/src/yarp-unix-socket/build \
-        ${CMAKE_COMMON_OPTIONS} && \
-    cmake --build /usr/local/src/yarp-unix-socket/build && \
-    cmake --build /usr/local/src/yarp-unix-socket/build --target install && \
-    chown -R $username /usr/local/src/yarp-unix-socket
 
 # Build and install BehaviorTree.CPP
 # RUN git clone --branch master https://github.com/BehaviorTree/BehaviorTree.CPP.git /usr/local/src/BehaviorTree.CPP && \
@@ -56,6 +49,7 @@ RUN git clone --branch master https://github.com/robotology/navigation.git /usr/
     echo >> /usr/local/src/navigation/app/robotPathPlannerExamples/conf/robotGoto_robot_2wheels.ini && \
     echo [GENERAL] >> /usr/local/src/navigation/app/robotPathPlannerExamples/conf/robotGoto_robot_2wheels.ini && \
     sed -i '/odomLocalizer::getEstimatedOdometry is not yet implemented/d' /usr/local/src/navigation/src/localizationDevices/odomLocalizer/odomLocalizer.cpp && \
+    sed -i 's/initial_x 0.0/initial_x -6.0/g' /usr/local/src/navigation/app/robotPathPlannerExamples/conf/odomLocalizer.ini && \
     mv /tmp/maps/* /usr/local/src/navigation/app/mapsExample/ && \
     cmake \
         -H/usr/local/src/navigation \

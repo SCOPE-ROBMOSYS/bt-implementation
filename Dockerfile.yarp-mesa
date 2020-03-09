@@ -2,11 +2,9 @@ FROM icubteamcode/ubuntu1804mesa:latest
 
 LABEL maintainer="daniele.domenichelli@iit.it"
 
-ENV DEBIAN_FRONTEND=noninteractive
-
 RUN apt-get update -qq && \
     apt-get dist-upgrade --autoremove --purge -qq -y && \
-    apt-get install -y \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
         build-essential \
         git \
         cmake \
@@ -60,6 +58,7 @@ RUN apt-get update -qq && \
         libode-dev \
         coinor-libipopt-dev \
         bash-completion \
+        ccache \
         mesa-utils \
         iproute2 \
         net-tools \
@@ -77,10 +76,11 @@ RUN apt-get update -qq && \
     apt-get update && \
     apt-get install -y kitware-archive-keyring && \
     apt-key --keyring /etc/apt/trusted.gpg del C1F34CDD40CD72DA && \
-    apt-get install -y cmake && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+        cmake && \
     add-apt-repository ppa:robotology/ppa && \
     apt-get update -qq && \
-    apt-get install -y \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
         robot-testing-framework \
         ycm-cmake-modules && \
     apt-get clean && \
@@ -99,6 +99,9 @@ ENV CMAKE_COMMON_OPTIONS=" \
     -DCMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY=ON \
     -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=FALSE \
     -DBUILD_SHARED_LIBS=ON"
+
+ARG cmake_parallel=8
+ENV CMAKE_BUILD_PARALLEL_LEVEL=${cmake_parallel}
 
 # Build and install YARP
 RUN git clone --branch master https://github.com/robotology/YARP.git /usr/local/src/YARP && \
@@ -128,7 +131,10 @@ RUN git clone --branch master https://github.com/robotology/YARP.git /usr/local/
         -DENABLE_yarpmod_laserFromDepth=ON \
         -DENABLE_yarpmod_rpLidar=ON \
         -DENABLE_yarpmod_rpLidar2=ON \
+        -DENABLE_yarpmod_laserFromPointCloud=ON \
+        -DENABLE_yarpmod_laserFromExternalPort=ON \
         -DENABLE_yarpmod_laserHokuyo=ON \
+        -DENABLE_yarpmod_upowerBattery=ON \
         -DENABLE_yarpmod_test_grabber=ON \
         -DENABLE_yarpmod_SDLJoypad=ON \
         -DENABLE_yarpmod_fakeLocalizer=ON \
@@ -150,6 +156,16 @@ RUN git clone --branch master https://github.com/robotology/YARP.git /usr/local/
     cmake --build /usr/local/src/YARP/build && \
     cmake --build /usr/local/src/YARP/build --target install && \
     chown -R $username /usr/local/src/YARP
+
+# Build and install yarp-unix-socket
+RUN git clone --branch master https://github.com/robotology/yarp-unix-socket.git /usr/local/src/yarp-unix-socket && \
+    cmake \
+        -H/usr/local/src/yarp-unix-socket \
+        -B/usr/local/src/yarp-unix-socket/build \
+        ${CMAKE_COMMON_OPTIONS} && \
+    cmake --build /usr/local/src/yarp-unix-socket/build && \
+    cmake --build /usr/local/src/yarp-unix-socket/build --target install && \
+    chown -R $username /usr/local/src/yarp-unix-socket
 
 
 RUN update-alternatives --set editor /usr/bin/vim.basic

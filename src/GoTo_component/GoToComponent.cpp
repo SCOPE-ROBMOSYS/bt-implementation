@@ -61,7 +61,6 @@ public:
 
         std::lock_guard<std::mutex> lock(mtx);
         inav->gotoTargetByLocationName(destination);
-        current_destination = destination;
         running = true;
     }
 
@@ -73,6 +72,11 @@ public:
 
         std::lock_guard<std::mutex> lock(mtx);
 
+        std::string current_destination;
+        if (!inav->getNameOfCurrentTarget(current_destination)) {
+            return ABORT;
+        }
+
         if(destination != current_destination) {
             return NOT_STARTED;
         }
@@ -80,6 +84,7 @@ public:
         if (!inav->getNavigationStatus(status)) {
             return ABORT;
         }
+
 
         switch(status) {
         case yarp::dev::Nav2D::navigation_status_idle:
@@ -111,7 +116,12 @@ public:
 
         std::lock_guard<std::mutex> lock(mtx);
 
-        if(running && destination != current_destination) {
+        if (!running) {
+            return;
+        }
+
+        std::string current_destination;
+        if (!inav->getNameOfCurrentTarget(current_destination) || destination != current_destination) {
             running = false;
             return;
         }
@@ -127,7 +137,6 @@ private:
 
     std::mutex mtx;
     bool running { false };
-    std::string current_destination;
 };
 
 int main()

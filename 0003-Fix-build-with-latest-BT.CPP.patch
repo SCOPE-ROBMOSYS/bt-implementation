@@ -1,0 +1,25 @@
+From fe400d5f2087b4ee5a81b9dee0676fbe3c3a48cf Mon Sep 17 00:00:00 2001
+From: Michele Colledanchise <michele.colledanchise@iit.it>
+Date: Mon, 9 Mar 2020 13:27:19 +0100
+Subject: [PATCH] Fix build with latest BT.CPP
+
+---
+ bt_editor/bt_editor_base.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/bt_editor/bt_editor_base.cpp b/bt_editor/bt_editor_base.cpp
+index 9265a8e..fbabc39 100644
+--- a/bt_editor/bt_editor_base.cpp
++++ b/bt_editor/bt_editor_base.cpp
+@@ -192,7 +192,7 @@ const NodeModels &BuiltinNodeModels()
+     {
+         BT::BehaviorTreeFactory factory;
+ 
+-        factory.registerNodeType<BT::DecoratorSubtreeNode>("Root");
++        factory.registerNodeType<BT::SubtreeNode>("Root");
+ 
+         NodeModels out;
+         for( const auto& it: factory.manifests())
+-- 
+2.25.0
+

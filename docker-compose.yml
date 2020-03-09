@@ -16,11 +16,6 @@ x-base: &base
   security_opt:
     - apparmor:unconfined
 
-
-x-build-base: &build-base
-    network_mode: host
-    ipc: host
-
 x-yarp-mesa-base: &yarp-mesa-base
   <<: *base
   image: scoperobmosys/yarp-mesa:latest
@@ -37,45 +32,44 @@ x-bt-implementation-base: &bt-implementation-base
   <<: *base
   image: bt-implementation:latest
 
+x-build-base: &build-base
+  context: .
+  args:
+    username: scope
+    cmake_parallel: 8
+
 
 services:
 
 # Images
-  qscxml:
-    <<: *build-base
-    build:
-      dockerfile: Dockerfile.qscxml
-      context: .
-      args:
-        username: scope
-    image: scoperobmosys/qscxml:latest
-
-  navigation:
-    <<: *build-base
-    build:
-      dockerfile: Dockerfile.navigation
-      context: .
-      args:
-        username: scope
-    image: scoperobmosys/navigation:latest
 
   yarp-mesa:
-    <<: *build-base
+    <<: *yarp-mesa-base
     build:
+      <<: *build-base
       dockerfile: Dockerfile.yarp-mesa
-      context: .
-      args:
-        username: scope
-    image: scoperobmosys/yarp-mesa:latest
+
+  navigation:
+    <<: *navigation-base
+    build:
+      <<: *build-base
+      dockerfile: Dockerfile.navigation
+    depends_on:
+      - yarp-mesa
+
+  qscxml:
+    <<: *qscxml-base
+    build:
+      <<: *build-base
+      dockerfile: Dockerfile.qscxml
 
   bt-implementation:
-    <<: *build-base
+    <<: *bt-implementation-base
     build:
+      <<: *build-base
       dockerfile: Dockerfile.bt-implementation
-      context: .
-      args:
-        username: scope
-    image: bt-implementation:latest
+    depends_on:
+      - qscxml
 
 
 # Containers
@@ -150,6 +144,7 @@ services:
     command: sh -c "
       yarp wait /root;
       yarp wait /localizationServer/rpc;
+      yarp wait /robot_2wheels/laser:o;
       yarpdev --device navigation2DServer --subdevice robotPathPlannerDev --context robotPathPlannerExamples --from robotPathPlanner_robot_2wheels.ini"
     depends_on:
       - yarp-server
@@ -232,7 +227,7 @@ services:
     container_name: GoToDestination
     command: sh -c "
       yarp wait /GoToComponent;
-      gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --skill-name GoToDestination --location living_room"
+      gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --skill-name GoToDestination --location kitchen"
     depends_on:
       - yarp-server
       - GoToComponent
@@ -242,7 +237,7 @@ services:
     container_name: GoToChargingStation
     command: sh -c "
       yarp wait /GoToComponent;
-      gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --skill-name GoToChargingStation --location office"
+      gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --skill-name GoToChargingStation --location charging_station"
     depends_on:
       - yarp-server
       - GoToComponent

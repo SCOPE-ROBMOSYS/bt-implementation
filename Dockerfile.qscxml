@@ -93,6 +93,7 @@ RUN echo "deb-src http://deb.debian.org/debian/ testing main" >> /etc/apt/source
         libswscale-dev \
         libgraphviz-dev \
         bash-completion \
+        ccache \
         mesa-utils \
         iproute2 \
         net-tools \
@@ -118,6 +119,9 @@ ENV CMAKE_COMMON_OPTIONS=" \
     -DCMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY=ON \
     -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=FALSE \
     -DBUILD_SHARED_LIBS=ON"
+
+ARG cmake_parallel=8
+ENV CMAKE_BUILD_PARALLEL_LEVEL=${cmake_parallel}
 
 # Build and install YCM
 RUN git clone --branch v0.11.0 https://github.com/robotology/YCM.git /usr/local/src/YCM && \
@@ -167,7 +171,10 @@ RUN git clone --branch master https://github.com/robotology/YARP.git /usr/local/
         -DENABLE_yarpmod_laserFromDepth=ON \
         -DENABLE_yarpmod_rpLidar=ON \
         -DENABLE_yarpmod_rpLidar2=ON \
+        -DENABLE_yarpmod_laserFromPointCloud=ON \
+        -DENABLE_yarpmod_laserFromExternalPort=ON \
         -DENABLE_yarpmod_laserHokuyo=ON \
+        -DENABLE_yarpmod_upowerBattery=ON \
         -DENABLE_yarpmod_test_grabber=ON \
         -DENABLE_yarpmod_SDLJoypad=ON \
         -DENABLE_yarpmod_fakeLocalizer=ON \
@@ -190,8 +197,19 @@ RUN git clone --branch master https://github.com/robotology/YARP.git /usr/local/
     cmake --build /usr/local/src/YARP/build --target install && \
     chown -R $username /usr/local/src/YARP
 
+# Build and install yarp-unix-socket
+RUN git clone --branch master https://github.com/robotology/yarp-unix-socket.git /usr/local/src/yarp-unix-socket && \
+    cmake \
+        -H/usr/local/src/yarp-unix-socket \
+        -B/usr/local/src/yarp-unix-socket/build \
+        ${CMAKE_COMMON_OPTIONS} && \
+    cmake --build /usr/local/src/yarp-unix-socket/build && \
+    cmake --build /usr/local/src/yarp-unix-socket/build --target install && \
+    chown -R $username /usr/local/src/yarp-unix-socket
+
 # Build and install BehaviorTree.CPP
 RUN git clone --branch master https://github.com/BehaviorTree/BehaviorTree.CPP.git /usr/local/src/BehaviorTree.CPP && \
+    ls -la /usr/local/src/BehaviorTree.CPP/src/decorators && \
     cmake \
         -H/usr/local/src/BehaviorTree.CPP \
         -B/usr/local/src/BehaviorTree.CPP/build \
@@ -207,6 +225,7 @@ RUN git clone --branch master https://github.com/BehaviorTree/Groot.git /usr/loc
     git -C /usr/local/src/Groot config --local user.name "Daniele E. Domenichelli" && \
     git -C /usr/local/src/Groot am /tmp/0001-Fix-build-with-BehaviorTree.CPP-library-installed-on.patch && \
     git -C /usr/local/src/Groot am /tmp/0002-Always-build-behavior_tree_editor-as-STATIC.patch && \
+    git -C /usr/local/src/Groot am /tmp/0003-Fix-build-with-latest-BT.CPP.patch && \
     git -C /usr/local/src/Groot config --local --remove-section user && \
     cmake \
         -H/usr/local/src/Groot \
@@ -216,15 +235,6 @@ RUN git clone --branch master https://github.com/BehaviorTree/Groot.git /usr/loc
     cmake --build /usr/local/src/Groot/build --target install && \
     chown -R $username /usr/local/src/Groot
 
-# Build and install yarp-unix-socket
-RUN git clone --branch master https://github.com/robotology/yarp-unix-socket.git /usr/local/src/yarp-unix-socket && \
-    cmake \
-        -H/usr/local/src/yarp-unix-socket \
-        -B/usr/local/src/yarp-unix-socket/build \
-        ${CMAKE_COMMON_OPTIONS} && \
-    cmake --build /usr/local/src/yarp-unix-socket/build && \
-    cmake --build /usr/local/src/yarp-unix-socket/build --target install && \
-    chown -R $username /usr/local/src/yarp-unix-socket
 
 RUN update-alternatives --set editor /usr/bin/vim.basic
 RUN apt-get update -qq
