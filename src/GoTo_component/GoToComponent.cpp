@@ -89,8 +89,12 @@ public:
 
         switch(status) {
         case yarp::dev::Nav2D::navigation_status_idle:
-            if (running && inav->checkInsideArea(destination)) {
-                return SUCCESS;
+            if (running) {
+                if(inav->checkInsideArea(destination)) {
+                    return SUCCESS;
+                } else {
+                    return RUNNING;
+                }
             } else {
                 return NOT_STARTED;
             }
