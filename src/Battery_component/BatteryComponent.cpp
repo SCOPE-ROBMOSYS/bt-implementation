@@ -54,16 +54,16 @@ public:
     ChargingStatus charging_status() override
     {
         yWarning("charging status called");
-        ibattery->getBatteryCurrent(battery_current);
-
-        return  (battery_current < 0) ? BATTERY_CHARGING : BATTERY_NOT_CHARGING;
+        yarp::dev::IBattery::Battery_status status;
+        ibattery->getBatteryStatus(status);
+        return  (status == yarp::dev::IBattery::BATTERY_OK_IN_CHARGE) ? BATTERY_CHARGING : BATTERY_NOT_CHARGING;
     }
 
     double level() override
     {
         yWarning("battery level called");
+        double battery_charge  = 0;
         ibattery->getBatteryCharge(battery_charge);
-
         return battery_charge;
     }
 
@@ -71,12 +71,7 @@ public:
 private:
     yarp::dev::PolyDriver ddbatteryclient;
     yarp::dev::IBattery * ibattery { nullptr };
-
     yarp::os::RpcServer server_port;
-
-    double battery_current = 0;
-    double battery_charge  = 0;
-
 };
 
 int main()
