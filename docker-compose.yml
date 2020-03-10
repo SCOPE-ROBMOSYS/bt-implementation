@@ -11,6 +11,7 @@ x-base: &base
     - "${XAUTHORITY}:/home/scope/.Xauthority:rw"
     - "${HOME}/.config/yarp:/home/scope/.config/yarp"
     - "${HOME}/.local/share/yarp:/home/scope/.local/share/yarp"
+    - "/tmp/logs:/home/scope/logs:rw"
   network_mode: host
   ipc: host
   security_opt:
