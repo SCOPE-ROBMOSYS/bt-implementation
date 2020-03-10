@@ -147,31 +147,30 @@ bool GoToSkill::start()
 
 ReturnStatus GoToSkill::request_status()
 {
-    auto states = stateMachine.activeStateNames();
+    while (true) {
+        auto states = stateMachine.activeStateNames();
 
-    for (const auto& state : states) {
-        if (state == "idle") {
-            return BT_IDLE;
-        }
-        if (state == "halted") {
-            return BT_RUNNING;
-        }
-        if (state == "success") {
-            return BT_SUCCESS;
-        }
-        if (state == "failure") {
-            return BT_FAILURE;
-        }
-        if (state == "sendrequest") {
-            return BT_RUNNING;
-        }
-        if (state == "getstatus") {
-            return BT_RUNNING;
+        for (const auto& state : states) {
+            if (state == "idle") {
+                return BT_IDLE;
+            }
+            if (state == "halted") {
+                return BT_RUNNING;
+            }
+            if (state == "success") {
+                return BT_SUCCESS;
+            }
+            if (state == "failure") {
+                return BT_FAILURE;
+            }
+            if (state == "sendrequest") {
+                return BT_RUNNING;
+            }
+            if (state == "getstatus") {
+                return BT_RUNNING;
+            }
         }
     }
-
-    // error
-    return BT_FAILURE;
 }
 
 ReturnStatus GoToSkill::request_tick()

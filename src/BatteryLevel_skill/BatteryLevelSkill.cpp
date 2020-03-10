@@ -39,25 +39,24 @@ bool BatteryLevelSkill::start()
 
 ReturnStatus BatteryLevelSkill::request_status()
 {
-    auto states = stateMachine.activeStateNames();
+    while (true) {
+        auto states = stateMachine.activeStateNames();
 
-    for (const auto& state : states) {
-        if (state == "idle") {
-            return BT_IDLE;
-        }
-        if (state == "get") {
-            return BT_IDLE;
-        }
-        if (state == "success") {
-            return BT_SUCCESS;
-        }
-        if (state == "failure") {
-            return BT_FAILURE;
+        for (const auto& state : states) {
+            if (state == "idle") {
+                return BT_IDLE;
+            }
+            if (state == "get") {
+                return BT_IDLE;
+            }
+            if (state == "success") {
+                return BT_SUCCESS;
+            }
+            if (state == "failure") {
+                return BT_FAILURE;
+            }
         }
     }
-
-    // error
-    return BT_FAILURE;
 }
 
 
