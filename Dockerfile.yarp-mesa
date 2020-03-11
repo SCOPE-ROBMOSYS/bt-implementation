@@ -87,7 +87,8 @@ RUN apt-get update -qq && \
     rm -rf /var/lib/apt/lists/*
 
 ARG username
-RUN useradd --system --home-dir /home/$username --create-home --shell /bin/bash --group root --groups sudo --uid 1000 $username -p "$(openssl passwd -1 $username)"
+RUN groupadd --system --gid 1000 scope; \
+    useradd --system --home-dir /home/$username --create-home --shell /bin/bash --uid 1000 --gid 1000 --groups root,sudo $username -p "$(openssl passwd -1 $username)"
 
 # Common CMake options for all the projects
 ENV CMAKE_COMMON_OPTIONS=" \
@@ -155,7 +156,10 @@ RUN git clone --branch master https://github.com/robotology/YARP.git /usr/local/
         -DYARP_USE_PYTHON_VERSION=3 && \
     cmake --build /usr/local/src/YARP/build && \
     cmake --build /usr/local/src/YARP/build --target install && \
-    chown -R $username /usr/local/src/YARP
+    chown -R $username /usr/local/src/YARP && \
+    mkdir -p /home/$username/.config/yarp && \
+    mkdir -p /home/$username/.local/share/yarp && \
+    chown -R $username /home/$username
 
 # Build and install yarp-unix-socket
 RUN git clone --branch master https://github.com/robotology/yarp-unix-socket.git /usr/local/src/yarp-unix-socket && \

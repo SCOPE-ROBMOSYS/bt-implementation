@@ -15,7 +15,9 @@ RUN \
         -DCMAKE_INSTALL_PREFIX=/usr/local \
         -DCMAKE_BUILD_TYPE=Debug && \
     cmake --build /usr/local/src/bt-implementation/build && \
-    chown -R $username /usr/local/src/bt-implementation
+    chown -R $username /usr/local/src/bt-implementation && \
+    mkdir -p /home/$username/logs && \
+    chown -R $username: /home/$username/logs
 
 RUN updatedb && \
     ldconfig

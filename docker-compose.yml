@@ -9,9 +9,9 @@ x-base: &base
   volumes:
     - "/tmp/.X11-unix:/tmp/.X11-unix:rw"
     - "${XAUTHORITY}:/home/scope/.Xauthority:rw"
-    - "${HOME}/.config/yarp:/home/scope/.config/yarp"
-    - "${HOME}/.local/share/yarp:/home/scope/.local/share/yarp"
-    - "/tmp/logs:/home/scope/logs:rw"
+    - "${HOME}/.config/yarp:/home/scope/.config/yarp:rw"
+    - "${HOME}/.local/share/yarp:/home/scope/.local/share/yarp:rw"
+    - logs-volume:/home/scope/logs
   network_mode: host
   ipc: host
   security_opt:
@@ -351,3 +351,6 @@ services:
     command: Groot --mode monitor
     depends_on:
       - BehaviorTree
+
+volumes:
+  logs-volume:
