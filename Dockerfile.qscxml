@@ -35,6 +35,8 @@ RUN echo "deb-src http://deb.debian.org/debian/ testing main" >> /etc/apt/source
         qttranslations5-l10n \
         qtwayland5 \
         qtwebengine5-dev \
+        libqt5remoteobjects5-dev \
+        libqt5remoteobjects5-bin \
         qml-module-qt3d \
         qml-module-qtquick2 \
         qml-module-qtquick-scene3d \
