@@ -17,7 +17,7 @@ RUN \
     cmake --build /usr/local/src/bt-implementation/build && \
     chown -R $username /usr/local/src/bt-implementation
 
-RUN updatedb
-RUN ldconfig
+RUN updatedb && \
+    ldconfig
 
 USER $username

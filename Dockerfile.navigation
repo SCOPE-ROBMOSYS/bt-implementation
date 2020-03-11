@@ -64,7 +64,7 @@ RUN git clone --branch master https://github.com/robotology/navigation.git /usr/
     cmake --build /usr/local/src/navigation/build --target install && \
     chown -R $username /usr/local/src/navigation
 
-RUN updatedb
-RUN ldconfig
+RUN updatedb && \
+    ldconfig
 
 USER $username

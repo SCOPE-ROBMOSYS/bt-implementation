@@ -168,10 +168,10 @@ RUN git clone --branch master https://github.com/robotology/yarp-unix-socket.git
     chown -R $username /usr/local/src/yarp-unix-socket
 
 
-RUN update-alternatives --set editor /usr/bin/vim.basic
-RUN apt-get update -qq
-RUN updatedb
-RUN ldconfig
+RUN update-alternatives --set editor /usr/bin/vim.basic && \
+    apt-get update -qq && \
+    updatedb && \
+    ldconfig
 
 USER $username
 WORKDIR /home/$username
