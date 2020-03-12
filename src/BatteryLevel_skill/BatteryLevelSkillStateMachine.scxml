@@ -12,6 +12,10 @@
     xmlns:scope="http://www.scope.org/scope"
 >
 
+    <datamodel>
+        <data id="level" expr="0.0" scope:cpp_type="double" />
+    </datamodel>
+
     <state id="idle" scope:bt_status="idle">
         <transition event="TICK" target="get" />
     </state>

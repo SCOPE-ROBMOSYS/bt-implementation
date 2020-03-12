@@ -87,6 +87,16 @@ int write(TranslationUnit *tu)
     for (int i = 0, ei = docs.size(); i != ei; ++i) {
         auto doc = docs.at(i);
 
+        for (DocumentModel::Node* anode : doc->allNodes) {
+            auto data = anode->asDataElement();
+            if (!data) {
+                // not a <data> element
+                continue;
+            }
+
+            // ...
+        }
+
         for (DocumentModel::AbstractState* astate : doc->allStates) {
             auto state = astate->asState();
             if (!state) {
