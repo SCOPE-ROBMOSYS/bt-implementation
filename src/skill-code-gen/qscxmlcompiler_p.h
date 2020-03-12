@@ -73,6 +73,7 @@ struct XmlLocation
     XmlLocation(int theLine, int theColumn): line(theLine), column(theColumn) {}
 };
 
+struct DataElement;
 struct If;
 struct Send;
 struct Invoke;
@@ -90,6 +91,7 @@ struct Node {
     virtual ~Node();
     virtual void accept(NodeVisitor *visitor) = 0;
 
+    virtual DataElement *asDataElement() { return nullptr; }
     virtual If *asIf() { return nullptr; }
     virtual Send *asSend() { return nullptr; }
     virtual Invoke *asInvoke() { return nullptr; }
@@ -110,8 +112,10 @@ struct DataElement: public Node
     QString src;
     QString expr;
     QString content;
+    QString cpp_type;
 
     DataElement(const XmlLocation &xmlLocation): Node(xmlLocation) {}
+    DataElement *asDataElement() override { return this; }
     void accept(NodeVisitor *visitor) override;
 };
 

@@ -1713,6 +1713,7 @@ bool QScxmlCompilerPrivate::preReadElementData()
     data->id = attributes.value(QLatin1String("id")).toString();
     data->src = attributes.value(QLatin1String("src")).toString();
     data->expr = attributes.value(QLatin1String("expr")).toString();
+    data->cpp_type = attributes.value(QStringLiteral("http://www.scope.org/scope"), QLatin1String("expr")).toString();
     if (DocumentModel::Scxml *scxml = m_currentState->asScxml()) {
         scxml->dataElements.append(data);
     } else if (DocumentModel::State *state = m_currentState->asState()) {
