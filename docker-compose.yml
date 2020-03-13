@@ -329,6 +329,17 @@ services:
       - yarp-server
       - BatteryComponent
 
+
+  BlackboardComponent:
+    <<: *bt-implementation-base
+    container_name: BlackboardComponent
+    command: sh -c "
+      yarp wait /root;
+      /usr/local/src/bt-implementation/build/bin/BlackboardComponent"
+    depends_on:
+      - yarp-server
+
+
   BehaviorTree:
     <<: *bt-implementation-base
     container_name: BehaviorTree
