@@ -73,7 +73,7 @@ struct XmlLocation
     XmlLocation(int theLine, int theColumn): line(theLine), column(theColumn) {}
 };
 
-struct DataElement;
+struct DataElement; // add !HERE
 struct If;
 struct Send;
 struct Invoke;
@@ -91,7 +91,7 @@ struct Node {
     virtual ~Node();
     virtual void accept(NodeVisitor *visitor) = 0;
 
-    virtual DataElement *asDataElement() { return nullptr; }
+    virtual DataElement *asDataElement() { return nullptr; } // add !HERE
     virtual If *asIf() { return nullptr; }
     virtual Send *asSend() { return nullptr; }
     virtual Invoke *asInvoke() { return nullptr; }
@@ -112,10 +112,14 @@ struct DataElement: public Node
     QString src;
     QString expr;
     QString content;
-    QString cpp_type;
+    QString cpp_type;  // add !HERE
+    QString service_type;  // add !HERE
+    QString component_type;  // add !HERE
+    QString client_port_name;  // add !HERE
+
 
     DataElement(const XmlLocation &xmlLocation): Node(xmlLocation) {}
-    DataElement *asDataElement() override { return this; }
+    DataElement *asDataElement() override { return this; } // add !HERE --- override della function di Node
     void accept(NodeVisitor *visitor) override;
 };
 
@@ -287,7 +291,7 @@ struct AbstractState: public StateContainer
 struct State: public AbstractState, public StateOrTransition
 {
     enum Type { Normal, Parallel, Final };
-    enum BT_Status { Undefined, Idle, Success, Failure };
+    enum BT_Status { Undefined, Idle, Success, Failure }; // 0 1 2 3   !HERE
 
     QStringList initial;
     QVector<DataElement *> dataElements;
@@ -297,7 +301,7 @@ struct State: public AbstractState, public StateOrTransition
     DoneData *doneData;
     QVector<Invoke *> invokes;
     Type type;
-    BT_Status bt_status;
+    BT_Status bt_status; // add DANIELE
 
     Transition *initialTransition; // when not set, it is filled during verification
 
@@ -412,12 +416,14 @@ struct ScxmlDocument
 {
     const QString fileName;
     Scxml *root;
-    QVector<AbstractState *> allStates;
+    QVector<AbstractState *> allStates; // to detect states
     QVector<Transition *> allTransitions;
     QVector<Node *> allNodes;
     QVector<InstructionSequence *> allSequences;
     QVector<ScxmlDocument *> allSubDocuments; // weak pointers
     bool isVerified;
+
+    //QVector< > ;  // contains the result of the parsing of "datamodel" , usato per le variabili
 
     ScxmlDocument(const QString &fileName)
         : fileName(fileName)

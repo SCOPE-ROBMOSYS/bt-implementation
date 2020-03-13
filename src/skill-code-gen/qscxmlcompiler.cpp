@@ -1462,7 +1462,7 @@ bool QScxmlCompilerPrivate::preReadElementState()
         const QString initial = attributes.value(QStringLiteral("initial")).toString();
         newState->initial += initial.split(QChar::Space, QString::SkipEmptyParts);
     }
-
+    // add DANIELE  !HERE
     if (attributes.hasAttribute(QStringLiteral("http://www.scope.org/scope"), QStringLiteral("bt_status"))) {
         const QString bt_status = attributes.value(QStringLiteral("http://www.scope.org/scope"), QStringLiteral("bt_status")).toString();
         if (bt_status == QLatin1String("idle")) {
@@ -1706,14 +1706,20 @@ bool QScxmlCompilerPrivate::preReadElementDataModel()
     return true;
 }
 
-bool QScxmlCompilerPrivate::preReadElementData()
+bool QScxmlCompilerPrivate::preReadElementData() // parser di DATAMODEL !HERE
 {
+
     const QXmlStreamAttributes attributes = m_reader->attributes();
     auto data = m_doc->newNode<DocumentModel::DataElement>(xmlLocation());
     data->id = attributes.value(QLatin1String("id")).toString();
     data->src = attributes.value(QLatin1String("src")).toString();
     data->expr = attributes.value(QLatin1String("expr")).toString();
-    data->cpp_type = attributes.value(QStringLiteral("http://www.scope.org/scope"), QLatin1String("expr")).toString();
+    // ADD
+    data->cpp_type = attributes.value(QStringLiteral("http://www.scope.org/scope"), QLatin1String("cpp_type")).toString();
+    data->service_type = attributes.value(QStringLiteral("http://www.scope.org/scope"), QLatin1String("service_type")).toString();
+    data->component_type = attributes.value(QStringLiteral("http://www.scope.org/scope"), QLatin1String("component_type")).toString();
+    data->client_port_name = attributes.value(QStringLiteral("http://www.scope.org/scope"), QLatin1String("client_port_name")).toString();
+
     if (DocumentModel::Scxml *scxml = m_currentState->asScxml()) {
         scxml->dataElements.append(data);
     } else if (DocumentModel::State *state = m_currentState->asState()) {
