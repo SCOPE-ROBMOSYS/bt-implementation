@@ -1,6 +1,6 @@
 The script 
 
-$ sh GenerateAll.sh
+$ `sh GenerateAll.sh`
 
 should generate the content inside the folder /output-files.
 
