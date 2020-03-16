@@ -4,18 +4,16 @@
  * All Rights Reserved.                                                       *
  *                                                                            *
  ******************************************************************************/
+#include <iostream>
 
 #include <yarp/os/Network.h>
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/LogStream.h>
-
 #include <yarp/os/ResourceFinder.h>
-
 
 #include <Blackboard.h>
 
-#include <iostream>
 
 using namespace yarp::os;
 
@@ -29,33 +27,43 @@ public:
         yInfo() << "Initializing Blackboard";
 
         Bottle p(rf.toString());
-
-        yInfo() << p.toString();
+        yDebug() << p.toString();
 
         // Cycle for each group, i.e. names in square brackets -> [group]
         for(int i=0; i< p.size(); i++)
         {
             Bottle group = *(p.get(i).asList());
+            yDebug() << "Group " << group.toString();
+
             Property prop;
             std::string mapKey = group.get(0).toString();
+            yDebug() <<"Key " << mapKey;
+
             // Cycle for each line in the group
             for(int j=0; j<group.size(); j++)
             {
                 // Rows are supposed to be key/data (where data may contains multiple elements)
                 if(group.get(j).isList())
-                {
+                {                    
                     Value row = group.get(j);
                     std::string propKey = row.asList()->get(0).toString();
                     Bottle data = row.asList()->tail();
+                    yDebug() << "data " << data.toString();
 
                     Value a;
                     if(data.size() == 1)
+                    {
                         a = data.get(0);
+                       // yDebug() << "adding datum " << a.toString();
+                    }
                     else
                     {
                         Bottle *abl = a.asList();
                         for(int k=0; k<data.size(); k++)
+                        {
                             abl->add(data.get(k));
+                            //yDebug() << "adding datum " << (data.get(k)).toString();
+                        }
                     }
                     prop.put(propKey, a);
                     m_initialization_values[mapKey] = prop;
@@ -68,7 +76,6 @@ public:
 
     bool open()
     {
-
         this->yarp().attachAsServer(m_server_port);
         if (!m_server_port.open("/BlackboardComponent")) {
             yError("Could not open /BlackboardComponent");
@@ -156,17 +163,20 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-
     ResourceFinder rf;
     rf.setVerbose();
-    bool file_ok = rf.setDefaultConfigFile("entries.ini");
+    std::string default_cong_filename = "entries.ini";
+    bool file_ok = rf.setDefaultConfigFile(default_cong_filename);
     if (!file_ok)
     {
-        yWarning() << " Default config file not found";
+        yWarning() << " Default config file " << default_cong_filename << " not found";
     }
     rf.configure(argc, argv);
 
-    blackboardComponent.init(rf);
+    if(!blackboardComponent.init(rf))
+    {
+        return 1;
+    }
 
     while (true) {
         yInfo("Server running happily");
