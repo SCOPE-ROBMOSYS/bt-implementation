@@ -1719,6 +1719,7 @@ bool QScxmlCompilerPrivate::preReadElementData() // parser di DATAMODEL !HERE
     data->service_type = attributes.value(QStringLiteral("http://www.scope.org/scope"), QLatin1String("service_type")).toString();
     data->component_type = attributes.value(QStringLiteral("http://www.scope.org/scope"), QLatin1String("component_type")).toString();
     data->client_port_name = attributes.value(QStringLiteral("http://www.scope.org/scope"), QLatin1String("client_port_name")).toString();
+    data->init_source = attributes.value(QStringLiteral("http://www.scope.org/scope"), QLatin1String("init_source")).toString();
 
     if (DocumentModel::Scxml *scxml = m_currentState->asScxml()) {
         scxml->dataElements.append(data);

@@ -7,7 +7,10 @@
 
 #include "@KEY_SKILL_NAME@SkillDataModel.h"
 #include <QDebug>
+#include <QTimer>
 #include <QScxmlStateMachine>
+
+@ADD_CONSTRUCTOR@
 
 bool @KEY_SKILL_NAME@SkillDataModel::setup(const QVariantMap &initialDataValues)
 {

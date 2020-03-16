@@ -50,7 +50,7 @@ class GoToSkillDataModel: public QScxmlCppDataModel
     Q_SCXML_DATAMODEL
 
 public:
-    GoToSkillDataModel() = default;
+    GoToSkillDataModel(const std::string location);
 
     bool setup(const QVariantMap& initialDataValues) override;
 
@@ -58,7 +58,7 @@ public:
     yarp::os::RpcClient client_port;
 
     GoTo goTo;
-    const std::string location { null }; // added using DATAMODEL 
+    const std::string location; // added using DATAMODEL 
     
 };
 

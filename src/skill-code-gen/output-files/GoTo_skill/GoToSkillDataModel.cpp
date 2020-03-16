@@ -7,7 +7,13 @@
 
 #include "GoToSkillDataModel.h"
 #include <QDebug>
+#include <QTimer>
 #include <QScxmlStateMachine>
+
+GoToSkillDataModel::GoToSkillDataModel(const std::string location) :
+                        location(std::move(location))
+{
+}
 
 bool GoToSkillDataModel::setup(const QVariantMap &initialDataValues)
 {
@@ -18,7 +24,7 @@ bool GoToSkillDataModel::setup(const QVariantMap &initialDataValues)
         return false;
     }
 
-    if (!client_port.open("//goToClient/location")) {
+    if (!client_port.open("/goToClient/location")) {
        qWarning("Error! Cannot open YARP port");
        return false;
     }

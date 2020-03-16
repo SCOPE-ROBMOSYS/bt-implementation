@@ -116,6 +116,7 @@ struct DataElement: public Node
     QString service_type;  // add !HERE
     QString component_type;  // add !HERE
     QString client_port_name;  // add !HERE
+    QString init_source;  // add !HERE
 
 
     DataElement(const XmlLocation &xmlLocation): Node(xmlLocation) {}

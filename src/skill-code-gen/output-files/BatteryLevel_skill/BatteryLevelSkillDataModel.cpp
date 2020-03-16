@@ -7,7 +7,10 @@
 
 #include "BatteryLevelSkillDataModel.h"
 #include <QDebug>
+#include <QTimer>
 #include <QScxmlStateMachine>
+
+
 
 bool BatteryLevelSkillDataModel::setup(const QVariantMap &initialDataValues)
 {

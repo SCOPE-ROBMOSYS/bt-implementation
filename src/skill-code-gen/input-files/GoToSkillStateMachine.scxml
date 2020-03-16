@@ -16,12 +16,12 @@
     <!--
      Services:
     -->
-    <data scope:component_type="GoTo" scope:service_type="GoTo" scope:client_port_name="/goToClient/location" scope:service_function="multiple"    id="goTo"/>
+    <data scope:component_type="GoTo"   scope:service_type="GoTo"   scope:client_port_name="/goToClient/location"   scope:service_function="multiple"   id="goTo"/>
 
     <!--
      Attributes:
     -->
-    <data scope:cpp_type="const std::string"              id="location"                    expr="null" />
+    <data scope:cpp_type="const std::string"    id="location" expr="null"  scope:init_source="define_in_class_constructor" />
 
 </datamodel>
 

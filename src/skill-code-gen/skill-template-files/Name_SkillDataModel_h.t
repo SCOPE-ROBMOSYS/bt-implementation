@@ -50,7 +50,7 @@ class @KEY_SKILL_NAME@SkillDataModel: public QScxmlCppDataModel
     Q_SCXML_DATAMODEL
 
 public:
-    @KEY_SKILL_NAME@SkillDataModel() = default;
+    @CONSTRUCTOR@
 
     bool setup(const QVariantMap& initialDataValues) override;
 

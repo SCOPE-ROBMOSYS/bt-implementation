@@ -102,6 +102,7 @@ struct Attribute{
     QString data_type;
     QString name_instance;
     QString value;
+    QString init_source; // if "define_in_skill_class_constructor" then it will be added in the constructor
 };
 
 struct ClientPort{ // not really needed
@@ -115,6 +116,10 @@ struct SkillDescription {
     vector<Service> UsedServices;
     vector<Attribute> UsedAttributes;
     vector<ClientPort> UsedClientPorts;
+
+    //@ for specialized constructor
+    bool add_constructor;
+    vector<Attribute> ListAttributesInitWithConstructor;
 };
 
 string DecoderEnum (int id){  // enum BT_Status { Undefined, Idle, Success, Failure };
@@ -202,6 +207,7 @@ int write(TranslationUnit *tu)
 {
 
     SkillDescription SD;
+    SD.add_constructor = false; // default constructor
 
     auto docs = tu->allDocuments;
 //     tables.resize(docs.size());
@@ -240,24 +246,29 @@ int write(TranslationUnit *tu)
                 continue;
             }
             cout << "\n\n ************ ACTUAL TEST************  \n\n ";
-            qDebug() << data->id << data->expr << data->cpp_type << data->component_type << data->service_type  << data->client_port_name;
+            qDebug() << data->id << data->expr << data->cpp_type << data->component_type << data->service_type  << data->client_port_name << data->init_source;
             cout << "\n\n ************ end ACTUAL TEST************  \n\n ";
 
             // access to data element
-            if (data->component_type != ""){
+            if (data->component_type != ""){ // means that the data represents a service!
                 Service service;
                 service.name_instance = data->id;
                 service.service_type = data->service_type;
                 service.component_type = data->component_type;
                 service.client_port_name = data->client_port_name;
                 SD.UsedServices.push_back(service);
-            }else if(data->cpp_type != ""){
+            }else if(data->cpp_type != ""){ // means that the data represents an attribute!
                 Attribute attribute;
                 attribute.data_type = data->cpp_type;
                 attribute.name_instance = data->id;
                 attribute.value = data->expr;
+                attribute.init_source = data->init_source;
                 SD.UsedAttributes.push_back(attribute);
-            }else if(data->client_port_name != ""){
+                if(attribute.init_source.toStdString() == "define_in_class_constructor"){
+                   SD.add_constructor = true;
+                   SD.ListAttributesInitWithConstructor.push_back(attribute);
+                }
+            }else if(data->client_port_name != ""){ // not needed
                 ClientPort port;
                 port.client_port_name = data->client_port_name;
                 SD.UsedClientPorts.push_back(port);
@@ -419,13 +430,46 @@ int write(TranslationUnit *tu)
 
     // list of attributes (with value assigned)
     for (int i=0; i<SD.UsedAttributes.size(); i++){
-        string single_instance = "" + SD.UsedAttributes[i].data_type.toStdString() + " " + SD.UsedAttributes[i].name_instance.toStdString() + " { " + SD.UsedAttributes[i].value.toStdString() + " }; // added using DATAMODEL \n    " ;
+        string single_instance = "";
+        if( SD.UsedAttributes[i].init_source.toStdString() == "initialize_inside_header"){
+            single_instance = "" + SD.UsedAttributes[i].data_type.toStdString() + " " + SD.UsedAttributes[i].name_instance.toStdString() + " { " + SD.UsedAttributes[i].value.toStdString() + " }; // added using DATAMODEL \n    " ;
+        }else{
+            single_instance = "" + SD.UsedAttributes[i].data_type.toStdString() + " " + SD.UsedAttributes[i].name_instance.toStdString() + "; // added using DATAMODEL \n    " ;
+        }
         all_instances = all_instances + single_instance;
     }
 
     cout << "\n\n\PRINT COMPONENTS --> all_instances : " << all_instances << "\n\n\ " ;
     QString value_LIST_PUBLIC_ATTRIBUTES = QString::fromStdString(all_instances);
     dataText.replace(KEY_LIST_PUBLIC_ATTRIBUTES, value_LIST_PUBLIC_ATTRIBUTES);
+
+
+    // 2.3 @CONSTRUCTOR@
+    QRegularExpression KEY_CONSTRUCTOR("@CONSTRUCTOR@");
+    string construct = "";
+    if( SD.add_constructor == false ){ // it is also used in .cpp to insert the not default constructor
+        construct = construct + value_skill_name.toStdString() + "SkillDataModel() = default;";
+    }else{ // e.g.  GoToSkillDataModel(std::string location);
+        string params ="";
+        switch (SD.ListAttributesInitWithConstructor.size())
+        {
+        case 1:
+            params = params + SD.UsedAttributes[0].data_type.toStdString() + " " +  SD.UsedAttributes[0].name_instance.toStdString();
+            break;
+        case 2:
+            params = params + SD.UsedAttributes[0].data_type.toStdString() + " " +  SD.UsedAttributes[0].name_instance.toStdString() + ", " + SD.UsedAttributes[1].data_type.toStdString() + " " +  SD.UsedAttributes[1].name_instance.toStdString();
+            break;
+        case 3:
+            // todo
+            break;
+        default:
+            break;
+        }
+        construct = construct + value_skill_name.toStdString() + "SkillDataModel(" + params +");";
+    }
+
+    QString value_CONSTRUCTOR = QString::fromStdString(construct);
+    dataText.replace(KEY_CONSTRUCTOR, value_CONSTRUCTOR);
 
 
     // 3: create new file and insert the dataText
@@ -490,7 +534,7 @@ int write(TranslationUnit *tu)
     string all_ports ="";
 
     for (int i=0; i<SD.UsedServices.size(); i++){
-        string single_port = "if (!client_port.open(\"/" + SD.UsedServices[i].client_port_name.toStdString() +"\")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n" ;
+        string single_port = "if (!client_port.open(\"" + SD.UsedServices[i].client_port_name.toStdString() +"\")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n" ;
         all_ports = all_ports + single_port;
 
         string single_client = "    if(!" + SD.UsedServices[i].name_instance.toStdString() + ".yarp().attachAsClient(client_port)) {\n       qWarning(\"Error! Could not attach as client\");\n       return false;\n    }\n";
@@ -503,6 +547,41 @@ int write(TranslationUnit *tu)
     QString value_OPEN_PORTS_AND_ATTACH_CLIENTS = QString::fromStdString(merge);
     dataText.replace(KEY_OPEN_PORTS_AND_ATTACH_CLIENTS, value_OPEN_PORTS_AND_ATTACH_CLIENTS);
 
+    // 2.4 @ADD_CONSTRUCTOR@ if needed (case not default in .h)
+
+    QRegularExpression KEY_ADD_CONSTRUCTOR("@ADD_CONSTRUCTOR@");
+    if( SD.add_constructor == true ){
+        string attributes_init_string_intro = value_skill_name.toStdString() + "SkillDataModel::" + value_skill_name.toStdString() +"SkillDataModel"; // GoToSkillDataModel::GoToSkillDataModel
+        string attributes_init_string_part_1 ="";
+        string attributes_init_string_mid =") :\n                        ";
+        string attributes_init_string_part_2 ="";
+        string attributes_init_string_end ="\n{\n}";
+
+        switch (SD.ListAttributesInitWithConstructor.size())
+        {
+        case 1:
+            attributes_init_string_part_1 = attributes_init_string_part_1 + "("+ SD.UsedAttributes[0].data_type.toStdString() + " " +  SD.UsedAttributes[0].name_instance.toStdString();
+            attributes_init_string_part_2 = SD.UsedAttributes[0].name_instance.toStdString() + "(std::move(" + SD.UsedAttributes[0].name_instance.toStdString() + "))";
+            break;
+        case 2:
+            attributes_init_string_part_1 = attributes_init_string_part_1 + "("+ SD.UsedAttributes[0].data_type.toStdString() + " " +  SD.UsedAttributes[0].name_instance.toStdString() + ", " + SD.UsedAttributes[1].data_type.toStdString() + " " +  SD.UsedAttributes[1].name_instance.toStdString();
+            attributes_init_string_part_2 = SD.UsedAttributes[0].name_instance.toStdString() + "(std::move(" + SD.UsedAttributes[0].name_instance.toStdString() + "))," + SD.UsedAttributes[1].name_instance.toStdString() + "(std::move(" + SD.UsedAttributes[1].name_instance.toStdString() + "))";
+            break;
+        case 3:
+            // todo
+            break;
+        default:
+            break;
+        }
+
+        string constructor_string = attributes_init_string_intro + attributes_init_string_part_1 + attributes_init_string_mid + attributes_init_string_part_2 + attributes_init_string_end;
+
+        QString value_ADD_CONSTRUCTOR = QString::fromStdString(constructor_string);
+        dataText.replace(KEY_ADD_CONSTRUCTOR, value_ADD_CONSTRUCTOR);
+
+    }else{
+        dataText.replace(KEY_ADD_CONSTRUCTOR, "");
+    }
 
     // 3: create new file and insert the dataText
     QFile output_file_3_DataModel_cpp(path_new_skill + skill_name + "SkillDataModel.cpp"); // e.g. /home/scope/bt-implementation/build/bin/DIR_NEW_SKILL/BatteryLevelSkill.cpp

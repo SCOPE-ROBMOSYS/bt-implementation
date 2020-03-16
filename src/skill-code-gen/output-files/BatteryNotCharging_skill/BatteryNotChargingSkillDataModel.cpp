@@ -7,7 +7,10 @@
 
 #include "BatteryNotChargingSkillDataModel.h"
 #include <QDebug>
+#include <QTimer>
 #include <QScxmlStateMachine>
+
+
 
 bool BatteryNotChargingSkillDataModel::setup(const QVariantMap &initialDataValues)
 {
