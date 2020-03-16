@@ -419,7 +419,7 @@ int write(TranslationUnit *tu)
 
     // list of attributes (with value assigned)
     for (int i=0; i<SD.UsedAttributes.size(); i++){
-        string single_instance = "" + SD.UsedAttributes[i].data_type.toStdString() + " " + SD.UsedAttributes[i].name_instance.toStdString() + ";"; // + " = " + SD.UsedAttributes[i].value.toStdString() + "; // added using DATAMODEL \n    " ;
+        string single_instance = "" + SD.UsedAttributes[i].data_type.toStdString() + " " + SD.UsedAttributes[i].name_instance.toStdString() + " { " + SD.UsedAttributes[i].value.toStdString() + " }; // added using DATAMODEL \n    " ;
         all_instances = all_instances + single_instance;
     }
 
@@ -490,7 +490,7 @@ int write(TranslationUnit *tu)
     string all_ports ="";
 
     for (int i=0; i<SD.UsedServices.size(); i++){
-        string single_port = "if (!client_port.open(" + SD.UsedServices[i].client_port_name.toStdString() +")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n" ;
+        string single_port = "if (!client_port.open(\"/" + SD.UsedServices[i].client_port_name.toStdString() +"\")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n" ;
         all_ports = all_ports + single_port;
 
         string single_client = "    if(!" + SD.UsedServices[i].name_instance.toStdString() + ".yarp().attachAsClient(client_port)) {\n       qWarning(\"Error! Could not attach as client\");\n       return false;\n    }\n";

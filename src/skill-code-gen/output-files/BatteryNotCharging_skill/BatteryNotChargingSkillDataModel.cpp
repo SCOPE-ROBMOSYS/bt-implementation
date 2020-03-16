@@ -18,7 +18,7 @@ bool BatteryNotChargingSkillDataModel::setup(const QVariantMap &initialDataValue
         return false;
     }
 
-    if (!client_port.open(BatteryLevelClient)) {
+    if (!client_port.open("/BatteryNotChargingClient")) {
        qWarning("Error! Cannot open YARP port");
        return false;
     }

@@ -58,7 +58,8 @@ public:
     yarp::os::RpcClient client_port;
 
     GoTo goTo;
-    const std::string location;
+    const std::string location { null }; // added using DATAMODEL 
+    
 };
 
 Q_DECLARE_METATYPE(::GoToSkillDataModel*)

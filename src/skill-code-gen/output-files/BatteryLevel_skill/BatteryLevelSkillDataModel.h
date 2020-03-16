@@ -58,7 +58,8 @@ public:
     yarp::os::RpcClient client_port;
 
     BatteryReader batteryReader;
-    double level;
+    double level { 0.0 }; // added using DATAMODEL 
+    
 };
 
 Q_DECLARE_METATYPE(::BatteryLevelSkillDataModel*)
