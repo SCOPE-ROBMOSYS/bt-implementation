@@ -16,8 +16,8 @@
         <!--
          Services:
         -->
-        <data scope:component_type="/BatteryComponent"   scope:service_type="BatteryReader"  scope:client_port_name="/BatteryLevelClient"    scope:service_function="level"  id="batteryReader"/>
-    <!--    <data scope:component_type="/Blackboard"   scope:service_type="bb"  scope:client_port_name="/BlackboardClient"    scope:service_function="multiple"  id="bb_instance_name"/>-->
+        <data scope:component_type="BatteryComponent" scope:connect_type="tcp"   scope:service_type="BatteryReader"  scope:service_function="level"  id="batteryReader"/>
+    <!--    <data scope:component_type="Blackboard"   scope:service_type="bb"    scope:service_function="multiple"  id="bb_instance_name"/>-->
 
         <!--
          Attributes:

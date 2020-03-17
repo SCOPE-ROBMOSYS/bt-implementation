@@ -11,9 +11,9 @@
 #include <QDebug>
 #include <QTime>
 
-BatteryLevelSkill::BatteryLevelSkill(std::string name , double level) :
+BatteryLevelSkill::BatteryLevelSkill(std::string name , int i) :
         name(std::move(name)),
-        dataModel(std::move(level))
+        dataModel(std::move(i))
 {
     stateMachine.setDataModel(&dataModel);
 }

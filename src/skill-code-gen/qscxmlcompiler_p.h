@@ -113,11 +113,11 @@ struct DataElement: public Node
     QString expr;
     QString content;
     QString cpp_type;  // add !HERE
-    QString service_type;  // add !HERE
-    QString component_type;  // add !HERE
-    QString client_port_name;  // add !HERE
-    QString init_source;  // add !HERE
-
+    QString service_type;
+    QString component_type;
+    QString client_port_name;
+    QString init_source;
+    QString connect_type;
 
     DataElement(const XmlLocation &xmlLocation): Node(xmlLocation) {}
     DataElement *asDataElement() override { return this; } // add !HERE --- override della function di Node

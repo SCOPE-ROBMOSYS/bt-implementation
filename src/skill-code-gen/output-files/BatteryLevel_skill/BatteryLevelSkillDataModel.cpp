@@ -10,8 +10,8 @@
 #include <QTimer>
 #include <QScxmlStateMachine>
 
-BatteryLevelSkillDataModel::BatteryLevelSkillDataModel(double level) :
-                        level(std::move(level))
+BatteryLevelSkillDataModel::BatteryLevelSkillDataModel(int i) :
+                        i(std::move(i))
 {
 }
 
@@ -24,7 +24,7 @@ bool BatteryLevelSkillDataModel::setup(const QVariantMap &initialDataValues)
         return false;
     }
 
-    if (!client_port.open("/BatteryLevelClient/" + i)) {
+    if (!client_port.open("batteryReaderClient/" + i)) {
        qWarning("Error! Cannot open YARP port");
        return false;
     }
@@ -34,7 +34,11 @@ bool BatteryLevelSkillDataModel::setup(const QVariantMap &initialDataValues)
     }
 
 
-    //@CHECK_CONNECTIONS@
+    if (!yarp::os::Network::connect(client_port.getName(), "/BatteryComponent", "tcp")) {
+        qWarning("Error! Could not connect to server /fakeBattery");
+        return false;
+    }
+
 
     return true;
 }

@@ -96,6 +96,7 @@ struct Service{
     QString service_type;
     QString component_type;
     QString client_port_name;
+    QString connect_type;
     };
 
 struct Attribute{
@@ -138,63 +139,42 @@ string DecoderEnum (int id){  // enum BT_Status { Undefined, Idle, Success, Fail
     }
 }
 
-//constexpr unsigned int str2int(const char* str, int h = 0)
-//{
-//    return !str[h] ? 5381 : (str2int(str, h+1) * 33) ^ str[h];
-//}
+vector<string> GenerateStringList_name_instance (vector<Attribute> ListAttributes){
+    vector<string> output;
+    for(int i=0; i<ListAttributes.size(); i++){
+        output.push_back(ListAttributes[i].name_instance.toStdString());
+    }
+    return output;
+}
 
-//string CustomSwitchStatus (string state_string){
-//    const char* c = state_string.c_str();
-//    switch (str2int(c))
-//    {
-//    case str2int("idle"):
-//        return "IDLE";
-//    case str2int("halted"):
-//        return "RUNNING";
-//    case str2int("success"):
-//        return "SUCCESS";
-//    case str2int("failure"):
-//        return "FAILURE";
-//    case str2int("sendrequest"):
-//        return "RUNNING";
-//    case str2int("getstatus"):
-//        return "RUNNING";
-//    case str2int("get"):
-//        return "IDLE";
-//    default:
-//        return "IDLE";
-//    }
-//}
+vector<string> GenerateStringList_data_type (vector<Attribute> ListAttributes){
+    vector<string> output;
+    for(int i=0; i<ListAttributes.size(); i++){
+        output.push_back(ListAttributes[i].data_type.toStdString());
+    }
+    return output;
+}
+string GenerateListConstructorParameters (vector<string> ListParamToAssign_data_type, vector<string> ListParamToAssign_name_instance){
+    string output ="";
+    for(int i=0; i<ListParamToAssign_data_type.size(); i++){
+        output = output + ListParamToAssign_data_type[i] + " " + ListParamToAssign_name_instance[i];
+        if(i!= (ListParamToAssign_data_type.size()-1) ){
+            output = output + ", ";
+        }
+    }
+    return output;
+}
 
-//vector<string> CheckUsedComponents ( QString dataTextXML ){
-//    vector<string> result;
-//    // search for "Connector" per capire se crea connessioni
-//    if ( dataTextXML.contains( "Connector",  Qt::CaseInsensitive ) ){
-//        // manual check for all the components names
-//        string search = "GoToComponent";
-//        string service_name = "GoTo";
-//        QString qstr = QString::fromStdString(search);
-//        if( dataTextXML.contains( qstr ,  Qt::CaseInsensitive ) ){
-//            cout << " \n\n\n DETECTED " + search + " \n";
-//            result.push_back(service_name); // NB !
-//        }
-//        search = "BatteryComponent";
-//        service_name = "BatteryReader";
-//        qstr = QString::fromStdString(search);
-//        if( dataTextXML.contains( qstr ,  Qt::CaseInsensitive ) ){
-//            cout << " \n\n\n DETECTED " + search + " \n";
-//            result.push_back(service_name);
-//        }
-//        search = "Component_XXXXX";
-//        service_name = "Service_XXXX";
-//        qstr = QString::fromStdString(search);
-//        if( dataTextXML.contains( qstr ,  Qt::CaseInsensitive ) ){
-//            cout << " \n\n\n DETECTED " + search + " \n";
-//            result.push_back(service_name);
-//        }
-//    }
-//    return result;
-//}
+string GenerateListConstructorParametersAssign (vector<string> ListMemberAttributes, vector<string> ListParamToAssign){
+    string output ="";
+    for(int i=0; i<ListMemberAttributes.size(); i++){
+        output = output +  ListMemberAttributes[i]   + "(std::move(" +    ListParamToAssign[i] + "))";
+        if(i!= (ListMemberAttributes.size()-1) ){
+            output = output + ", ";
+        }
+    }
+    return output;
+}
 
 int write(TranslationUnit *tu)
 {
@@ -206,8 +186,7 @@ int write(TranslationUnit *tu)
 //     tables.resize(docs.size());
 //     metaDataInfos.resize(tables.size());
 //     dataModelInfos.resize(tables.size());
-//     factories.resize(tables.size());
-    auto classnameForDocument = tu->classnameForDocument;
+//     factories.resize(tables.size());    auto classnameForDocument = tu->classnameForDocument;
 
     for (int i = 0, ei = docs.size(); i != ei; ++i) {
         auto doc = docs.at(i);
@@ -238,7 +217,7 @@ int write(TranslationUnit *tu)
                 continue;
             }
             cout << "\n\n ************ ACTUAL TEST************  \n\n ";
-            qDebug() << data->id << data->expr << data->cpp_type << data->component_type << data->service_type  << data->client_port_name << data->init_source;
+            qDebug() << data->id << data->expr << data->cpp_type << data->component_type << data->service_type  << data->client_port_name << data->init_source << data->connect_type;
             cout << "\n\n ************ end ACTUAL TEST************  \n\n ";
 
             // access to data element
@@ -248,6 +227,7 @@ int write(TranslationUnit *tu)
                 service.service_type = data->service_type;
                 service.component_type = data->component_type;
                 service.client_port_name = data->client_port_name;
+                service.connect_type = data->connect_type;
                 SD.UsedServices.push_back(service);
             }else if(data->cpp_type != ""){ // means that the data represents an attribute!
                 Attribute attribute;
@@ -346,23 +326,18 @@ int write(TranslationUnit *tu)
     QRegularExpression KEY_CONSTRUCTOR_ATTRIBUTES_p1("@KEY_CONSTRUCTOR_ATTRIBUTES_p1@");
     string attrib_1 = "";
     if( SD.add_constructor == true ){
-        switch (SD.ListAttributesInitWithConstructor.size())
-        {
-        case 1:
-            attrib_1 = attrib_1 + ", " + SD.UsedAttributes[0].data_type.toStdString() + " " +  SD.UsedAttributes[0].name_instance.toStdString();
-            break;
-        case 2:
-            attrib_1 = attrib_1 + ", " + SD.UsedAttributes[0].data_type.toStdString() + " " +  SD.UsedAttributes[0].name_instance.toStdString() + ", " + SD.UsedAttributes[1].data_type.toStdString() + " " +  SD.UsedAttributes[1].name_instance.toStdString();
-            break;
-        case 3:
-            // todo
-            break;
-        default:
-            break;
-        }
+        vector<string> ListParamToAssign_data_type     = GenerateStringList_data_type (SD.ListAttributesInitWithConstructor);
+        vector<string> ListParamToAssign_name_instance = GenerateStringList_name_instance (SD.ListAttributesInitWithConstructor);
+        attrib_1 = GenerateListConstructorParameters (ListParamToAssign_data_type, ListParamToAssign_name_instance);
     }
-    QString value_CONSTRUCTOR_ATTRIBUTES_p1 = QString::fromStdString(attrib_1);
-    dataText.replace(KEY_CONSTRUCTOR_ATTRIBUTES_p1, value_CONSTRUCTOR_ATTRIBUTES_p1);
+    string attrib_1_with_comma = ", " + attrib_1;
+    QString value_NULL = QString::fromStdString("");
+    QString value_CONSTRUCTOR_ATTRIBUTES_p1_with_comma = QString::fromStdString(attrib_1_with_comma);
+    if(SD.ListAttributesInitWithConstructor.size()>0){ // otherwise insert a not needed comma
+        dataText.replace(KEY_CONSTRUCTOR_ATTRIBUTES_p1, value_CONSTRUCTOR_ATTRIBUTES_p1_with_comma);
+    }else{
+        dataText.replace(KEY_CONSTRUCTOR_ATTRIBUTES_p1, value_NULL);
+    }
 
     // 3: create new file and insert the dataText
     QFile output_file_1_h(path_new_skill + skill_name + "Skill.h");
@@ -400,25 +375,24 @@ int write(TranslationUnit *tu)
     // 2.3 @KEY_CONSTRUCTOR_ATTRIBUTES_p1@ + @KEY_CONSTRUCTOR_ATTRIBUTES_p2@
 
     // KEY_CONSTRUCTOR_ATTRIBUTES_p1 is already defined for .h
-    dataText.replace(KEY_CONSTRUCTOR_ATTRIBUTES_p1, value_CONSTRUCTOR_ATTRIBUTES_p1);
+    if(SD.ListAttributesInitWithConstructor.size()>0){
+        dataText.replace(KEY_CONSTRUCTOR_ATTRIBUTES_p1, value_CONSTRUCTOR_ATTRIBUTES_p1_with_comma);
+    }else{
+        dataText.replace(KEY_CONSTRUCTOR_ATTRIBUTES_p1, value_NULL);
+    }
 
     QRegularExpression KEY_CONSTRUCTOR_ATTRIBUTES_p2("@KEY_CONSTRUCTOR_ATTRIBUTES_p2@");
     string attrib_2 = "";
     if( SD.add_constructor == true ){
-        switch (SD.ListAttributesInitWithConstructor.size())
-        {
-        case 1:
-            attrib_2 = attrib_2 + ",\n        dataModel" + "(std::move(" + SD.UsedAttributes[0].name_instance.toStdString() + "))";
-            break;
-        case 2:
-            attrib_2 = attrib_2 + ",\n        dataModel" + "(std::move(" + SD.UsedAttributes[0].name_instance.toStdString() + ")),\n        dataModel" + "(std::move(" + SD.UsedAttributes[1].name_instance.toStdString() + "))";
-            break;
-        case 3:
-            // todo
-            break;
-        default:
-            break;
+        string space = ",\n        ";
+        attrib_2 = attrib_2 + space;
+        vector<string> ListParamToAssign = GenerateStringList_name_instance(SD.ListAttributesInitWithConstructor);
+        int dim = ListParamToAssign.size();
+        vector<string> ListMemberAttributes;
+        for(int i=0; i<dim; i++){
+            ListMemberAttributes.push_back("dataModel"); // to check!
         }
+        attrib_2 = attrib_2 + GenerateListConstructorParametersAssign (ListMemberAttributes, ListParamToAssign);
     }
     QString value_CONSTRUCTOR_ATTRIBUTES_p2 = QString::fromStdString(attrib_2);
     dataText.replace(KEY_CONSTRUCTOR_ATTRIBUTES_p2, value_CONSTRUCTOR_ATTRIBUTES_p2);
@@ -443,18 +417,19 @@ int write(TranslationUnit *tu)
     // 2.1: name
     dataText.replace(key_skill_name, value_skill_name);
 
+    // 2.1.2 #include @INCLUDE_THRIFT_SERVICE@
+    QRegularExpression KEY_INCLUDE_THRIFT_SERVICE("@INCLUDE_THRIFT_SERVICE@");
+    string str_include ="";
+    for (int i=0; i<SD.UsedServices.size(); i++){
+        str_include = str_include + "#include \"" + SD.UsedServices[i].service_type.toStdString()  + ".h\" \n ";
+    }
+    QString value_INCLUDE_THRIFT_SERVICE = QString::fromStdString(str_include);
+    dataText.replace(KEY_INCLUDE_THRIFT_SERVICE, value_INCLUDE_THRIFT_SERVICE);
+
     // 2.2: KEY_LIST_PUBLIC_ATTRIBUTES
     QRegularExpression KEY_LIST_PUBLIC_ATTRIBUTES("@KEY_LIST_PUBLIC_ATTRIBUTES@");
 
     string all_instances = "";
-
-    // not used in last version
-//    for (int i=0; i<SD.UsedComponents.size(); i++){
-//        auto component = SD.UsedComponents[i]; //string
-//        string instance_name = to_lower(component);
-//        string single_instance = "" + component + " " + instance_name + "; // added by MY AUTOMATIC DETECTION \n    " ;
-//        all_instances = all_instances + single_instance;
-//    }
 
     // list of services
     for (int i=0; i<SD.UsedServices.size(); i++){
@@ -484,21 +459,9 @@ int write(TranslationUnit *tu)
     if( SD.add_constructor == false ){ // it is also used in .cpp to insert the not default constructor
         construct = construct + value_skill_name.toStdString() + "SkillDataModel() = default;";
     }else{ // e.g.  GoToSkillDataModel(std::string location);
-        string params ="";
-        switch (SD.ListAttributesInitWithConstructor.size())
-        {
-        case 1:
-            params = params + SD.UsedAttributes[0].data_type.toStdString() + " " +  SD.UsedAttributes[0].name_instance.toStdString();
-            break;
-        case 2:
-            params = params + SD.UsedAttributes[0].data_type.toStdString() + " " +  SD.UsedAttributes[0].name_instance.toStdString() + ", " + SD.UsedAttributes[1].data_type.toStdString() + " " +  SD.UsedAttributes[1].name_instance.toStdString();
-            break;
-        case 3:
-            // todo
-            break;
-        default:
-            break;
-        }
+        vector<string> ListParamToAssign_data_type     = GenerateStringList_data_type (SD.ListAttributesInitWithConstructor);
+        vector<string> ListParamToAssign_name_instance = GenerateStringList_name_instance (SD.ListAttributesInitWithConstructor);
+        string params = GenerateListConstructorParameters (ListParamToAssign_data_type, ListParamToAssign_name_instance);
         construct = construct + value_skill_name.toStdString() + "SkillDataModel(" + params +");";
     }
 
@@ -539,7 +502,7 @@ int write(TranslationUnit *tu)
             adaptation = "/";
             port_name_specific = " + " + SD.ListAttributesInitWithConstructor[i].name_instance.toStdString();
         }
-        string single_port = "if (!client_port.open(\"" + SD.UsedServices[i].client_port_name.toStdString() + adaptation + "\"" + port_name_specific + ")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n" ;
+        string single_port = "if (!client_port.open(\"/" + SD.UsedServices[i].name_instance.toStdString() + "Client" + adaptation + "\"" + port_name_specific + ")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n" ;
         all_ports = all_ports + single_port;
         string single_client = "    if(!" + SD.UsedServices[i].name_instance.toStdString() + ".yarp().attachAsClient(client_port)) {\n       qWarning(\"Error! Could not attach as client\");\n       return false;\n    }\n";
         all_clients = all_clients + single_client;
@@ -548,33 +511,37 @@ int write(TranslationUnit *tu)
     QString value_OPEN_PORTS_AND_ATTACH_CLIENTS = QString::fromStdString(merge);
     dataText.replace(KEY_OPEN_PORTS_AND_ATTACH_CLIENTS, value_OPEN_PORTS_AND_ATTACH_CLIENTS);
 
+    // 2.3  @OPEN_CONNECTIONS_TO_COMPONENTS@
+    QRegularExpression KEY_OPEN_CONNECTIONS_TO_COMPONENTS("@OPEN_CONNECTIONS_TO_COMPONENTS@");
+    string all_components ="";
+    for (int i=0; i<SD.UsedServices.size(); i++){
+        all_components = all_components + "if (!yarp::os::Network::connect(client_port.getName(), \"/" + SD.UsedServices[i].component_type.toStdString()  + "\", \"" + SD.UsedServices[i].connect_type.toStdString() + "\")) {\n        qWarning(\"Error! Could not connect to server /fakeBattery\");\n        return false;\n    }\n" ;
+    }
+    QString value_OPEN_CONNECTIONS_TO_COMPONENTS = QString::fromStdString(all_components);
+    dataText.replace(KEY_OPEN_CONNECTIONS_TO_COMPONENTS, value_OPEN_CONNECTIONS_TO_COMPONENTS);
+
     // 2.4 @ADD_CONSTRUCTOR@ if needed (case not default in .h)
     QRegularExpression KEY_ADD_CONSTRUCTOR("@ADD_CONSTRUCTOR@");
     if( SD.add_constructor == true ){
-        string attributes_init_string_intro = value_skill_name.toStdString() + "SkillDataModel::" + value_skill_name.toStdString() +"SkillDataModel"; // GoToSkillDataModel::GoToSkillDataModel
-        string attributes_init_string_part_1 ="";
+
+        string attributes_init_string_intro = value_skill_name.toStdString() + "SkillDataModel::" + value_skill_name.toStdString() +"SkillDataModel("; // GoToSkillDataModel::GoToSkillDataModel
+
+        vector<string> ListParamToAssign_data_type     = GenerateStringList_data_type (SD.ListAttributesInitWithConstructor);
+        vector<string> ListParamToAssign_name_instance = GenerateStringList_name_instance (SD.ListAttributesInitWithConstructor);
+        string attributes_init_string_part_1 = GenerateListConstructorParameters (ListParamToAssign_data_type, ListParamToAssign_name_instance);
+
         string attributes_init_string_mid =") :\n                        ";
-        string attributes_init_string_part_2 ="";
+
+        vector<string> ListMemberAttributes = GenerateStringList_name_instance(SD.ListAttributesInitWithConstructor);
+        vector<string> ListParamToAssign = ListMemberAttributes;
+        string attributes_init_string_part_2 = GenerateListConstructorParametersAssign (ListMemberAttributes, ListParamToAssign);
+
         string attributes_init_string_end ="\n{\n}";
-        switch (SD.ListAttributesInitWithConstructor.size())
-        {
-        case 1:
-            attributes_init_string_part_1 = attributes_init_string_part_1 + "("+ SD.UsedAttributes[0].data_type.toStdString() + " " +  SD.UsedAttributes[0].name_instance.toStdString();
-            attributes_init_string_part_2 = SD.UsedAttributes[0].name_instance.toStdString() + "(std::move(" + SD.UsedAttributes[0].name_instance.toStdString() + "))";
-            break;
-        case 2:
-            attributes_init_string_part_1 = attributes_init_string_part_1 + "("+ SD.UsedAttributes[0].data_type.toStdString() + " " +  SD.UsedAttributes[0].name_instance.toStdString() + ", " + SD.UsedAttributes[1].data_type.toStdString() + " " +  SD.UsedAttributes[1].name_instance.toStdString();
-            attributes_init_string_part_2 = SD.UsedAttributes[0].name_instance.toStdString() + "(std::move(" + SD.UsedAttributes[0].name_instance.toStdString() + "))," + SD.UsedAttributes[1].name_instance.toStdString() + "(std::move(" + SD.UsedAttributes[1].name_instance.toStdString() + "))";
-            break;
-        case 3:
-            // todo
-            break;
-        default:
-            break;
-        }
+
         string constructor_string = attributes_init_string_intro + attributes_init_string_part_1 + attributes_init_string_mid + attributes_init_string_part_2 + attributes_init_string_end;
         QString value_ADD_CONSTRUCTOR = QString::fromStdString(constructor_string);
         dataText.replace(KEY_ADD_CONSTRUCTOR, value_ADD_CONSTRUCTOR);
+
     }else{
         dataText.replace(KEY_ADD_CONSTRUCTOR, "");
     }

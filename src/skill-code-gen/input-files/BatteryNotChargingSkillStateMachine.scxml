@@ -16,7 +16,7 @@
     <!--
      Services:
     -->
-    <data scope:component_type="/BatteryComponent"   scope:service_type="BatteryReader"  scope:client_port_name="/BatteryNotChargingClient"  scope:service_function="charging_status"    id="batteryReader"/>
+    <data scope:component_type="BatteryComponent" scope:connect_type="tcp"   scope:service_type="BatteryReader"  scope:service_function="charging_status"    id="batteryReader"/>
 
     <!--
      Attributes:
@@ -32,7 +32,7 @@
     <state id="get">
         <onentry>
             <script>
-                Connector connection(client_port.getName(), "/BatteryComponent", "tcp");
+<!--                Connector connection(client_port.getName(), "/BatteryComponent", "tcp");-->
                 ChargingStatus status = batteryReader.charging_status();
                 QTimer::singleShot(0, stateMachine(), [=](){
                     stateMachine()->submitEvent((status == BATTERY_NOT_CHARGING) ? "STATUS_SUCCESS" : "STATUS_FAILED");
