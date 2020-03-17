@@ -7,10 +7,12 @@
 
 #include "BatteryLevelSkill.h"
 
+#include <QTimer>
 #include <QDebug>
+#include <QTime>
 
-BatteryLevelSkill::BatteryLevelSkill(std::string name) :
-        name(std::move(name)) // KEY_CONSTRUCTOR_ATTRIBUTES
+BatteryLevelSkill::BatteryLevelSkill(std::string name ) :
+        name(std::move(name))
 {
     stateMachine.setDataModel(&dataModel);
 }

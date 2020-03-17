@@ -21,7 +21,7 @@ class @KEY_SKILL_NAME@Skill:
         public BT_request
 {
 public:
-    @KEY_SKILL_NAME@Skill(std::string name);
+    @KEY_SKILL_NAME@Skill(std::string name @KEY_CONSTRUCTOR_ATTRIBUTES_p1@);
 
     bool start();
 

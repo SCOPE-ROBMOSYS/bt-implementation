@@ -143,7 +143,7 @@ string DecoderEnum (int id){  // enum BT_Status { Undefined, Idle, Success, Fail
 //    return !str[h] ? 5381 : (str2int(str, h+1) * 33) ^ str[h];
 //}
 
-//string CustomSwitchStatus (string state_string){                    // TOGLIERE ED UTILIZZARE IL TAG DANIELE / ATTRIBUTO DEL tipo state VEDI
+//string CustomSwitchStatus (string state_string){
 //    const char* c = state_string.c_str();
 //    switch (str2int(c))
 //    {
@@ -166,23 +166,18 @@ string DecoderEnum (int id){  // enum BT_Status { Undefined, Idle, Success, Fail
 //    }
 //}
 
-//vector<string> CheckUsedComponents ( QString dataTextXML ){ // modifica t.c. lista dei used components fornita da fuori
-
+//vector<string> CheckUsedComponents ( QString dataTextXML ){
 //    vector<string> result;
-
 //    // search for "Connector" per capire se crea connessioni
 //    if ( dataTextXML.contains( "Connector",  Qt::CaseInsensitive ) ){
-
 //        // manual check for all the components names
-
 //        string search = "GoToComponent";
-//        string service_name = "GoTo"; // VA BENE SOLO SE SINGOLO SERVIZIO
+//        string service_name = "GoTo";
 //        QString qstr = QString::fromStdString(search);
 //        if( dataTextXML.contains( qstr ,  Qt::CaseInsensitive ) ){
 //            cout << " \n\n\n DETECTED " + search + " \n";
 //            result.push_back(service_name); // NB !
 //        }
-
 //        search = "BatteryComponent";
 //        service_name = "BatteryReader";
 //        qstr = QString::fromStdString(search);
@@ -190,7 +185,6 @@ string DecoderEnum (int id){  // enum BT_Status { Undefined, Idle, Success, Fail
 //            cout << " \n\n\n DETECTED " + search + " \n";
 //            result.push_back(service_name);
 //        }
-
 //        search = "Component_XXXXX";
 //        service_name = "Service_XXXX";
 //        qstr = QString::fromStdString(search);
@@ -198,7 +192,6 @@ string DecoderEnum (int id){  // enum BT_Status { Undefined, Idle, Success, Fail
 //            cout << " \n\n\n DETECTED " + search + " \n";
 //            result.push_back(service_name);
 //        }
-
 //    }
 //    return result;
 //}
@@ -219,7 +212,7 @@ int write(TranslationUnit *tu)
     for (int i = 0, ei = docs.size(); i != ei; ++i) {
         auto doc = docs.at(i);
 
-        for (DocumentModel::AbstractState* astate : doc->allStates) { // doc->allStates funzione che identifica tutti gli stati nel scxml
+        for (DocumentModel::AbstractState* astate : doc->allStates) { // doc->allStates identifies all the states inside the scxml input file
             auto state = astate->asState();
             if (!state) {
                 qDebug() << astate->id;
@@ -228,7 +221,6 @@ int write(TranslationUnit *tu)
             qDebug() << state->id << state->xmlLocation.line << state->xmlLocation.column << state->dataElements.size() << state->bt_status;
 
             // need to control the gerarchy of the states, s.t. the external "wrapper" is not tackled into the list
-            // not easy because cannot control the exact location (names have different length), maybe control on TAG ANNIDATION
 
             State stato;
             stato.id = state->id;
@@ -274,9 +266,6 @@ int write(TranslationUnit *tu)
                 SD.UsedClientPorts.push_back(port);
             }
         }
-
-//         auto metaDataInfo = &metaDataInfos[i];
-//         GeneratedTableData::build(doc, &tables[i], metaDataInfo, &dataModelInfos[i],
     }
 
     std::cout << "\n\n\n SKILL_DESCRIPTION SD : \n      ListStates size : " << SD.ListStates.size() << "\n\n" ;
@@ -300,7 +289,6 @@ int write(TranslationUnit *tu)
     QFile file_template_NAMESkill_DataModel_cpp (path_template + "Name_SkillDataModel_cpp.t");
     QFile file_template_CMakeLists              (path_template + "CMakeLists_txt.t");
     QFile file_template_main                    (path_template + "main_cpp.t");
-//    QFile file_template_NAMESkill_Manifest_xml  (path_template + "NAMESkillManifest.xml");
 
     //detect skill name
     string ss = tu->scxmlFileName.toUtf8().constData();
@@ -310,12 +298,10 @@ int write(TranslationUnit *tu)
             "#########################################################"
             "######################################################### \n\n START DEBUG SKILL --> " << ss << "\n\n\ " ;
 
-    /*
-    I need to
+    /* I need to
     1) search the word "skill" inside the string  -->  std::string::find()
-        test_str.find("Skill") contiene puntatore alla posizione di inizio substring
-    2) fetch string before that.
-    */
+        test_str.find("Skill") contains the pointer to the sub-string initial position
+    2) fetch string before that. */
     bool found = ss.find("SkillStateMachine.scxml") != ss.npos;
     std::cout << "\n\n\nTEST\n\n\n" << found << " ||||| " << ss.find("SkillStateMachine.scxml") << "\n\n\nEND TEST\n\n\n";
     // 2) split
@@ -337,25 +323,61 @@ int write(TranslationUnit *tu)
 
     // **********************************++ "CmakeLists.txt" **********************************++
     // create new file
-    QFile output_file_0(path_new_skill + "CMakeLists.txt"); // e.g. /home/scope/bt-implementation/build/bin/DIR_NEW_SKILL/BatteryLevelSkill.cpp
+    QFile output_file_0(path_new_skill + "CMakeLists.txt");
     ReplaceKeyInsideTemplate (path_new_skill, file_template_CMakeLists, output_file_0, key_skill_name, value_skill_name);
 
     // **********************************++ "main.cpp" **********************************++
     // create new file
-    QFile output_file_main(path_new_skill + "main.cpp"); // e.g. /home/scope/bt-implementation/build/bin/DIR_NEW_SKILL/BatteryLevelSkill.cpp
+    QFile output_file_main(path_new_skill + "main.cpp");
     ReplaceKeyInsideTemplate (path_new_skill, file_template_main, output_file_main, key_skill_name, value_skill_name);
 
     // **********************************++ "Skill.h" **********************************++
-    // create new file
-    QFile output_file_1_H(path_new_skill + skill_name + "Skill.h"); // e.g. /home/scope/bt-implementation/build/bin/DIR_NEW_SKILL/BatteryLevelSkill.cpp
-    ReplaceKeyInsideTemplate (path_new_skill, file_template_NAMESkill_h, output_file_1_H, key_skill_name, value_skill_name);
 
+    // 1: open and read the template
+    file_template_NAMESkill_h.open(QIODevice::Text | QIODevice::ReadOnly);
+    QString dataText = file_template_NAMESkill_h.readAll();
+
+    // 2: replace
+
+    // 2.1: name
+    dataText.replace(key_skill_name, value_skill_name);
+
+    // 2.3 @KEY_CONSTRUCTOR_ATTRIBUTES_p1@
+    QRegularExpression KEY_CONSTRUCTOR_ATTRIBUTES_p1("@KEY_CONSTRUCTOR_ATTRIBUTES_p1@");
+    string attrib_1 = "";
+    if( SD.add_constructor == true ){
+        switch (SD.ListAttributesInitWithConstructor.size())
+        {
+        case 1:
+            attrib_1 = attrib_1 + ", " + SD.UsedAttributes[0].data_type.toStdString() + " " +  SD.UsedAttributes[0].name_instance.toStdString();
+            break;
+        case 2:
+            attrib_1 = attrib_1 + ", " + SD.UsedAttributes[0].data_type.toStdString() + " " +  SD.UsedAttributes[0].name_instance.toStdString() + ", " + SD.UsedAttributes[1].data_type.toStdString() + " " +  SD.UsedAttributes[1].name_instance.toStdString();
+            break;
+        case 3:
+            // todo
+            break;
+        default:
+            break;
+        }
+    }
+    QString value_CONSTRUCTOR_ATTRIBUTES_p1 = QString::fromStdString(attrib_1);
+    dataText.replace(KEY_CONSTRUCTOR_ATTRIBUTES_p1, value_CONSTRUCTOR_ATTRIBUTES_p1);
+
+    // 3: create new file and insert the dataText
+    QFile output_file_1_h(path_new_skill + skill_name + "Skill.h");
+    if(output_file_1_h.open(QFile::WriteOnly | QFile::Truncate)) {
+        QTextStream out(&output_file_1_h);
+        out << dataText;
+    }
+    output_file_1_h.close();
 
     // **********************************++ "Skill.cpp" **********************************++
 
     // 1: open and read the template
     file_template_NAMESkill_cpp.open(QIODevice::Text | QIODevice::ReadOnly);
-    QString dataText = file_template_NAMESkill_cpp.readAll();
+    dataText.clear();
+    dataText = file_template_NAMESkill_cpp.readAll();
 
     // 2: replace
 
@@ -375,27 +397,39 @@ int write(TranslationUnit *tu)
     QString value_all_states_condit = QString::fromStdString(all);
     dataText.replace(key_states, value_all_states_condit);
 
+    // 2.3 @KEY_CONSTRUCTOR_ATTRIBUTES_p1@ + @KEY_CONSTRUCTOR_ATTRIBUTES_p2@
+
+    // KEY_CONSTRUCTOR_ATTRIBUTES_p1 is already defined for .h
+    dataText.replace(KEY_CONSTRUCTOR_ATTRIBUTES_p1, value_CONSTRUCTOR_ATTRIBUTES_p1);
+
+    QRegularExpression KEY_CONSTRUCTOR_ATTRIBUTES_p2("@KEY_CONSTRUCTOR_ATTRIBUTES_p2@");
+    string attrib_2 = "";
+    if( SD.add_constructor == true ){
+        switch (SD.ListAttributesInitWithConstructor.size())
+        {
+        case 1:
+            attrib_2 = attrib_2 + ",\n        dataModel" + "(std::move(" + SD.UsedAttributes[0].name_instance.toStdString() + "))";
+            break;
+        case 2:
+            attrib_2 = attrib_2 + ",\n        dataModel" + "(std::move(" + SD.UsedAttributes[0].name_instance.toStdString() + ")),\n        dataModel" + "(std::move(" + SD.UsedAttributes[1].name_instance.toStdString() + "))";
+            break;
+        case 3:
+            // todo
+            break;
+        default:
+            break;
+        }
+    }
+    QString value_CONSTRUCTOR_ATTRIBUTES_p2 = QString::fromStdString(attrib_2);
+    dataText.replace(KEY_CONSTRUCTOR_ATTRIBUTES_p2, value_CONSTRUCTOR_ATTRIBUTES_p2);
 
     // 3: create new file and insert the dataText
-    QFile output_file_2_cpp(path_new_skill + skill_name + "Skill.cpp"); // e.g. /home/scope/bt-implementation/build/bin/DIR_NEW_SKILL/BatteryLevelSkill.cpp
+    QFile output_file_2_cpp(path_new_skill + skill_name + "Skill.cpp");
     if(output_file_2_cpp.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out(&output_file_2_cpp);
         out << dataText;
     }
     output_file_2_cpp.close();
-
-
-    // ********************************** open scxml (not needed in last version) **********************************++
-
-//    QString path_SCXML = "/home/scope/bt-implementation/build/bin/";
-
-//        QFile XML( path_SCXML + tu->scxmlFileName);
-//        // open and read
-//        XML.open(QIODevice::Text | QIODevice::ReadOnly);
-//        QString dataTextXML = XML.readAll();
-
-//        SD.UsedComponents = CheckUsedComponents ( dataTextXML );
-
 
     // **********************************++ "SkillDataModel.h" **********************************++
 
@@ -424,7 +458,7 @@ int write(TranslationUnit *tu)
 
     // list of services
     for (int i=0; i<SD.UsedServices.size(); i++){
-        string single_instance = "" + SD.UsedServices[i].service_type.toStdString() + " " + SD.UsedServices[i].name_instance.toStdString() + ";\n    "; // "; // added using DATAMODEL \n    " ;
+        string single_instance = "" + SD.UsedServices[i].service_type.toStdString() + " " + SD.UsedServices[i].name_instance.toStdString() + ";\n    ";
         all_instances = all_instances + single_instance;
     }
 
@@ -432,9 +466,9 @@ int write(TranslationUnit *tu)
     for (int i=0; i<SD.UsedAttributes.size(); i++){
         string single_instance = "";
         if( SD.UsedAttributes[i].init_source.toStdString() == "initialize_inside_header"){
-            single_instance = "" + SD.UsedAttributes[i].data_type.toStdString() + " " + SD.UsedAttributes[i].name_instance.toStdString() + " { " + SD.UsedAttributes[i].value.toStdString() + " }; // added using DATAMODEL \n    " ;
+            single_instance = "" + SD.UsedAttributes[i].data_type.toStdString() + " " + SD.UsedAttributes[i].name_instance.toStdString() + " { " + SD.UsedAttributes[i].value.toStdString() + " };\n    " ;
         }else{
-            single_instance = "" + SD.UsedAttributes[i].data_type.toStdString() + " " + SD.UsedAttributes[i].name_instance.toStdString() + "; // added using DATAMODEL \n    " ;
+            single_instance = "" + SD.UsedAttributes[i].data_type.toStdString() + " " + SD.UsedAttributes[i].name_instance.toStdString() + ";\n    " ;
         }
         all_instances = all_instances + single_instance;
     }
@@ -473,7 +507,7 @@ int write(TranslationUnit *tu)
 
 
     // 3: create new file and insert the dataText
-    QFile output_file_3_DataModel_h(path_new_skill + skill_name + "SkillDataModel.h"); // e.g. /home/scope/bt-implementation/build/bin/DIR_NEW_SKILL/BatteryLevelSkill.cpp
+    QFile output_file_3_DataModel_h(path_new_skill + skill_name + "SkillDataModel.h");
     if(output_file_3_DataModel_h.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out(&output_file_3_DataModel_h);
         out << dataText;
@@ -492,63 +526,29 @@ int write(TranslationUnit *tu)
     // 2.1: name
     dataText.replace(key_skill_name, value_skill_name);
 
-    // 2.2      @OPEN_PORTS@
-
-//    QRegularExpression KEY_OPEN_PORTS("@OPEN_PORTS@");
-
-//    string all_ports ="";
-
-//    if ( SD.UsedClientPorts.size() != 0 ){ // if specified in datamodel
-//        for (int i=0; i<SD.UsedClientPorts.size(); i++){
-//            string single_port = "if (!client_port.open(" + SD.UsedClientPorts[i].client_port_name.toStdString() +")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n" ;
-//            all_ports = all_ports + single_port;
-//        }
-//    }else  // if not specified in datamodel, then use the default name "/@KEY_SKILL_NAME@Client"
-//        all_ports = all_ports + "if (!client_port.open(/" + value_skill_name.toStdString() + "Client" + ")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n" ;
-
-//    QString value_OPEN_PORTS = QString::fromStdString(all_ports);
-//    dataText.replace(KEY_OPEN_PORTS, value_OPEN_PORTS);
-
-
-//    // 2.3  @OPEN_PORTS_AND_ATTACH_CLIENTS@
-
-//    QRegularExpression KEY_ATTACH_CLIENTS("@ATTACH_CLIENTS@");
-
-//    string all_clients ="";
-
-//    for (int i=0; i<SD.UsedServices.size(); i++){
-//        string single_client = "if(!" + SD.UsedServices[i].name_instance.toStdString() + ".yarp().attachAsClient(client_port)) {\n       qWarning(\"Error! Could not attach as client\");\n       return false;\n    }\n";
-//        all_clients = all_clients + single_client;
-//    }
-
-//    QString value_ATTACH_CLIENTS = QString::fromStdString(all_clients);
-//    dataText.replace(KEY_ATTACH_CLIENTS, value_ATTACH_CLIENTS);
-
-
-    // 2.3  @OPEN_PORTS_AND_ATTACH_CLIENTS@
-
+    // 2.2  @OPEN_PORTS_AND_ATTACH_CLIENTS@
     QRegularExpression KEY_OPEN_PORTS_AND_ATTACH_CLIENTS("@OPEN_PORTS_AND_ATTACH_CLIENTS@");
-
     string merge ="";
     string all_clients ="";
     string all_ports ="";
-
     for (int i=0; i<SD.UsedServices.size(); i++){
-        string single_port = "if (!client_port.open(\"" + SD.UsedServices[i].client_port_name.toStdString() +"\")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n" ;
+        // additional name spec if needed
+        string port_name_specific = "";
+        string adaptation = "";
+        if (SD.ListAttributesInitWithConstructor.size() > 0){
+            adaptation = "/";
+            port_name_specific = " + " + SD.ListAttributesInitWithConstructor[i].name_instance.toStdString();
+        }
+        string single_port = "if (!client_port.open(\"" + SD.UsedServices[i].client_port_name.toStdString() + adaptation + "\"" + port_name_specific + ")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n" ;
         all_ports = all_ports + single_port;
-
         string single_client = "    if(!" + SD.UsedServices[i].name_instance.toStdString() + ".yarp().attachAsClient(client_port)) {\n       qWarning(\"Error! Could not attach as client\");\n       return false;\n    }\n";
         all_clients = all_clients + single_client;
-
-
         merge = all_ports + all_clients;
     }
-
     QString value_OPEN_PORTS_AND_ATTACH_CLIENTS = QString::fromStdString(merge);
     dataText.replace(KEY_OPEN_PORTS_AND_ATTACH_CLIENTS, value_OPEN_PORTS_AND_ATTACH_CLIENTS);
 
     // 2.4 @ADD_CONSTRUCTOR@ if needed (case not default in .h)
-
     QRegularExpression KEY_ADD_CONSTRUCTOR("@ADD_CONSTRUCTOR@");
     if( SD.add_constructor == true ){
         string attributes_init_string_intro = value_skill_name.toStdString() + "SkillDataModel::" + value_skill_name.toStdString() +"SkillDataModel"; // GoToSkillDataModel::GoToSkillDataModel
@@ -556,7 +556,6 @@ int write(TranslationUnit *tu)
         string attributes_init_string_mid =") :\n                        ";
         string attributes_init_string_part_2 ="";
         string attributes_init_string_end ="\n{\n}";
-
         switch (SD.ListAttributesInitWithConstructor.size())
         {
         case 1:
@@ -573,24 +572,31 @@ int write(TranslationUnit *tu)
         default:
             break;
         }
-
         string constructor_string = attributes_init_string_intro + attributes_init_string_part_1 + attributes_init_string_mid + attributes_init_string_part_2 + attributes_init_string_end;
-
         QString value_ADD_CONSTRUCTOR = QString::fromStdString(constructor_string);
         dataText.replace(KEY_ADD_CONSTRUCTOR, value_ADD_CONSTRUCTOR);
-
     }else{
         dataText.replace(KEY_ADD_CONSTRUCTOR, "");
     }
 
     // 3: create new file and insert the dataText
-    QFile output_file_3_DataModel_cpp(path_new_skill + skill_name + "SkillDataModel.cpp"); // e.g. /home/scope/bt-implementation/build/bin/DIR_NEW_SKILL/BatteryLevelSkill.cpp
+    QFile output_file_3_DataModel_cpp(path_new_skill + skill_name + "SkillDataModel.cpp");
     if(output_file_3_DataModel_cpp.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out(&output_file_3_DataModel_cpp);
         out << dataText;
     }
     output_file_3_DataModel_cpp.close();
 
+    // ********************************** open scxml (not needed in last version) **********************************++
+
+//    QString path_SCXML = "/home/scope/bt-implementation/build/bin/";
+
+//        QFile XML( path_SCXML + tu->scxmlFileName);
+//        // open and read
+//        XML.open(QIODevice::Text | QIODevice::ReadOnly);
+//        QString dataTextXML = XML.readAll();
+
+//        SD.UsedComponents = CheckUsedComponents ( dataTextXML );
 
     // ##########################################################################################################################################################################################
     // ##########################################################################################################################################################################################
@@ -602,10 +608,6 @@ int write(TranslationUnit *tu)
 
     return NoError;
 }
-
-
-
-
 
 static void collectAllDocuments(DocumentModel::ScxmlDocument *doc,
                                 QList<DocumentModel::ScxmlDocument *> *docs)

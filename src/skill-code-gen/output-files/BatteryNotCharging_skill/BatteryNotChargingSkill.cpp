@@ -7,10 +7,12 @@
 
 #include "BatteryNotChargingSkill.h"
 
+#include <QTimer>
 #include <QDebug>
+#include <QTime>
 
-BatteryNotChargingSkill::BatteryNotChargingSkill(std::string name) :
-        name(std::move(name)) // KEY_CONSTRUCTOR_ATTRIBUTES
+BatteryNotChargingSkill::BatteryNotChargingSkill(std::string name ) :
+        name(std::move(name))
 {
     stateMachine.setDataModel(&dataModel);
 }

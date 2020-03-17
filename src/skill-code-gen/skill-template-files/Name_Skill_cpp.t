@@ -7,10 +7,12 @@
 
 #include "@KEY_SKILL_NAME@Skill.h"
 
+#include <QTimer>
 #include <QDebug>
+#include <QTime>
 
-@KEY_SKILL_NAME@Skill::@KEY_SKILL_NAME@Skill(std::string name) :
-        name(std::move(name)) // KEY_CONSTRUCTOR_ATTRIBUTES
+@KEY_SKILL_NAME@Skill::@KEY_SKILL_NAME@Skill(std::string name @KEY_CONSTRUCTOR_ATTRIBUTES_p1@) :
+        name(std::move(name))@KEY_CONSTRUCTOR_ATTRIBUTES_p2@
 {
     stateMachine.setDataModel(&dataModel);
 }

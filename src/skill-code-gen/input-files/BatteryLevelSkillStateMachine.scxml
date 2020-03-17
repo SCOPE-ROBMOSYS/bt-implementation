@@ -16,7 +16,7 @@
     <!--
      Services:
     -->
-    <data scope:component_type="BatteryComponent"   scope:service_type="BatteryReader"  scope:client_port_name="/BatteryLevelClient"    scope:service_function="level"  id="batteryReader"/>
+    <data scope:component_type="/BatteryComponent"   scope:service_type="BatteryReader"  scope:client_port_name="/BatteryLevelClient"    scope:service_function="level"  id="batteryReader"/>
 
     <!--
      Attributes:

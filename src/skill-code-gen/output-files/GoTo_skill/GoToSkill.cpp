@@ -7,10 +7,13 @@
 
 #include "GoToSkill.h"
 
+#include <QTimer>
 #include <QDebug>
+#include <QTime>
 
-GoToSkill::GoToSkill(std::string name) :
-        name(std::move(name)) // KEY_CONSTRUCTOR_ATTRIBUTES
+GoToSkill::GoToSkill(std::string name , const std::string location) :
+        name(std::move(name)),
+        dataModel(std::move(location))
 {
     stateMachine.setDataModel(&dataModel);
 }

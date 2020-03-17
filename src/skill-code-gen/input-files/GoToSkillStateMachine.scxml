@@ -16,7 +16,7 @@
     <!--
      Services:
     -->
-    <data scope:component_type="GoTo"   scope:service_type="GoTo"   scope:client_port_name="/goToClient/location"   scope:service_function="multiple"   id="goTo"/>
+    <data scope:component_type="/GoToComponent"   scope:service_type="GoTo"   scope:client_port_name="/goToClient"   scope:service_function="multiple"   id="goTo"/>
 
     <!--
      Attributes:

@@ -21,7 +21,7 @@ class GoToSkill:
         public BT_request
 {
 public:
-    GoToSkill(std::string name);
+    GoToSkill(std::string name , const std::string location);
 
     bool start();
 

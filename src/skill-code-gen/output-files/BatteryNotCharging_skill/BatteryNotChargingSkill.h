@@ -21,7 +21,7 @@ class BatteryNotChargingSkill:
         public BT_request
 {
 public:
-    BatteryNotChargingSkill(std::string name);
+    BatteryNotChargingSkill(std::string name );
 
     bool start();
 

@@ -16,7 +16,7 @@
     <!--
      Services:
     -->
-    <data scope:component_type="BatteryComponent"   scope:service_type="BatteryReader"  scope:client_port_name="/BatteryNotChargingClient"  scope:service_function="charging_status"    id="batteryReader"/>
+    <data scope:component_type="/BatteryComponent"   scope:service_type="BatteryReader"  scope:client_port_name="/BatteryNotChargingClient"  scope:service_function="charging_status"    id="batteryReader"/>
 
     <!--
      Attributes:

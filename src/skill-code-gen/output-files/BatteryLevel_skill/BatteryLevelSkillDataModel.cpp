@@ -31,5 +31,7 @@ bool BatteryLevelSkillDataModel::setup(const QVariantMap &initialDataValues)
     }
 
 
+    @CHECK_CONNECTIONS@
+
     return true;
 }
