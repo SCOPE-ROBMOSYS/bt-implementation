@@ -34,7 +34,7 @@ bool GoToSkillDataModel::setup(const QVariantMap &initialDataValues)
     }
 
 
-    @CHECK_CONNECTIONS@
+    //@CHECK_CONNECTIONS@
 
     return true;
 }

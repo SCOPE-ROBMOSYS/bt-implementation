@@ -12,19 +12,20 @@
     xmlns:scope="http://www.scope.org/scope"
 >
 
-<datamodel>
-    <!--
-     Services:
-    -->
-    <data scope:component_type="/BatteryComponent"   scope:service_type="BatteryReader"  scope:client_port_name="/BatteryLevelClient"    scope:service_function="level"  id="batteryReader"/>
+    <datamodel>
+        <!--
+         Services:
+        -->
+        <data scope:component_type="/BatteryComponent"   scope:service_type="BatteryReader"  scope:client_port_name="/BatteryLevelClient"    scope:service_function="level"  id="batteryReader"/>
+    <!--    <data scope:component_type="/Blackboard"   scope:service_type="bb"  scope:client_port_name="/BlackboardClient"    scope:service_function="multiple"  id="bb_instance_name"/>-->
 
-    <!--
-     Attributes:
-    -->
-    <data scope:cpp_type="double"   id="level"  expr="0.0"  scope:init_source="initialize_inside_header" />
+        <!--
+         Attributes:
+        -->
+        <data scope:cpp_type="double"   id="level"  expr="0.0"  scope:init_source="initialize_inside_header" />
+        <data scope:cpp_type="int"   id="i"  expr="100"  scope:init_source="define_in_class_constructor" />
 
-</datamodel>
-
+    </datamodel>
 
     <state id="idle" scope:bt_status="idle">
         <transition event="TICK" target="get" />
@@ -33,15 +34,11 @@
     <state id="get" scope:bt_status="idle">
         <onentry>
             <script>
-                Connector connection(client_port.getName(), "/BatteryComponent", "tcp");
-                double level = batteryReader.level();
-                QTimer::singleShot(0, stateMachine(), [=](){
-                    stateMachine()->submitEvent((level > 20) ? "STATUS_SUCCESS" : "STATUS_FAILED");
-                });
+                level = batteryReader.level();
             </script>
         </onentry>
-        <transition event="STATUS_SUCCESS" target="success" />
-        <transition event="STATUS_FAILED" target="failure" />
+        <transition cond="level &gt; 20" target="success" />
+        <transition cond="level &lt;= 20" target="failure" />
     </state>
 
     <state id="success" scope:bt_status="success">
@@ -52,3 +49,4 @@
         <transition event="TICK" target="idle" />
     </state>
 </scxml>
+

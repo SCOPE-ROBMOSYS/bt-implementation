@@ -31,7 +31,7 @@ bool BatteryNotChargingSkillDataModel::setup(const QVariantMap &initialDataValue
     }
 
 
-    @CHECK_CONNECTIONS@
+    //@CHECK_CONNECTIONS@
 
     return true;
 }

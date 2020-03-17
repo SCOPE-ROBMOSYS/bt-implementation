@@ -16,9 +16,10 @@
 #include <QTimer>
 #include <QDebug>
 
-#include "BatteryReader.h"
 #include <yarp/os/Network.h>
 #include <yarp/os/RpcClient.h>
+
+#include @INCLUDE_THRIFT_SERVICE@ "BatteryReader.h" CHANGE
 
 struct Connector
 {
@@ -58,7 +59,7 @@ public:
     yarp::os::RpcClient client_port;
 
     GoTo goTo;
-    const std::string location; // added using DATAMODEL 
+    const std::string location;
     
 };
 

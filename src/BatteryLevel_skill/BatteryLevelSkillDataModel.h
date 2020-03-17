@@ -30,14 +30,14 @@
 //             qFatal("Error! Could not connect to server /fakeBattery");
 //         }
 //     }
-//
+
 //     ~Connector()
 //     {
 //         if (!yarp::os::Network::disconnect(m_from, m_to)) {
 //             qFatal("Error! Could not disconnect from server /fakeBattery");
 //         }
 //     }
-//
+
 //     std::string m_from;
 //     std::string m_to;
 //     std::string m_carrier;

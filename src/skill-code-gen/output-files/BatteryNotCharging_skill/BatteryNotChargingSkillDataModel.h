@@ -16,9 +16,10 @@
 #include <QTimer>
 #include <QDebug>
 
-#include "BatteryReader.h"
 #include <yarp/os/Network.h>
 #include <yarp/os/RpcClient.h>
+
+#include @INCLUDE_THRIFT_SERVICE@ "BatteryReader.h" CHANGE
 
 struct Connector
 {

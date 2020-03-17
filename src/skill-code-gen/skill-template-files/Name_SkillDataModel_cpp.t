@@ -23,7 +23,7 @@ bool @KEY_SKILL_NAME@SkillDataModel::setup(const QVariantMap &initialDataValues)
 
     @OPEN_PORTS_AND_ATTACH_CLIENTS@
 
-    @CHECK_CONNECTIONS@
+    //@CHECK_CONNECTIONS@
 
     return true;
 }

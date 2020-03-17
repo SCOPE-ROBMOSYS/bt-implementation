@@ -16,9 +16,10 @@
 #include <QTimer>
 #include <QDebug>
 
-#include "BatteryReader.h"
 #include <yarp/os/Network.h>
 #include <yarp/os/RpcClient.h>
+
+#include @INCLUDE_THRIFT_SERVICE@ "BatteryReader.h" CHANGE
 
 struct Connector
 {
@@ -50,7 +51,7 @@ class BatteryLevelSkillDataModel: public QScxmlCppDataModel
     Q_SCXML_DATAMODEL
 
 public:
-    BatteryLevelSkillDataModel() = default;
+    BatteryLevelSkillDataModel(double level);
 
     bool setup(const QVariantMap& initialDataValues) override;
 
@@ -58,7 +59,8 @@ public:
     yarp::os::RpcClient client_port;
 
     BatteryReader batteryReader;
-    double level { 0.0 }; // added using DATAMODEL 
+    double level { 0.0 };
+    int i;
     
 };
 
