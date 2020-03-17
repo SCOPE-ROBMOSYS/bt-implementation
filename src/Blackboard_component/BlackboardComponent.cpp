@@ -14,7 +14,9 @@
 
 #include <Blackboard.h>
 
-
+#include <fstream>
+#include <algorithm>
+#include <string>
 using namespace yarp::os;
 
 class BlackboardComponent : public Blackboard
@@ -22,56 +24,40 @@ class BlackboardComponent : public Blackboard
 public:
     BlackboardComponent() = default;
 
-    bool init(yarp::os::ResourceFinder &rf)
+    bool init(std::string filename)
     {
+        // The file has entry of the type key : value1, value2, value3,...
         yInfo() << "Initializing Blackboard";
 
-        Bottle p(rf.toString());
-        yDebug() << p.toString();
-
-        // Cycle for each group, i.e. names in square brackets -> [group]
-        for(int i=0; i< p.size(); i++)
+        std::ifstream cFile (filename);
+        if (cFile.is_open())
         {
-            Bottle group = *(p.get(i).asList());
-            yDebug() << "Group " << group.toString();
-
-            Property prop;
-            std::string mapKey = group.get(0).toString();
-            yDebug() <<"Key " << mapKey;
-
-            // Cycle for each line in the group
-            for(int j=0; j<group.size(); j++)
-            {
-                // Rows are supposed to be key/data (where data may contains multiple elements)
-                if(group.get(j).isList())
-                {                    
-                    Value row = group.get(j);
-                    std::string propKey = row.asList()->get(0).toString();
-                    Bottle data = row.asList()->tail();
-                    yDebug() << "data " << data.toString();
-
-                    Value a;
-                    if(data.size() == 1)
-                    {
-                        a = data.get(0);
-                       // yDebug() << "adding datum " << a.toString();
-                    }
-                    else
-                    {
-                        Bottle *abl = a.asList();
-                        for(int k=0; k<data.size(); k++)
-                        {
-                            abl->add(data.get(k));
-                            //yDebug() << "adding datum " << (data.get(k)).toString();
-                        }
-                    }
-                    prop.put(propKey, a);
-                    m_initialization_values[mapKey] = prop;
+            std::string line;
+            while(getline(cFile, line)){//parse each single line
+                line.erase(std::remove_if(line.begin(), line.end(), isspace),
+                                     line.end());
+                if(line[0] == '#' || line.empty()) // skypping comments and empylined
+                    continue;
+                auto delimiterPos = line.find(":"); // delimiter is :
+                auto key = line.substr(0, delimiterPos);
+                auto allvalues = line.substr(delimiterPos + 1);
+                std::string word = "";
+                std::stringstream s(allvalues);
+                Bottle b_values;
+                while (getline(s, word, ',')) {// values are Comma Separated Values
+                    b_values.addString(word);
                 }
+                m_initialization_values[key] = b_values;
             }
+            resetData();
+            return true;
+
         }
-        resetData();
-        return true;
+        else {
+            std::cerr << "Couldn't open config file for reading.\n";
+            return false;
+        }
+
     }
 
     bool open()
@@ -89,11 +75,11 @@ public:
         m_server_port.close();
     }
 
-    yarp::os::Property getData(const std::string& target) override
+    yarp::os::Bottle getData(const std::string& target) override
     {
         std::lock_guard<std::mutex> lock(m_mutex);
-        Property p = m_storage[target];
-        yInfo() << "getData with target " << p.toString();
+        Bottle b = m_storage[target];
+        yInfo() << "getData with target " << b.toString();
         return m_storage[target];
     }
 
@@ -128,7 +114,7 @@ public:
         m_storage = m_initialization_values;
     }
 
-    bool setData(const std::string& target, const yarp::os::Property& datum) override
+    bool setData(const std::string& target, const yarp::os::Bottle& datum) override
     {
         /* Using fromString(toString) is the only way known to merge two properties together.
          * In case the pair <key, value> exists only in the lhs, it'll be kept as is
@@ -142,14 +128,14 @@ public:
 
         yInfo() << "setData with target " << target << " and params " << datum.toString();
 
-        m_storage[target].fromString(datum.toString(), false);
+        m_storage[target] = datum;
         return true;
     }
 
 private:
     yarp::os::RpcServer m_server_port;
-    std::map<std::string, Property> m_storage;
-    std::map<std::string, Property> m_initialization_values;
+    std::map<std::string, Bottle> m_storage;
+    std::map<std::string, Bottle> m_initialization_values;
     std::mutex                      m_mutex;
 
 };
@@ -173,7 +159,8 @@ int main(int argc, char *argv[])
     }
     rf.configure(argc, argv);
 
-    if(!blackboardComponent.init(rf))
+
+    if(!blackboardComponent.init(default_cong_filename))
     {
         return 1;
     }

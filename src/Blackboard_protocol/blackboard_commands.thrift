@@ -7,8 +7,8 @@
 
 struct Data { }
 (
-  yarp.name = "yarp::os::Property"
-  yarp.includefile="yarp/os/Property.h"
+  yarp.name = "yarp::os::Bottle"
+  yarp.includefile="yarp/os/Bottle.h"
 )
 
 service Blackboard {
