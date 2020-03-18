@@ -52,7 +52,7 @@ class BatteryLevelSkillDataModel: public QScxmlCppDataModel
     Q_SCXML_DATAMODEL
 
 public:
-    BatteryLevelSkillDataModel(int i);
+    BatteryLevelSkillDataModel() = default;
 
     bool setup(const QVariantMap& initialDataValues) override;
 
@@ -61,7 +61,6 @@ public:
 
     BatteryReader batteryReader;
     double level { 0.0 };
-    int i;
     
 };
 

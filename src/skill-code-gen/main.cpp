@@ -34,17 +34,12 @@ struct TranslationUnit
     {}
 
     QString scxmlFileName;
-    QString outHFileName,
-            outCppFileName,
-            outCppDataModelFileName,
-            outHDataModelFileName; // 4 output files names - not used
     QString namespaceName;
     bool stateMethods;
     DocumentModel::ScxmlDocument *mainDocument;
     QList<DocumentModel::ScxmlDocument *> allDocuments;
     QHash<DocumentModel::ScxmlDocument *, QString> classnameForDocument;
     QList<TranslationUnit *> dependencies;
-
 };
 
 enum {
@@ -118,8 +113,7 @@ struct SkillDescription {
     vector<Attribute> UsedAttributes;
     vector<ClientPort> UsedClientPorts;
 
-    //@ for specialized constructor
-    bool add_constructor;
+    bool add_constructor; //for not default constructor
     vector<Attribute> ListAttributesInitWithConstructor;
 };
 
@@ -178,15 +172,10 @@ string GenerateListConstructorParametersAssign (vector<string> ListMemberAttribu
 
 int write(TranslationUnit *tu)
 {
-
     SkillDescription SD;
     SD.add_constructor = false; // default constructor
 
     auto docs = tu->allDocuments;
-//     tables.resize(docs.size());
-//     metaDataInfos.resize(tables.size());
-//     dataModelInfos.resize(tables.size());
-//     factories.resize(tables.size());    auto classnameForDocument = tu->classnameForDocument;
 
     for (int i = 0, ei = docs.size(); i != ei; ++i) {
         auto doc = docs.at(i);
@@ -252,12 +241,6 @@ int write(TranslationUnit *tu)
     qDebug() << " Print: " << SD.ListStates[0].id << " " << SD.ListStates[1].id << " " << SD.ListStates[2].id << " " << SD.ListStates[3].id << " .\n\n";
 
     // ##########################################################################################################################################################################################
-    // ##########################################################################################################################################################################################
-    // ##########################################################################################################################################################################################
-    // ##########################################################################################################################################################################################
-    // ##########################################################################################################################################################################################
-    // ##########################################################################################################################################################################################
-    // ##########################################################################################################################################################################################
 
     // locate TEMPLATE-folder with template-files
     QString path_template ="/home/scope/bt-implementation/src/skill-code-gen/skill-template-files/";
@@ -269,15 +252,10 @@ int write(TranslationUnit *tu)
     QFile file_template_NAMESkill_DataModel_cpp (path_template + "Name_SkillDataModel_cpp.t");
     QFile file_template_CMakeLists              (path_template + "CMakeLists_txt.t");
     QFile file_template_main                    (path_template + "main_cpp.t");
+    QFile file_template_NAMESkill_Manifest_xml  (path_template + "NAMESkillManifest_yml.t");
 
     //detect skill name
     string ss = tu->scxmlFileName.toUtf8().constData();
-
-    cout << "\n\n\ #########################################################"
-            "#########################################################"
-            "#########################################################"
-            "######################################################### \n\n START DEBUG SKILL --> " << ss << "\n\n\ " ;
-
     /* I need to
     1) search the word "skill" inside the string  -->  std::string::find()
         test_str.find("Skill") contains the pointer to the sub-string initial position
@@ -502,11 +480,11 @@ int write(TranslationUnit *tu)
             adaptation = "/";
             port_name_specific = " + " + SD.ListAttributesInitWithConstructor[i].name_instance.toStdString();
         }
-        string single_port = "if (!client_port.open(\"/" + SD.UsedServices[i].name_instance.toStdString() + "Client" + adaptation + "\"" + port_name_specific + ")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n" ;
+        string single_port = "    if (!client_port.open(\"/" + SD.UsedServices[i].name_instance.toStdString() + "Client" + adaptation + "\"" + port_name_specific + ")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
         all_ports = all_ports + single_port;
         string single_client = "    if(!" + SD.UsedServices[i].name_instance.toStdString() + ".yarp().attachAsClient(client_port)) {\n       qWarning(\"Error! Could not attach as client\");\n       return false;\n    }\n";
         all_clients = all_clients + single_client;
-        merge = all_ports + all_clients;
+        merge = "    // open ports\n\n" + all_ports + "    // attach as clients\n\n" + all_clients;
     }
     QString value_OPEN_PORTS_AND_ATTACH_CLIENTS = QString::fromStdString(merge);
     dataText.replace(KEY_OPEN_PORTS_AND_ATTACH_CLIENTS, value_OPEN_PORTS_AND_ATTACH_CLIENTS);
@@ -515,8 +493,9 @@ int write(TranslationUnit *tu)
     QRegularExpression KEY_OPEN_CONNECTIONS_TO_COMPONENTS("@OPEN_CONNECTIONS_TO_COMPONENTS@");
     string all_components ="";
     for (int i=0; i<SD.UsedServices.size(); i++){
-        all_components = all_components + "if (!yarp::os::Network::connect(client_port.getName(), \"/" + SD.UsedServices[i].component_type.toStdString()  + "\", \"" + SD.UsedServices[i].connect_type.toStdString() + "\")) {\n        qWarning(\"Error! Could not connect to server /fakeBattery\");\n        return false;\n    }\n" ;
+        all_components = all_components + "    if (!yarp::os::Network::connect(client_port.getName(), \"/" + SD.UsedServices[i].component_type.toStdString()  + "\", \"" + SD.UsedServices[i].connect_type.toStdString() + "\")) {\n        qWarning(\"Error! Could not connect to server /fakeBattery\");\n        return false;\n    }\n" ;
     }
+    all_components = "    // open connections to components\n\n" + all_components;
     QString value_OPEN_CONNECTIONS_TO_COMPONENTS = QString::fromStdString(all_components);
     dataText.replace(KEY_OPEN_CONNECTIONS_TO_COMPONENTS, value_OPEN_CONNECTIONS_TO_COMPONENTS);
 
@@ -554,24 +533,7 @@ int write(TranslationUnit *tu)
     }
     output_file_3_DataModel_cpp.close();
 
-    // ********************************** open scxml (not needed in last version) **********************************++
-
-//    QString path_SCXML = "/home/scope/bt-implementation/build/bin/";
-
-//        QFile XML( path_SCXML + tu->scxmlFileName);
-//        // open and read
-//        XML.open(QIODevice::Text | QIODevice::ReadOnly);
-//        QString dataTextXML = XML.readAll();
-
-//        SD.UsedComponents = CheckUsedComponents ( dataTextXML );
-
-    // ##########################################################################################################################################################################################
-    // ##########################################################################################################################################################################################
-    // ##########################################################################################################################################################################################
-    // ##########################################################################################################################################################################################
-    // ##########################################################################################################################################################################################
-    // ##########################################################################################################################################################################################
-    // ##########################################################################################################################################################################################
+    // end skill-auto-gen
 
     return NoError;
 }
@@ -604,23 +566,6 @@ int main(int argc, char* argv[])
     QCommandLineOption optionNamespace(QLatin1String("namespace"),
                        QCoreApplication::translate("main", "Put generated code into <namespace>."),
                        QCoreApplication::translate("main", "namespace"));
-    QCommandLineOption optionOutputBaseName(QStringList() << QLatin1String("o") << QLatin1String("output"),
-                       QCoreApplication::translate("main", "Generate <name>.h and <name>.cpp files."),
-                       QCoreApplication::translate("main", "name"));
-
-    QCommandLineOption optionOutputHeaderName(QLatin1String("header"),
-                       QCoreApplication::translate("main", "Generate <name> for the header file."),
-                       QCoreApplication::translate("main", "name"));
-    QCommandLineOption optionOutputSourceName(QLatin1String("impl"),
-                       QCoreApplication::translate("main", "Generate <name> for the source file."),
-                       QCoreApplication::translate("main", "name"));
-    QCommandLineOption optionOutputHeaderDMName(QLatin1String("headerDM"),
-                       QCoreApplication::translate("main", "Generate <name> for the header file."),
-                       QCoreApplication::translate("main", "name"));
-    QCommandLineOption optionOutputSourceDMName(QLatin1String("implDM"),
-                       QCoreApplication::translate("main", "Generate <name> for the source file."),
-                       QCoreApplication::translate("main", "name"));
-
     QCommandLineOption optionClassName(QLatin1String("classname"),
                        QCoreApplication::translate("main", "Generate <name> for state machine class name."),
                        QCoreApplication::translate("main", "name"));
@@ -630,13 +575,6 @@ int main(int argc, char* argv[])
     cmdParser.addPositionalArgument(QLatin1String("input"),
                        QCoreApplication::translate("main", "Input SCXML file."));
     cmdParser.addOption(optionNamespace);
-    cmdParser.addOption(optionOutputBaseName);
-
-    cmdParser.addOption(optionOutputHeaderName);
-    cmdParser.addOption(optionOutputSourceName);
-    cmdParser.addOption(optionOutputHeaderDMName);
-    cmdParser.addOption(optionOutputSourceDMName);
-
     cmdParser.addOption(optionClassName);
     cmdParser.addOption(optionStateMethods);
 
@@ -662,26 +600,7 @@ int main(int argc, char* argv[])
     if (cmdParser.isSet(optionNamespace))
         options.namespaceName = cmdParser.value(optionNamespace);
 
-    QString outFileName = cmdParser.value(optionOutputBaseName);
-
-    QString outHFileName = cmdParser.value(optionOutputHeaderName);
-    QString outCppFileName = cmdParser.value(optionOutputSourceName);
-    QString outHDataModelFileName = cmdParser.value(optionOutputHeaderDMName);
-    QString outCppDataModelFileName = cmdParser.value(optionOutputSourceDMName);
-
     QString mainClassName = cmdParser.value(optionClassName);
-
-    if (outFileName.isEmpty())
-        outFileName = QFileInfo(scxmlFileName).baseName();
-
-    if (outHFileName.isEmpty())
-        outHFileName = outFileName + QLatin1String(".h");
-    if (outCppFileName.isEmpty())
-        outCppFileName = outFileName + QLatin1String(".cpp");
-    if (outHDataModelFileName.isEmpty())
-        outHDataModelFileName = outFileName + QLatin1String("DataModel.h");
-    if (outCppDataModelFileName.isEmpty())
-        outCppDataModelFileName = outFileName + QLatin1String("DataModel.cpp");
 
     qDebug() << __LINE__;
 
@@ -734,11 +653,6 @@ int main(int argc, char* argv[])
     tu.allDocuments = docs;
     tu.scxmlFileName = QFileInfo(file).fileName();
     tu.mainDocument = mainDoc;
-
-    tu.outHFileName = outHFileName;
-    tu.outCppFileName = outCppFileName;
-    tu.outHDataModelFileName = outHDataModelFileName;
-    tu.outCppDataModelFileName = outCppDataModelFileName;
 
     tu.classnameForDocument.insert(mainDoc, mainClassName);
 

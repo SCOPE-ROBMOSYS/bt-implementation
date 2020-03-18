@@ -16,8 +16,8 @@
     <!--
      Services:
     -->
-<!--  initial:  <data scope:component_type="/GoToComponent"   scope:service_type="GoTo"   scope:client_port_name="/goToClient"   scope:service_function="multiple"   id="goTo"/>-->
     <data scope:component_type="GoToComponent" scope:connect_type="tcp"   scope:service_type="GoTo"  scope:service_function="multiple"   id="goTo"/>
+    <!--  removed  scope:client_port_name="/goToClient" -->
 
     <!--
      Attributes:

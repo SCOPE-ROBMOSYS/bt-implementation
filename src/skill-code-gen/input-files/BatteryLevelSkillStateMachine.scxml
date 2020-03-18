@@ -12,20 +12,20 @@
     xmlns:scope="http://www.scope.org/scope"
 >
 
-    <datamodel>
-        <!--
-         Services:
-        -->
-        <data scope:component_type="BatteryComponent" scope:connect_type="tcp"   scope:service_type="BatteryReader"  scope:service_function="level"  id="batteryReader"/>
-    <!--    <data scope:component_type="Blackboard"   scope:service_type="bb"    scope:service_function="multiple"  id="bb_instance_name"/>-->
+<datamodel>
+    <!--
+     Services:
+    -->
+    <data scope:component_type="BatteryComponent" scope:connect_type="tcp"   scope:service_type="BatteryReader"  scope:service_function="level"  id="batteryReader"/>
+<!--    <data scope:component_type="Blackboard"   scope:service_type="bb"    scope:service_function="multiple"  id="bb_instance_name"/>-->
 
-        <!--
-         Attributes:
-        -->
-        <data scope:cpp_type="double"   id="level"  expr="0.0"  scope:init_source="initialize_inside_header" />
-        <data scope:cpp_type="int"   id="i"  expr="100"  scope:init_source="define_in_class_constructor" />
+    <!--
+     Attributes:
+    -->
+    <data scope:cpp_type="double"   id="level"  expr="0.0"  scope:init_source="initialize_inside_header" />
+<!--    <data scope:cpp_type="int"   id="i"  expr="100"  scope:init_source="define_in_class_constructor" />-->
 
-    </datamodel>
+</datamodel>
 
     <state id="idle" scope:bt_status="idle">
         <transition event="TICK" target="get" />

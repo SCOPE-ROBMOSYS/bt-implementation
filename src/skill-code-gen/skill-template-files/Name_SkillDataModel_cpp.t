@@ -21,9 +21,9 @@ bool @KEY_SKILL_NAME@SkillDataModel::setup(const QVariantMap &initialDataValues)
         return false;
     }
 
-    @OPEN_PORTS_AND_ATTACH_CLIENTS@
+@OPEN_PORTS_AND_ATTACH_CLIENTS@
 
-    @OPEN_CONNECTIONS_TO_COMPONENTS@
+@OPEN_CONNECTIONS_TO_COMPONENTS@
 
     return true;
 }

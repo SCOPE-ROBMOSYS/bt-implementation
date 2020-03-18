@@ -21,7 +21,7 @@ class BatteryLevelSkill:
         public BT_request
 {
 public:
-    BatteryLevelSkill(std::string name , int i);
+    BatteryLevelSkill(std::string name );
 
     bool start();
 
