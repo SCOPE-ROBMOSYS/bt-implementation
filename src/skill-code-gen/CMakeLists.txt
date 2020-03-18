@@ -12,6 +12,10 @@ target_sources(skill-code-gen
     qscxmlcompiler.cpp
     qscxmlcompiler.h
     qscxmlcompiler_p.h
+    SkillGenerator.cpp
+    SkillGenerator.h
+    SkillConfigReader.cpp
+    SkillConfigReader.h
 )
 target_link_libraries(skill-code-gen
   PRIVATE
