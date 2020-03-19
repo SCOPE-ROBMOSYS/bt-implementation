@@ -10,7 +10,10 @@
 #include <QTimer>
 #include <QScxmlStateMachine>
 
-
+BatteryLevelSkillDataModel::BatteryLevelSkillDataModel(int i) :
+                        i(std::move(i))
+{
+}
 
 bool BatteryLevelSkillDataModel::setup(const QVariantMap &initialDataValues)
 {
@@ -28,9 +31,18 @@ bool BatteryLevelSkillDataModel::setup(const QVariantMap &initialDataValues)
        return false;
     }
 
+    if (!client_port.open("/bb_instance_nameClient/" + not_default)) {
+       qWarning("Error! Cannot open YARP port");
+       return false;
+    }
+
     // attach as clients
 
     if(!batteryReader.yarp().attachAsClient(client_port)) {
+       qWarning("Error! Could not attach as client");
+       return false;
+    }
+    if(!bb_instance_name.yarp().attachAsClient(client_port)) {
        qWarning("Error! Could not attach as client");
        return false;
     }
@@ -39,6 +51,10 @@ bool BatteryLevelSkillDataModel::setup(const QVariantMap &initialDataValues)
     // open connections to components
 
     if (!yarp::os::Network::connect(client_port.getName(), "/BatteryComponent", "tcp")) {
+        qWarning("Error! Could not connect to server /fakeBattery");
+        return false;
+    }
+    if (!yarp::os::Network::connect(client_port.getName(), "/Blackboard", "tcp")) {
         qWarning("Error! Could not connect to server /fakeBattery");
         return false;
     }

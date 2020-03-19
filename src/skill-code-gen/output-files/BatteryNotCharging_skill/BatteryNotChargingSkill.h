@@ -5,8 +5,6 @@
  *                                                                            *
  ******************************************************************************/
 
-//#ifndef KEY_SKILL_NAME_UPPERCASE__SKILL_KEY_SKILL_NAME_UPPERCASE_SKILL_H
-//#define KEY_SKILL_NAME_UPPERCASE__SKILL_KEY_SKILL_NAME_UPPERCASE_SKILL_H
 # pragma once
 
 #include <BT_request.h>
@@ -36,5 +34,3 @@ private:
     BatteryNotChargingSkillDataModel dataModel;
     BatteryNotChargingSkillStateMachine stateMachine;
 };
-
-//#endif // KEY_SKILL_NAME_UPPERCASE__SKILL_KEY_SKILL_NAME_UPPERCASE_SKILL_H

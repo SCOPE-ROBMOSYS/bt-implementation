@@ -112,7 +112,9 @@ struct DataElement: public Node
     QString src;
     QString expr;
     QString content;
-    QString cpp_type;  // add !HERE
+
+    // scope_yarp data
+    QString cpp_type;
     QString service_type;
     QString component_type;
     QString client_port_name;

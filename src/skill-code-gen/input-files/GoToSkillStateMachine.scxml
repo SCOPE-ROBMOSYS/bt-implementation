@@ -10,19 +10,28 @@
     initial="wrapper"
     datamodel="cplusplus:GoToSkillDataModel:GoToSkillDataModel.h"
     xmlns:scope="http://www.scope.org/scope"
+    xmlns:scope_yarp="http://www.scope.org/scope_yarp"
 >
 
 <datamodel>
-    <!--
-     Services:
-    -->
-    <data scope:component_type="GoToComponent" scope:connect_type="tcp"   scope:service_type="GoTo"  scope:service_function="multiple"   id="goTo"/>
-    <!--  removed  scope:client_port_name="/goToClient" -->
 
-    <!--
-     Attributes:
-    -->
-    <data scope:cpp_type="const std::string"    id="location" expr="null"  scope:init_source="define_in_class_constructor" />
+<!--  Services:  -->
+
+    <data id="goTo"
+          scope_yarp:service_type="GoTo"
+          scope_yarp:connect_type="tcp"
+          scope_yarp:component_type="GoToComponent"
+          scope_yarp:service_function="multiple"
+          scope_yarp:port_name_attribute="location"
+          />
+
+<!--  Attributes:  -->
+
+    <data id="location"
+          scope:cpp_type="const std::string"
+          expr="none"
+          scope:init_source="define_in_class_constructor"
+          />
 
 </datamodel>
 

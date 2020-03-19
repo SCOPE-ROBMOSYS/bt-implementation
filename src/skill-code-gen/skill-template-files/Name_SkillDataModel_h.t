@@ -5,8 +5,6 @@
  *                                                                            *
  ******************************************************************************/
 
-//#ifndef KEY_SKILL_NAME_UPPERCASE__SKILL_KEY_SKILL_NAME_UPPERCASE_DATAMODEL_H
-//#define KEY_SKILL_NAME_UPPERCASE__SKILL_KEY_SKILL_NAME_UPPERCASE_DATAMODEL_H
 #pragma once
 
 #include <QScxmlCppDataModel>
@@ -62,5 +60,3 @@ public:
 };
 
 Q_DECLARE_METATYPE(::@KEY_SKILL_NAME@SkillDataModel*)
-
-//#endif // KEY_SKILL_NAME_UPPERCASE__SKILL_@KEY_SKILL_NAME@UPPERCASE_DATAMODEL_H

@@ -5,8 +5,6 @@
  *                                                                            *
  ******************************************************************************/
 
-//#ifndef KEY_SKILL_NAME_UPPERCASE__SKILL_KEY_SKILL_NAME_UPPERCASE_DATAMODEL_H
-//#define KEY_SKILL_NAME_UPPERCASE__SKILL_KEY_SKILL_NAME_UPPERCASE_DATAMODEL_H
 #pragma once
 
 #include <QScxmlCppDataModel>
@@ -20,6 +18,7 @@
 #include <yarp/os/RpcClient.h>
 
 #include "BatteryReader.h" 
+ #include "Blackboard.h" 
  
 
 //struct Connector
@@ -52,7 +51,7 @@ class BatteryLevelSkillDataModel: public QScxmlCppDataModel
     Q_SCXML_DATAMODEL
 
 public:
-    BatteryLevelSkillDataModel() = default;
+    BatteryLevelSkillDataModel(int i);
 
     bool setup(const QVariantMap& initialDataValues) override;
 
@@ -60,10 +59,11 @@ public:
     yarp::os::RpcClient client_port;
 
     BatteryReader batteryReader;
+    Blackboard bb_instance_name;
     double level { 0.0 };
+    double level { 0.0 };
+    int i;
     
 };
 
 Q_DECLARE_METATYPE(::BatteryLevelSkillDataModel*)
-
-//#endif // KEY_SKILL_NAME_UPPERCASE__SKILL_BatteryLevelUPPERCASE_DATAMODEL_H

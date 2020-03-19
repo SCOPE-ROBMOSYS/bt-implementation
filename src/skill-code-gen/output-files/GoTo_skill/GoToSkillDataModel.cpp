@@ -26,7 +26,7 @@ bool GoToSkillDataModel::setup(const QVariantMap &initialDataValues)
 
     // open ports
 
-    if (!client_port.open("/goToClient/" + location)) {
+    if (!client_port.open("/goToClient)) {
        qWarning("Error! Cannot open YARP port");
        return false;
     }

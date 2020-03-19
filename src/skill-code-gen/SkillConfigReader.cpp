@@ -53,7 +53,7 @@ bool SkillConfigReader::ReadConfig(){
 
             }else{
                 SC_.specify_port_name_attribute=false;
-                cout << "\n\nCONFIG READER DEBUG:\n SC_.port_name -> " << "NOT FOUND" << "\n\n";
+//                cout << "\n\nCONFIG READER DEBUG:\n SC_.port_name -> " << "NOT FOUND" << "\n\n";
             }
 
         }
