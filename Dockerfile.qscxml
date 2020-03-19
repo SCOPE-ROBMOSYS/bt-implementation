@@ -195,7 +195,8 @@ RUN git clone --branch master https://github.com/robotology/YARP.git /usr/local/
         -DCREATE_LUA=ON \
         -DCREATE_PERL=ON \
         -DCREATE_PYTHON=ON \
-        -DYARP_USE_PYTHON_VERSION=3 && \
+        -DYARP_USE_PYTHON_VERSION=3 \
+        -DCMAKE_CXX_FLAGS=-D_XOPEN_STREAMS=-1 && \
     cmake --build /usr/local/src/YARP/build && \
     cmake --build /usr/local/src/YARP/build --target install && \
     chown -R $username /usr/local/src/YARP && \
