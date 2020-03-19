@@ -24,6 +24,10 @@
 #include <behaviortree_cpp_v3/actions/always_failure_node.h>
 #include <behaviortree_cpp_v3/actions/always_success_node.h>
 
+#include <behaviortree_cpp_v3/loggers/bt_cout_logger.h>
+#include <behaviortree_cpp_v3/loggers/bt_minitrace_logger.h>
+#include <behaviortree_cpp_v3/loggers/bt_file_logger.h>
+
 using namespace std;
 using namespace BT;
 
@@ -94,9 +98,17 @@ int main()
 
     BT::Tree tree = bt_factory.createTreeFromFile("./test_battery_BT.xml");
 
+
+    // Create some logger
+    StdCoutLogger logger_cout(tree);
+    MinitraceLogger logger_minitrace(tree, "/home/scope/logs/bt_trace.json");
+    FileLogger logger_file(tree, "/home/scope/logs/bt_trace.fbl");
+
 #ifdef ZMQ_FOUND
     PublisherZMQ publisher_zmq(tree);
 #endif
+    printTreeRecursively(tree.root_node);
+
 
     //bool is_ok = true;
     vector<TreeNode::Ptr> all_nodes_prt = tree.nodes;
