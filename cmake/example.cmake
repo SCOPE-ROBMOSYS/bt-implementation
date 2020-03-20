@@ -4,14 +4,14 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-# SKILLS_to_dir
+# yarp_idl_to_dir
 # ---------------
 #
 # Take an IDL file and generate code for it in the specified directory,
 # optionally storing the list of source/header files in the supplied
 # variables. Call as:
 #
-#   SKILLS_to_dir(INPUT_FILES <file> [file]
+#   yarp_idl_to_dir(INPUT_FILES <file> [file]
 #                   OUTPUT_DIR <dir>
 #                   [SOURCES_VAR <var>]
 #                   [HEADERS_VAR <var>]
@@ -29,26 +29,23 @@
 #                   [THRIFT_DEBUG_GENERATOR]
 #                   [VERBOSE])
 #
-# add_SCXML
+# yarp_add_idl
 # ------------
 #
-# Take one or more SCXML files and generate code at build time.
-# Files will be regenerated whenever the SCXML file changes.
+# Take one or more IDL files and generate code at build time.
+# Files will be regenerated whenever the IDL file changes.
 #
-#   add_SCXML(<var> <file> [file [...]])
+#   yarp_add_idl(<var> <file> [file [...]])
 #
 # The <var> variable, will contain the generated files, and can be
 # added to the an add_executable or add_library call. For example:
 #
-#   set(SKILL_FILES main.cpp
-#                   GoToSkill.cpp
-#                   GoToSkill.h
-#                   GoToSkillDataModel.cpp
-#                   GoToSkillDataModel.h
-#                   CMakeLists.txt)
-#   add_SCXML(SKILL_GEN_FILES ${SKILL_FILES})
-#   add_executable(GoToSkill)
-#   target_sources(GoToSkill PRIVATE ${SKILL_GEN_FILES})
+#   set(THRIFT_FILES file1.thrift
+#                    file2.msg
+#                    file3.srv)
+#   yarp_add_idl(THRIFT_GEN_FILES ${THRIFT_FILES})
+#   add_executable(foo)
+#   target_sources(foo PRIVATE main.cpp ${THRIFT_GEN_FILES})
 #
 # The ``YARP_ADD_IDL_INCLUDE_DIR`` variable contains the include directory for
 # using the header files
@@ -188,7 +185,7 @@ function(_YARP_IDL_TO_DIR_GENERATE _family _file _name _index_file_name _output_
 endfunction()
 
 
-function(SKILLS_TO_DIR)
+function(YARP_IDL_TO_DIR)
 
   # Flag to control whether IDL generation is allowed.
   option(ALLOW_IDL_GENERATION "Allow YARP to (re)build IDL files as needed" OFF)

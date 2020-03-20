@@ -20,9 +20,9 @@ add_subdirectory(Blackboard_protocol)
 add_subdirectory(skill-code-gen)
 
 #Skills
-#add_subdirectory(GoTo_skill)
-#add_subdirectory(BatteryLevel_skill)
-#add_subdirectory(BatteryNotCharging_skill)
+add_subdirectory(GoTo_skill)
+add_subdirectory(BatteryLevel_skill)
+add_subdirectory(BatteryNotCharging_skill)
 
 set(BAR_FOUND FALSE)
 if(BAR_FOUND)
