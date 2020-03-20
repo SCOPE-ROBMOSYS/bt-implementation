@@ -22,7 +22,6 @@ int main(int argc, char **argv)
     parser.addVersionOption();
 
     parser.addOption({{"n", "skill-name"}, "The <name> of the skill (implies the port opened).", "name", "GoTo"});
-    parser.addOption({{"l", "location"}, "The <location> to reach.", "location", "GoTo"});
 
     // Process the actual command line arguments given by the user
     parser.process(app);
@@ -31,9 +30,8 @@ int main(int argc, char **argv)
     // source is args.at(0), destination is args.at(1)
 
     QString skillName = parser.value("skill-name");
-    QString location = parser.value("location");
 
-    GoToSkill bt(skillName.toStdString(), location.toStdString());
+    GoToSkill bt(skillName.toStdString());
     if (!bt.start()) {
         return 1;
     }

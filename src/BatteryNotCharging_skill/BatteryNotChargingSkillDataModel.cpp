@@ -7,12 +7,10 @@
 
 #include "BatteryNotChargingSkillDataModel.h"
 #include <QDebug>
+#include <QTimer>
 #include <QScxmlStateMachine>
 
-BatteryNotChargingSkillDataModel::BatteryNotChargingSkillDataModel()
-{
-    qDebug() << "BatteryNotChargingSkillDataModel::BatteryNotChargingSkillDataModel() called";
-}
+
 
 bool BatteryNotChargingSkillDataModel::setup(const QVariantMap &initialDataValues)
 {
@@ -23,15 +21,28 @@ bool BatteryNotChargingSkillDataModel::setup(const QVariantMap &initialDataValue
         return false;
     }
 
-    if (!client_port.open("/BatteryNotChargingClient")) {
-        qWarning("Error! Cannot open YARP port");
+    // open ports
+
+    if (!client_port.open("/batteryReaderClient)) {
+       qWarning("Error! Cannot open YARP port");
+       return false;
+    }
+
+    // attach as clients
+
+    if(!batteryReader.yarp().attachAsClient(client_port)) {
+       qWarning("Error! Could not attach as client");
+       return false;
+    }
+
+
+    // open connections to components
+
+    if (!yarp::os::Network::connect(client_port.getName(), "/BatteryComponent", "tcp")) {
+        qWarning("Error! Could not connect to server /fakeBattery");
         return false;
     }
 
-    if(!batteryReader.yarp().attachAsClient(client_port)) {
-        qWarning("Error! Could not attach as client");
-        return false;
-    }
 
     return true;
 }

@@ -177,7 +177,7 @@ struct Send: public Instruction
     void accept(NodeVisitor *visitor) override;
 };
 
-struct ScxmlDocument;
+struct ScxmlDocument;   // DocumentModel::ScxmlDocument
 struct Invoke: public Instruction
 {
     QString type;
@@ -418,7 +418,7 @@ struct Scxml: public StateContainer, public Node
 struct ScxmlDocument
 {
     const QString fileName;
-    Scxml *root;
+    Scxml *root; // contains basic information
     QVector<AbstractState *> allStates; // to detect states
     QVector<Transition *> allTransitions;
     QVector<Node *> allNodes;

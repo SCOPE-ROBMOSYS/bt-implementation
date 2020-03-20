@@ -5,8 +5,7 @@
  *                                                                            *
  ******************************************************************************/
 
-#ifndef BATTERYLEVEL_SKILL_BATTERYLEVELSKILL_H
-#define BATTERYLEVEL_SKILL_BATTERYLEVELSKILL_H
+# pragma once
 
 #include <BT_request.h>
 
@@ -20,7 +19,7 @@ class BatteryLevelSkill:
         public BT_request
 {
 public:
-    BatteryLevelSkill(std::string name);
+    BatteryLevelSkill(std::string name , int i);
 
     bool start();
 
@@ -35,5 +34,3 @@ private:
     BatteryLevelSkillDataModel dataModel;
     BatteryLevelSkillStateMachine stateMachine;
 };
-
-#endif // BATTERYLEVEL_SKILL_BATTERYLEVELSKILL_H

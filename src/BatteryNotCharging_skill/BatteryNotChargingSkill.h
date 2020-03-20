@@ -5,8 +5,7 @@
  *                                                                            *
  ******************************************************************************/
 
-#ifndef BATTERYNOTCHARGING_SKILL_BATTERYNOTCHARGINGSKILL_H
-#define BATTERYNOTCHARGING_SKILL_BATTERYNOTCHARGINGSKILL_H
+# pragma once
 
 #include <BT_request.h>
 
@@ -20,7 +19,7 @@ class BatteryNotChargingSkill:
         public BT_request
 {
 public:
-    BatteryNotChargingSkill(std::string name);
+    BatteryNotChargingSkill(std::string name );
 
     bool start();
 
@@ -35,5 +34,3 @@ private:
     BatteryNotChargingSkillDataModel dataModel;
     BatteryNotChargingSkillStateMachine stateMachine;
 };
-
-#endif // BATTERYNOTCHARGING_SKILL_BATTERYNOTCHARGINGSKILL_H

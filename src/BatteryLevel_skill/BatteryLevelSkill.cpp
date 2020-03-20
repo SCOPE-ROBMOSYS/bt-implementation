@@ -7,10 +7,13 @@
 
 #include "BatteryLevelSkill.h"
 
+#include <QTimer>
 #include <QDebug>
+#include <QTime>
 
-BatteryLevelSkill::BatteryLevelSkill(std::string name) :
-        name(std::move(name))
+BatteryLevelSkill::BatteryLevelSkill(std::string name , int i) :
+        name(std::move(name)),
+        dataModel(std::move(i))
 {
     stateMachine.setDataModel(&dataModel);
 }
@@ -39,26 +42,26 @@ bool BatteryLevelSkill::start()
 
 ReturnStatus BatteryLevelSkill::request_status()
 {
-    while (true) {
-        auto states = stateMachine.activeStateNames();
+    auto states = stateMachine.activeStateNames();
 
-        for (const auto& state : states) {
-            if (state == "idle") {
-                return BT_IDLE;
-            }
-            if (state == "get") {
-                return BT_IDLE;
-            }
-            if (state == "success") {
-                return BT_SUCCESS;
-            }
-            if (state == "failure") {
-                return BT_FAILURE;
-            }
-        }
+    for (const auto& state : states) {
+       if (state == "idle") {
+           return BT_IDLE;
+       }
+       if (state == "get") {
+           return BT_IDLE;
+       }
+       if (state == "success") {
+           return BT_SUCCESS;
+       }
+       if (state == "failure") {
+           return BT_FAILURE;
+       }
+
     }
+    // error
+    return BT_FAILURE;
 }
-
 
 ReturnStatus BatteryLevelSkill::request_tick()
 {

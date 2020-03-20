@@ -238,7 +238,7 @@ int SkillGenerator::write()
     QString value_skill_name(skill_name);
 
     // create new folder
-    QString path_new_skill = "/home/scope/bt-implementation/src/skill-code-gen/output-files/" + skill_name + "_skill/";
+    QString path_new_skill = "/home/scope/bt-implementation/src/" + skill_name + "_skill/"; // "/home/scope/bt-implementation/src/skill-code-gen/output-files/" + skill_name + "_skill/";
     QDir dir_new_skill;
     if(!dir_new_skill.exists(path_new_skill))
     {

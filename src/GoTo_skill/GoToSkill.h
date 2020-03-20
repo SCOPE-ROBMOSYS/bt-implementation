@@ -5,8 +5,7 @@
  *                                                                            *
  ******************************************************************************/
 
-#ifndef GOTO_SKILL_GOTOSKILL_H
-#define GOTO_SKILL_GOTOSKILL_H
+# pragma once
 
 #include <BT_request.h>
 
@@ -20,7 +19,7 @@ class GoToSkill:
         public BT_request
 {
 public:
-    GoToSkill(std::string name, std::string location);
+    GoToSkill(std::string name , const std::string location);
 
     bool start();
 
@@ -29,12 +28,9 @@ public:
     void request_halt() override;
 
 private:
+    std::string name;
     yarp::os::Network yarpnet;
     yarp::os::RpcServer port;
     GoToSkillDataModel dataModel;
     GoToSkillStateMachine stateMachine;
-
-    std::string name;
 };
-
-#endif // GOTO_SKILL_GOTOSKILL_H

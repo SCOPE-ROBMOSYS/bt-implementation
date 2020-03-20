@@ -51,5 +51,6 @@ include_directories(skill-code-gen
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/skill-template-files/
     ${CMAKE_CURRENT_SOURCE_DIR}/input-files/
-    ${CMAKE_CURRENT_SOURCE_DIR}/output-files/
 )
+
+include(SkillAutogen)

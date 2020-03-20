@@ -7,9 +7,11 @@
 
 #include "BatteryNotChargingSkill.h"
 
+#include <QTimer>
 #include <QDebug>
+#include <QTime>
 
-BatteryNotChargingSkill::BatteryNotChargingSkill(std::string name) :
+BatteryNotChargingSkill::BatteryNotChargingSkill(std::string name ) :
         name(std::move(name))
 {
     stateMachine.setDataModel(&dataModel);
@@ -39,24 +41,25 @@ bool BatteryNotChargingSkill::start()
 
 ReturnStatus BatteryNotChargingSkill::request_status()
 {
-    while (true) {
-        auto states = stateMachine.activeStateNames();
+    auto states = stateMachine.activeStateNames();
 
-        for (const auto& state : states) {
-            if (state == "idle") {
-                return BT_IDLE;
-            }
-            if (state == "get") {
-                return BT_IDLE;
-            }
-            if (state == "success") {
-                return BT_SUCCESS;
-            }
-            if (state == "failure") {
-                return BT_FAILURE;
-            }
-        }
+    for (const auto& state : states) {
+       if (state == "idle") {
+           return BT_UNDEFINED;
+       }
+       if (state == "get") {
+           return BT_UNDEFINED;
+       }
+       if (state == "success") {
+           return BT_UNDEFINED;
+       }
+       if (state == "failure") {
+           return BT_UNDEFINED;
+       }
+
     }
+    // error
+    return BT_FAILURE;
 }
 
 ReturnStatus BatteryNotChargingSkill::request_tick()
