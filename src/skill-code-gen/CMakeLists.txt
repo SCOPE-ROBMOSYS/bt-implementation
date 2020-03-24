@@ -45,12 +45,5 @@ target_compile_options(skill-code-gen
   PRIVATE
     -Wno-overloaded-virtual)
 
-# add Matteo
-
-include_directories(skill-code-gen
-  PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/skill-template-files/
-    ${CMAKE_CURRENT_SOURCE_DIR}/input-files/
-)
-
+# need to include .cmake file to generate the skills, launching the skill-code-gen executable
 include(SkillAutogen)

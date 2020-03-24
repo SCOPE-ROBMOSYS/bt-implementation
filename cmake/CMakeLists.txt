@@ -6,7 +6,7 @@
 ################################################################################
 
 # YARP CMake Modules
-set(YARP_CMAKE_FILES SkillAutogen.cmake)
-install(FILES ${YARP_CMAKE_FILES}
+set(CMAKE_FILES SkillAutogen.cmake)
+install(FILES ${CMAKE_FILES}
         DESTINATION share/bt-implementation/cmake
         COMPONENT BT_IMPLEM_conf-dev)

@@ -1,0 +1,69 @@
+# Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
+
+include(CMakeDependentOption)
+
+@PACKAGE_INIT@
+
+
+# Used by YarpIDL.cmake
+set(YARP_IDL_BINARY_HINT "@PACKAGE_YARP_IDL_BINARY_HINT@")
+
+
+
+# Save the variables, that it should not be modified by find_package(YARP), but
+# we need to modify it in order to find all the dependencies.
+set(_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH})
+
+
+
+# Restore the original value of the variables
+set(CMAKE_MODULE_PATH ${_CMAKE_MODULE_PATH})
+unset(_CMAKE_MODULE_PATH)
+
+
+################################################################################
+
+  if(NOT COMMAND yarp_add_idl)
+    macro(YARP_ADD_IDL)
+      message(DEPRECATION "Calling \"yarp_add_idl\" without including YARP \"idl_tools\" COMPONENT in \"find_package(YARP)\" is deprecated.")
+      get_property(_yarp_idl_tools_transitive_dependency_set GLOBAL PROPERTY _CMAKE_YARP_idl_tools_TRANSITIVE_DEPENDENCY SET)
+      find_package(YARP_idl_tools
+                  ${_YARP_FIND_PARTS_QUIET}
+                  ${_YARP_FIND_PART_idl_tools_REQUIRED}
+                  HINTS "${YARP_CMAKECONFIG_DIR}"
+                  NO_DEFAULT_PATH)
+      # Ensure that YARP_idl_tools is not shown by FeatureSummary if not requested
+      # by the user
+      if(NOT _yarp_idl_tools_transitive_dependency_set)
+        set_property(GLOBAL PROPERTY _CMAKE_YARP_idl_tools_TRANSITIVE_DEPENDENCY TRUE)
+      endif()
+
+      yarp_add_idl(${ARGN})
+
+    endmacro()
+  endif()
+
+  if(NOT COMMAND yarp_idl_to_dir)
+    macro(YARP_IDL_TO_DIR)
+      message(DEPRECATION "Calling \"yarp_idl_to_dir\" without including YARP \"idl_tools\" COMPONENT in \"find_package(YARP)\" is deprecated.")
+      get_property(_yarp_idl_tools_transitive_dependency_set GLOBAL PROPERTY _CMAKE_YARP_idl_tools_TRANSITIVE_DEPENDENCY SET)
+      find_package(YARP_idl_tools
+                  ${_YARP_FIND_PARTS_QUIET}
+                  ${_YARP_FIND_PART_idl_tools_REQUIRED}
+                  HINTS "${YARP_CMAKECONFIG_DIR}"
+                  NO_DEFAULT_PATH)
+      # Ensure that YARP_idl_tools is not shown by FeatureSummary if not requested
+      # by the user
+      if(NOT _yarp_idl_tools_transitive_dependency_set)
+        set_property(GLOBAL PROPERTY _CMAKE_YARP_idl_tools_TRANSITIVE_DEPENDENCY TRUE)
+      endif()
+
+      yarp_idl_to_dir(${ARGN})
+
+    endmacro()
+  endif()
