@@ -146,11 +146,14 @@ int main(int argc, char* argv[])
 
     tu.classnameForDocument.insert(mainDoc, mainClassName);
 
+    cout << "DOCS SIZE1 : " << docs.size() << "\n\n";
+
     docs.pop_front();
 
     for (DocumentModel::ScxmlDocument *doc : qAsConst(docs)) {
         auto name = doc->root->name;
         auto prefix = name;
+        qDebug() << "\n\n DEBUG NAME: " << name << "\n\n";
         if (name.isEmpty()) {
             prefix = QStringLiteral("%1_StateMachine").arg(mainClassName);
             name = prefix;
@@ -162,6 +165,11 @@ int main(int argc, char* argv[])
 
         tu.classnameForDocument.insert(doc, name);
     }
+
+    QString try_str = docs.at(0)->root->cppDataModelClassName;
+    cout << "DOCS SIZE2 : " << docs.size() << "\n\n";
+    cout << "\n\nTRY : " << try_str.toStdString() ;
+    qDebug() << try_str;
 
     SkillGenerator generator(&tu);
     return generator.init(); //    return write(&tu);
