@@ -23,6 +23,7 @@ if(RE-GENERATE-SKILLS)
        COMMENT "########################################### SkillAutogen.cmake COMMENT skills generation"
        DEPENDS skill-code-gen
        )
+    # necessary otherwise cmake does not execute add_custom_command above
     add_custom_target(dummy_app ALL
         DEPENDS dummy.txt)
 endif(RE-GENERATE-SKILLS)
