@@ -24,13 +24,6 @@ add_subdirectory(GoTo_skill)
 add_subdirectory(BatteryLevel_skill)
 add_subdirectory(BatteryNotCharging_skill)
 
-set(BAR_FOUND FALSE)
-if(BAR_FOUND)
-    add_subdirectory(GoTo_skill)
-    add_subdirectory(BatteryLevel_skill)
-    add_subdirectory(BatteryNotCharging_skill)
-endif(BAR_FOUND)
-
 #components
 add_subdirectory(Battery_component)
 add_subdirectory(GoTo_component)
