@@ -216,6 +216,7 @@ RUN git clone --branch master https://github.com/robotology/yarp-unix-socket.git
 
 # Build and install BehaviorTree.CPP
 RUN git clone --branch master https://github.com/BehaviorTree/BehaviorTree.CPP.git /usr/local/src/BehaviorTree.CPP && \
+    git -C /usr/local/src/BehaviorTree.CPP checkout 5e8e2da2d93139fdf5f5d188e6dedf4e8180cf15 && \
     ls -la /usr/local/src/BehaviorTree.CPP/src/decorators && \
     cmake \
         -H/usr/local/src/BehaviorTree.CPP \
