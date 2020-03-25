@@ -12,7 +12,7 @@
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/Network.h>
 
-#include "GoToSkillStateMachine.h"
+#include "GoToSkillStateMachine.h"  // not found!!
 #include "GoToSkillDataModel.h"
 
 class GoToSkill:
