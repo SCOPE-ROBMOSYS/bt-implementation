@@ -375,6 +375,8 @@ int SkillGenerator::write()
     string str_include ="";
     for (int i=0; i<SD.UsedServices.size(); i++){
         str_include = str_include + "#include \"" + SD.UsedServices[i].service_type.toStdString()  + ".h\" \n ";
+        // with < >
+        //str_include = str_include + "#include <" + SD.UsedServices[i].service_type.toStdString()  + ".h> \n ";
     }
     QString value_INCLUDE_THRIFT_SERVICE = QString::fromStdString(str_include);
     dataText.replace(KEY_INCLUDE_THRIFT_SERVICE, value_INCLUDE_THRIFT_SERVICE);

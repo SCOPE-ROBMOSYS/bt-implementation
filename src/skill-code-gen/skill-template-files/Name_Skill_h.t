@@ -12,7 +12,7 @@
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/Network.h>
 
-#include "@KEY_SKILL_NAME@SkillStateMachine.h"
+#include "@KEY_SKILL_NAME@SkillStateMachine.h"  // not found!!
 #include "@KEY_SKILL_NAME@SkillDataModel.h"
 
 class @KEY_SKILL_NAME@Skill:

@@ -31,5 +31,6 @@ target_link_libraries(@KEY_SKILL_NAME@Skill
     Qt5::Scxml
     YARP::YARP_os
     YARP::YARP_init
+    GoTo_protocol
     Battery_protocol
     BT_protocol)
