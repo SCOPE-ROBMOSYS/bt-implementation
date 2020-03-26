@@ -19,7 +19,7 @@ target_sources(BatteryNotChargingSkill
     BatteryNotChargingSkillDataModel.cpp
     BatteryNotChargingSkillDataModel.h)
 
-qt5_add_statecharts(STATECHARTS_FILES BatteryNotChargingSkillStateMachine.scxml)
+qt5_add_statecharts(STATECHARTS_FILES ${SKILL_SCXML_FILES_DIR}/BatteryNotChargingSkillStateMachine.scxml)
 set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/BatteryNotChargingSkillStateMachine.cpp PROPERTIES SKIP_AUTOMOC TRUE)
 
 target_sources(BatteryNotChargingSkill

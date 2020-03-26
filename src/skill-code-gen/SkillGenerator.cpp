@@ -66,7 +66,7 @@ void SkillGenerator::ConfigGeneration(){
 
     //detect skill name
     string ss = tu_->scxmlFileName.toUtf8().constData();
-    bool found = ss.find("SkillStateMachine.scxml") != ss.npos; //    std::cout << "\n\n\nTEST\n\n\n" << found << " ||||| " << ss.find("SkillStateMachine.scxml") << "\n\n\nEND TEST\n\n\n";
+//    bool found = ss.find("SkillStateMachine.scxml") != ss.npos; //    std::cout << "\n\n\nTEST\n\n\n" << found << " ||||| " << ss.find("SkillStateMachine.scxml") << "\n\n\nEND TEST\n\n\n";
     string str_first_part = ss.substr (0, ss.find("SkillStateMachine.scxml") );
     cout << "Skill name --> " << str_first_part << "\n\n";
     SD_.skill_name = QString::fromStdString(str_first_part);
@@ -104,7 +104,7 @@ string SkillGenerator::DecoderEnum (int id){  // enum BT_Status { Undefined, Idl
 
 vector<string> SkillGenerator::GenerateStringList_name_instance (vector<Attribute> ListAttributes){
     vector<string> output;
-    for(int i=0; i<ListAttributes.size(); i++){
+    for(unsigned int i=0; i<ListAttributes.size(); i++){
         output.push_back(ListAttributes[i].name_instance.toStdString());
     }
     return output;
@@ -112,7 +112,7 @@ vector<string> SkillGenerator::GenerateStringList_name_instance (vector<Attribut
 
 vector<string> SkillGenerator::GenerateStringList_data_type (vector<Attribute> ListAttributes){
     vector<string> output;
-    for(int i=0; i<ListAttributes.size(); i++){
+    for(unsigned int i=0; i<ListAttributes.size(); i++){
         output.push_back(ListAttributes[i].data_type.toStdString());
     }
     return output;
@@ -120,7 +120,7 @@ vector<string> SkillGenerator::GenerateStringList_data_type (vector<Attribute> L
 
 string SkillGenerator::GenerateListConstructorParametersPassArgs (vector<string> ListParamToAssign_name_instance){
     string output ="";
-    for(int i=0; i<ListParamToAssign_name_instance.size(); i++){
+    for(unsigned int i=0; i<ListParamToAssign_name_instance.size(); i++){
         output = output + ListParamToAssign_name_instance[i];
         if(i!= (ListParamToAssign_name_instance.size()-1) ){
             output = output + ", ";
@@ -131,7 +131,7 @@ string SkillGenerator::GenerateListConstructorParametersPassArgs (vector<string>
 
 string SkillGenerator::GenerateListConstructorParameters (vector<string> ListParamToAssign_data_type, vector<string> ListParamToAssign_name_instance){
     string output ="";
-    for(int i=0; i<ListParamToAssign_data_type.size(); i++){
+    for(unsigned int i=0; i<ListParamToAssign_data_type.size(); i++){
         output = output + ListParamToAssign_data_type[i] + " " + ListParamToAssign_name_instance[i];
         if(i!= (ListParamToAssign_data_type.size()-1) ){
             output = output + ", ";
@@ -142,7 +142,7 @@ string SkillGenerator::GenerateListConstructorParameters (vector<string> ListPar
 
 string SkillGenerator::GenerateListConstructorParametersAssign (vector<string> ListMemberAttributes, vector<string> ListParamToAssign){
     string output ="";
-    for(int i=0; i<ListMemberAttributes.size(); i++){
+    for(unsigned int i=0; i<ListMemberAttributes.size(); i++){
         output = output +  ListMemberAttributes[i]   + "(std::move(" +    ListParamToAssign[i] + "))";
         if(i!= (ListMemberAttributes.size()-1) ){
             output = output + ", ";
@@ -169,7 +169,7 @@ void SkillGenerator::Generate_CMakeLists(){ // (const QFile template_file){
     QRegularExpression KEY_ADDITIONAL_THRIFT_PROTOCOLS("@ADDITIONAL_THRIFT_PROTOCOLS@");
     string all_protocols = "";
     // list of protocols
-    for (int i=0; i<SD_.UsedServices.size(); i++){
+    for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
         all_protocols =  all_protocols + "\n    " + SD_.UsedServices[i].thrift_protocol.toStdString() + "_protocol";
     }
     QString value_ADDITIONAL_THRIFT_PROTOCOLS = QString::fromStdString(all_protocols);
@@ -218,7 +218,7 @@ void SkillGenerator::Generate_Main(){
     string all_instances_main = "";
 
     // list of attributes (without value assigned)
-    for (int i=0; i<SD_.UsedAttributes.size(); i++){
+    for(unsigned int i=0; i<SD_.UsedAttributes.size(); i++){
         string single_instance = "";
         if( SD_.UsedAttributes[i].init_source.toStdString() != "initialize_inside_header"){
             single_instance = "" + SD_.UsedAttributes[i].data_type.toStdString() + " " + SD_.UsedAttributes[i].name_instance.toStdString() + ";\n    " ;
@@ -294,7 +294,7 @@ void SkillGenerator::Generate_Skill_cpp(){
     // 2.2: states
     QRegularExpression key_states("@KEY_SKILL_STATES@");
     string all = "";
-    for (int i=0; i<SD_.ListStates.size(); i++){
+    for(unsigned int i=0; i<SD_.ListStates.size(); i++){
         auto actual_state = SD_.ListStates[i].id;
         string actual_state_string = actual_state.toUtf8().constData();
         string single_state_condit = "       if (state == \"" + actual_state_string + "\") {\n           return BT_" + SD_.ListStates[i].ReturnStatus + ";\n       }\n" ;
@@ -321,9 +321,8 @@ void SkillGenerator::Generate_Skill_cpp(){
         string space = ",\n        ";
         attrib_2 = attrib_2 + space;
         vector<string> ListParamToAssign = GenerateStringList_name_instance(SD_.ListAttributesInitWithConstructor);
-        int dim = ListParamToAssign.size();
         vector<string> ListMemberAttributes;
-        for(int i=0; i<dim; i++){
+        for(unsigned int i=0; i<ListParamToAssign.size(); i++){
             ListMemberAttributes.push_back("dataModel"); // to check!
         }
         attrib_2 = attrib_2 + GenerateListConstructorParametersAssign (ListMemberAttributes, ListParamToAssign);
@@ -356,7 +355,7 @@ void SkillGenerator::Generate_Skill_DataModel_h(){
     // 2.1.2 #include @INCLUDE_THRIFT_SERVICE@
     QRegularExpression KEY_INCLUDE_THRIFT_SERVICE("@INCLUDE_THRIFT_SERVICE@");
     string str_include ="";
-    for (int i=0; i<SD_.UsedServices.size(); i++){
+    for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
         str_include = str_include + "#include \"" + SD_.UsedServices[i].service_type.toStdString()  + ".h\" \n ";
         // with < >
         //str_include = str_include + "#include <" + SD_.UsedServices[i].service_type.toStdString()  + ".h> \n ";
@@ -368,13 +367,13 @@ void SkillGenerator::Generate_Skill_DataModel_h(){
     QRegularExpression KEY_LIST_PUBLIC_ATTRIBUTES("@KEY_LIST_PUBLIC_ATTRIBUTES@");
     string all_instances = "";
     // list of services
-    for (int i=0; i<SD_.UsedServices.size(); i++){
+    for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
         string single_instance = "" + SD_.UsedServices[i].service_type.toStdString() + " " + SD_.UsedServices[i].name_instance.toStdString() + ";\n    ";
         all_instances = all_instances + single_instance;
     }
 
     // list of attributes (with value assigned)
-    for (int i=0; i<SD_.UsedAttributes.size(); i++){
+    for(unsigned int i=0; i<SD_.UsedAttributes.size(); i++){
         string single_instance = "";
         if( SD_.UsedAttributes[i].init_source.toStdString() == "initialize_inside_header"){
             single_instance = "" + SD_.UsedAttributes[i].data_type.toStdString() + " " + SD_.UsedAttributes[i].name_instance.toStdString() + " { " + SD_.UsedAttributes[i].value.toStdString() + " };\n    " ;
@@ -431,7 +430,7 @@ void SkillGenerator::Generate_Skill_DataModel_cpp(){
     string merge ="";
     string all_clients ="";
     string all_ports ="";
-    for (int i=0; i<SD_.UsedServices.size(); i++){
+    for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
         string single_port = "";
         if(Skill_Config_.specify_port_name_attribute){
             // additional name spec if needed
@@ -452,7 +451,7 @@ void SkillGenerator::Generate_Skill_DataModel_cpp(){
     // 2.3  @OPEN_CONNECTIONS_TO_COMPONENTS@
     QRegularExpression KEY_OPEN_CONNECTIONS_TO_COMPONENTS("@OPEN_CONNECTIONS_TO_COMPONENTS@");
     string all_components ="";
-    for (int i=0; i<SD_.UsedServices.size(); i++){
+    for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
         all_components = all_components + "    if (!yarp::os::Network::connect(client_port.getName(), \"/" + SD_.UsedServices[i].thrift_protocol.toStdString()  + "\", \"" + SD_.UsedServices[i].connect_type.toStdString() + "\")) {\n        qWarning(\"Error! Could not connect to server /fakeBattery\");\n        return false;\n    }\n" ;
     }
     all_components = "    // open connections to components\n\n" + all_components;

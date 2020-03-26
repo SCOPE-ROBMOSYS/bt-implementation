@@ -19,7 +19,7 @@ target_sources(@KEY_SKILL_NAME@Skill
     @KEY_SKILL_NAME@SkillDataModel.cpp
     @KEY_SKILL_NAME@SkillDataModel.h)
 
-qt5_add_statecharts(STATECHARTS_FILES @KEY_SKILL_NAME@SkillStateMachine.scxml)
+qt5_add_statecharts(STATECHARTS_FILES ${SKILL_SCXML_FILES_DIR}/@KEY_SKILL_NAME@SkillStateMachine.scxml)
 set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/@KEY_SKILL_NAME@SkillStateMachine.cpp PROPERTIES SKIP_AUTOMOC TRUE)
 
 target_sources(@KEY_SKILL_NAME@Skill

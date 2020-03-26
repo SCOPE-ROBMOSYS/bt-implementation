@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
     }
 
     const QString scxmlFileName = inputFiles.at(0);
-    qDebug() << "Complete path -->" << scxmlFileName;
+    qDebug() << "\n ----------------- Skill Auto-generation ----------------- \nComplete path of input file -->" << scxmlFileName << "\n";
 
     TranslationUnit options;
     options.stateMethods = cmdParser.isSet(optionStateMethods);

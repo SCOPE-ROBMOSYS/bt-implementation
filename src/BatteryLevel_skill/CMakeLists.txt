@@ -19,7 +19,7 @@ target_sources(BatteryLevelSkill
     BatteryLevelSkillDataModel.cpp
     BatteryLevelSkillDataModel.h)
 
-qt5_add_statecharts(STATECHARTS_FILES BatteryLevelSkillStateMachine.scxml)
+qt5_add_statecharts(STATECHARTS_FILES ${SKILL_SCXML_FILES_DIR}/BatteryLevelSkillStateMachine.scxml)
 set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/BatteryLevelSkillStateMachine.cpp PROPERTIES SKIP_AUTOMOC TRUE)
 
 target_sources(BatteryLevelSkill

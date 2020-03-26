@@ -19,7 +19,7 @@ target_sources(GoToSkill
     GoToSkillDataModel.cpp
     GoToSkillDataModel.h)
 
-qt5_add_statecharts(STATECHARTS_FILES GoToSkillStateMachine.scxml)
+qt5_add_statecharts(STATECHARTS_FILES ${SKILL_SCXML_FILES_DIR}/GoToSkillStateMachine.scxml)
 set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/GoToSkillStateMachine.cpp PROPERTIES SKIP_AUTOMOC TRUE)
 
 target_sources(GoToSkill

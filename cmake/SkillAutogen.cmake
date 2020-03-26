@@ -21,7 +21,7 @@ if(RE-GENERATE-SKILLS)
        COMMAND skill-code-gen  ${SKILL_SCXML_FILES_DIR}/BatteryLevelSkillStateMachine.scxml
        COMMAND skill-code-gen  ${SKILL_SCXML_FILES_DIR}/BatteryNotChargingSkillStateMachine.scxml
        COMMAND skill-code-gen  ${SKILL_SCXML_FILES_DIR}/GoToSkillStateMachine.scxml
-       COMMENT "########################################### SkillAutogen.cmake COMMENT skills generation"
+       COMMENT "################# Skills auto-generation commands inside SkillAutogen.cmake."
        DEPENDS skill-code-gen
        )
     # necessary otherwise cmake does not execute add_custom_command above
