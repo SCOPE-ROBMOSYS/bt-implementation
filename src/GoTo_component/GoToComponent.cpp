@@ -124,11 +124,11 @@ public:
             return;
         }
 
-        std::string current_destination;
-        if (!inav->getNameOfCurrentTarget(current_destination) || destination != current_destination) {
-            running = false;
-            return;
-        }
+//        std::string current_destination;
+//        if (!inav->getNameOfCurrentTarget(current_destination) || destination.compare(current_destination) !=0) {
+//            running = false;
+//            return;
+//        }
 
         inav->stopNavigation();
         running = false;
