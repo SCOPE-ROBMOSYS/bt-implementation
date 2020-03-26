@@ -18,9 +18,9 @@ if(RE-GENERATE-SKILLS)
        COMMAND cd  ../GoTo_skill
        #COMMAND echo ' ' > CMakeLists.txt
        #generate skill files
-       COMMAND skill-code-gen  /home/scope/bt-implementation/src/skill-code-gen/input-files/BatteryLevelSkillStateMachine.scxml
-       COMMAND skill-code-gen  /home/scope/bt-implementation/src/skill-code-gen/input-files/BatteryNotChargingSkillStateMachine.scxml
-       COMMAND skill-code-gen  /home/scope/bt-implementation/src/skill-code-gen/input-files/GoToSkillStateMachine.scxml
+       COMMAND skill-code-gen  ${SKILL_SCXML_FILES_DIR}/BatteryLevelSkillStateMachine.scxml
+       COMMAND skill-code-gen  ${SKILL_SCXML_FILES_DIR}/BatteryNotChargingSkillStateMachine.scxml
+       COMMAND skill-code-gen  ${SKILL_SCXML_FILES_DIR}/GoToSkillStateMachine.scxml
        COMMENT "########################################### SkillAutogen.cmake COMMENT skills generation"
        DEPENDS skill-code-gen
        )

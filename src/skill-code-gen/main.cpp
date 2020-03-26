@@ -64,6 +64,18 @@ int main(int argc, char* argv[])
 
     cmdParser.addPositionalArgument(QLatin1String("input"),
                        QCoreApplication::translate("main", "Input SCXML file."));
+
+//    cmdParser.addPositionalArgument(QLatin1String("application_root_path"),
+//                       QCoreApplication::translate("main", "root path."));
+
+
+//    QCommandLineOption rootPath(QStringList() << "o" << "opt", QCoreApplication::translate("main", "Option is: rootPath") \
+//                                       ,QCoreApplication::translate("main", "opt"), "2");
+//    cmdParser.addOption(rootPath);
+//    QString opt2 = cmdParser.value(rootPath);
+//    qDebug() << opt2;
+
+
     cmdParser.addOption(optionNamespace);
     cmdParser.addOption(optionClassName);
     cmdParser.addOption(optionStateMethods);
@@ -84,6 +96,7 @@ int main(int argc, char* argv[])
     }
 
     const QString scxmlFileName = inputFiles.at(0);
+    qDebug() << "Complete path -->" << scxmlFileName;
 
     TranslationUnit options;
     options.stateMethods = cmdParser.isSet(optionStateMethods);
@@ -171,6 +184,7 @@ int main(int argc, char* argv[])
     cout << "\n\nTRY : " << try_str.toStdString() ;
     qDebug() << try_str;
 
+    tu.Path = scxmlFileName;
     SkillGenerator generator(&tu);
     return generator.init(); //    return write(&tu);
 }

@@ -38,6 +38,7 @@ struct TranslationUnit
         , mainDocument(nullptr)
     {}
 
+    QString Path;
     QString scxmlFileName;
     QString namespaceName;
     bool stateMethods;
@@ -90,6 +91,7 @@ struct SkillDescription {
 //    {}
 
     QString skill_name;
+    QString path_skill_folder;
     vector<State> ListStates;
     vector<string> UsedComponents;
     vector<Service> UsedServices;
@@ -100,6 +102,27 @@ struct SkillDescription {
     vector<Attribute> ListAttributesInitWithConstructor;
 };
 
+struct Keys {
+    QString key_skill_name;
+    QString KEY_CONSTRUCTOR_ATTRIBUTES_p1;
+
+    Keys()
+        : key_skill_name("@KEY_SKILL_NAME@")
+        , KEY_CONSTRUCTOR_ATTRIBUTES_p1("@KEY_CONSTRUCTOR_ATTRIBUTES_p1@")
+    {}
+
+};
+
+struct Values {
+    QString empty;
+    QString value_CONSTRUCTOR_ATTRIBUTES_p1_with_comma;
+
+    Values()
+        : empty("")
+    {}
+
+};
+
 
 
 class SkillGenerator
@@ -108,6 +131,15 @@ public:
     SkillGenerator (TranslationUnit *tu);
 
     TranslationUnit *tu_;
+
+    QString path_template_;
+
+    SkillDescription SD_;
+    Keys K_;
+    Values V_;
+    SkillConfig Skill_Config_;
+
+    bool debug_;
 
     //methods
 
@@ -127,6 +159,13 @@ public:
     string GenerateListConstructorParametersAssign (vector<string> ListMemberAttributes, vector<string> ListParamToAssign);
     string GenerateListConstructorParametersPassArgs (vector<string> ListParamToAssign_name_instance);
 
+    void ConfigGeneration();
+    void Generate_CMakeLists();
+    void Generate_Main();
+    void Generate_Skill_h();
+    void Generate_Skill_cpp();
+    void Generate_Skill_DataModel_h();
+    void Generate_Skill_DataModel_cpp();
 
 private:
 
