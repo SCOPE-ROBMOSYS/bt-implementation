@@ -195,7 +195,8 @@ RUN git clone --branch master https://github.com/robotology/YARP.git /usr/local/
         -DCREATE_LUA=ON \
         -DCREATE_PERL=ON \
         -DCREATE_PYTHON=ON \
-        -DYARP_USE_PYTHON_VERSION=3 && \
+        -DYARP_USE_PYTHON_VERSION=3 \
+        -DCMAKE_CXX_FLAGS=-D_XOPEN_STREAMS=-1 && \
     cmake --build /usr/local/src/YARP/build && \
     cmake --build /usr/local/src/YARP/build --target install && \
     chown -R $username /usr/local/src/YARP && \
@@ -215,6 +216,7 @@ RUN git clone --branch master https://github.com/robotology/yarp-unix-socket.git
 
 # Build and install BehaviorTree.CPP
 RUN git clone --branch master https://github.com/BehaviorTree/BehaviorTree.CPP.git /usr/local/src/BehaviorTree.CPP && \
+    git -C /usr/local/src/BehaviorTree.CPP checkout 5e8e2da2d93139fdf5f5d188e6dedf4e8180cf15 && \
     ls -la /usr/local/src/BehaviorTree.CPP/src/decorators && \
     cmake \
         -H/usr/local/src/BehaviorTree.CPP \
