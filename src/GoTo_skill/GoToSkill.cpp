@@ -10,6 +10,7 @@
 #include <QTimer>
 #include <QDebug>
 #include <QTime>
+#include <qstatemachine.h>
 
 #define DEBUG_STATE_MACHINE
 
@@ -187,5 +188,5 @@ void GoToSkill::request_halt()
 #ifdef DEBUG_STATE_MACHINE
     qDebug() << QTime::currentTime().toString() << "Event HALT submitted";
 #endif
-    stateMachine.submitEvent("HALT");
+    stateMachine.submitEvent("HALT",  QStateMachine::HighPriority);
 }
