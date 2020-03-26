@@ -25,8 +25,12 @@ Repository containing the software to run the experimental validation's scenario
 
    `sudo curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
 
-   `sudo chmod +x /usr/local/bin/docker-compose`
    
+
+   `sudo chmod +x /usr/local/bin/docker-compose`
+
+   
+
    `sudo usermod -aG docker $USER`
 
 3. **Reboot your system**
@@ -35,13 +39,18 @@ Repository containing the software to run the experimental validation's scenario
 
    Open a terminal window and run:
    `git clone https://github.com/SCOPE-ROBMOSYS/bt-implementation.git`
+   
    `cd bt-implementation`
+   
    `docker-compose pull yarp-mesa navigation qscxml`
-   `docker-compose build bt-implementation`
-   If YARP  is not installed in the system then run:
 
-   `mkdir -p ${HOME}/.config/yarp/ ${HOME}/.local/share/yarp/
-   docker-compose run -T --rm yarp-mesa yarp conf <ip address> 10000`
+   `docker-compose build bt-implementation`
+   
+   If YARP  is not installed in the system then run:
+   
+   `mkdir -p ${HOME}/.config/yarp/ ${HOME}/.local/share/yarp/`
+   
+   `docker-compose run -T --rm yarp-mesa yarp conf <ip address> 10000`
 
 ### Execution
 
