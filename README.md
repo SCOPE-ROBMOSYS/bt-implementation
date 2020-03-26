@@ -12,7 +12,7 @@ Repository containing the software to run the experimental validation's scenario
 
 
 
-## Setup (Tested with Ubuntu 18.04)
+## Setup (Tested with Ubuntu 18.04 and Debian Testing)
 
 
 
@@ -22,6 +22,8 @@ Repository containing the software to run the experimental validation's scenario
 2. **install Docker Compose**
 
    Open a terminal window and run:
+
+   
 
    `sudo curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
 
