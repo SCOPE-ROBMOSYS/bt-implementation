@@ -1720,7 +1720,7 @@ bool QScxmlCompilerPrivate::preReadElementData() // datamodel parser
     data->init_source      = attributes.value(QStringLiteral("http://www.scope.org/scope"), QLatin1String("init_source")).toString();
     // scope_yarp data
     data->service_type     = attributes.value(QStringLiteral("http://www.scope.org/scope_yarp"), QLatin1String("service_type")).toString();
-    data->component_type   = attributes.value(QStringLiteral("http://www.scope.org/scope_yarp"), QLatin1String("component_type")).toString();
+    data->thrift_protocol  = attributes.value(QStringLiteral("http://www.scope.org/scope_yarp"), QLatin1String("thrift_protocol")).toString();
     data->client_port_name = attributes.value(QStringLiteral("http://www.scope.org/scope_yarp"), QLatin1String("client_port_name")).toString();
     data->connect_type     = attributes.value(QStringLiteral("http://www.scope.org/scope_yarp"), QLatin1String("connect_type")).toString();
 

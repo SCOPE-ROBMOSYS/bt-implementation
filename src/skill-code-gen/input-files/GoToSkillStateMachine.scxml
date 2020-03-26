@@ -20,7 +20,7 @@
     <data id="goTo"
           scope_yarp:service_type="GoTo"
           scope_yarp:connect_type="tcp"
-          scope_yarp:component_type="GoToComponent"
+          scope_yarp:thrift_protocol="GoTo"
           scope_yarp:service_function="multiple"
           scope_yarp:port_name_attribute="location"
           />

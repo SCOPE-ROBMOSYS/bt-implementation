@@ -68,10 +68,10 @@ struct State{
 struct Service{
     QString name_instance;
     QString service_type;
-    QString component_type;
+    QString thrift_protocol;
     QString client_port_name;
     QString connect_type;
-    };
+};
 
 struct Attribute{
     QString data_type;
@@ -125,6 +125,7 @@ public:
 
     string GenerateListConstructorParameters (vector<string> ListParamToAssign_data_type, vector<string> ListParamToAssign_name_instance);
     string GenerateListConstructorParametersAssign (vector<string> ListMemberAttributes, vector<string> ListParamToAssign);
+    string GenerateListConstructorParametersPassArgs (vector<string> ListParamToAssign_name_instance);
 
 
 private:

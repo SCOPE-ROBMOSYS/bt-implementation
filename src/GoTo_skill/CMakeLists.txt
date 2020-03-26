@@ -19,8 +19,6 @@ target_sources(GoToSkill
     GoToSkillDataModel.cpp
     GoToSkillDataModel.h)
 
-message ("*********************************************************************************")
-message (${CMAKE_CURRENT_BINARY_DIR})
 qt5_add_statecharts(STATECHARTS_FILES GoToSkillStateMachine.scxml)
 set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/GoToSkillStateMachine.cpp PROPERTIES SKIP_AUTOMOC TRUE)
 
@@ -33,6 +31,6 @@ target_link_libraries(GoToSkill
     Qt5::Scxml
     YARP::YARP_os
     YARP::YARP_init
+    BT_protocol 
     GoTo_protocol
-    Battery_protocol
-    BT_protocol)
+    )

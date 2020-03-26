@@ -31,7 +31,9 @@ int main(int argc, char **argv)
 
     QString skillName = parser.value("skill-name");
 
-    BatteryNotChargingSkill bt(skillName.toStdString());
+    
+
+    BatteryNotChargingSkill bt(skillName.toStdString() );
     if (!bt.start()) {
         return 1;
     }

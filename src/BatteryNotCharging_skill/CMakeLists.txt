@@ -31,6 +31,6 @@ target_link_libraries(BatteryNotChargingSkill
     Qt5::Scxml
     YARP::YARP_os
     YARP::YARP_init
-    GoTo_protocol
+    BT_protocol 
     Battery_protocol
-    BT_protocol)
+    )

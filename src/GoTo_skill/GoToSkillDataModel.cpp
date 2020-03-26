@@ -26,7 +26,7 @@ bool GoToSkillDataModel::setup(const QVariantMap &initialDataValues)
 
     // open ports
 
-    if (!client_port.open("/goToClient)) {
+    if (!client_port.open("/goToClient")) {
        qWarning("Error! Cannot open YARP port");
        return false;
     }
@@ -41,7 +41,7 @@ bool GoToSkillDataModel::setup(const QVariantMap &initialDataValues)
 
     // open connections to components
 
-    if (!yarp::os::Network::connect(client_port.getName(), "/GoToComponent", "tcp")) {
+    if (!yarp::os::Network::connect(client_port.getName(), "/GoTo", "tcp")) {
         qWarning("Error! Could not connect to server /fakeBattery");
         return false;
     }

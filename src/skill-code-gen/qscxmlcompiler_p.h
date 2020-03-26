@@ -116,7 +116,7 @@ struct DataElement: public Node
     // scope_yarp data
     QString cpp_type;
     QString service_type;
-    QString component_type;
+    QString thrift_protocol; //component_type;
     QString client_port_name;
     QString init_source;
     QString connect_type;

@@ -12,7 +12,7 @@
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/Network.h>
 
-#include "BatteryLevelSkillStateMachine.h"  // not found!!
+#include "BatteryLevelSkillStateMachine.h"
 #include "BatteryLevelSkillDataModel.h"
 
 class BatteryLevelSkill:

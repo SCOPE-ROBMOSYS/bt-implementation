@@ -28,6 +28,8 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_C_EXTENSIONS OFF)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+set(SKILL_SCXML_FILES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/skill-code-gen/input-files")
+
 # Pick up our CMake scripts - they are all in the cmake subdirectory.
 set(BT_IMPLEM_MODULE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 list(APPEND CMAKE_MODULE_PATH "${BT_IMPLEM_MODULE_DIR}")

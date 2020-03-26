@@ -106,6 +106,17 @@ vector<string> SkillGenerator::GenerateStringList_data_type (vector<Attribute> L
     return output;
 }
 
+string SkillGenerator::GenerateListConstructorParametersPassArgs (vector<string> ListParamToAssign_name_instance){
+    string output ="";
+    for(int i=0; i<ListParamToAssign_name_instance.size(); i++){
+        output = output + ListParamToAssign_name_instance[i];
+        if(i!= (ListParamToAssign_name_instance.size()-1) ){
+            output = output + ", ";
+        }
+    }
+    return output;
+}
+
 string SkillGenerator::GenerateListConstructorParameters (vector<string> ListParamToAssign_data_type, vector<string> ListParamToAssign_name_instance){
     string output ="";
     for(int i=0; i<ListParamToAssign_data_type.size(); i++){
@@ -170,16 +181,16 @@ int SkillGenerator::write()
             }
             if (debug){
                 cout << "\n\n ************ ACTUAL TEST************  \n\n ";
-                qDebug() << data->id << data->expr << data->cpp_type << data->component_type << data->service_type  << data->client_port_name << data->init_source << data->connect_type;
+                qDebug() << data->id << data->expr << data->cpp_type << data->thrift_protocol << data->service_type  << data->client_port_name << data->init_source << data->connect_type;
                 cout << "\n\n ************ end ACTUAL TEST************  \n\n ";
             }
 
             // access to data element
-            if (data->component_type != ""){ // means that the data represents a service!
+            if (data->thrift_protocol != ""){ // means that the data represents a service!
                 Service service;
                 service.name_instance = data->id;
                 service.service_type = data->service_type;
-                service.component_type = data->component_type;
+                service.thrift_protocol = data->thrift_protocol;
                 service.client_port_name = data->client_port_name;
                 service.connect_type = data->connect_type;
                 SD.UsedServices.push_back(service);
@@ -254,19 +265,98 @@ int SkillGenerator::write()
 
     // **********************************++ "CmakeLists.txt" **********************************++
     // create new file
+//    QFile output_file_0(path_new_skill + "CMakeLists.txt");
+//    ReplaceKeyInsideTemplate (path_new_skill, file_template_CMakeLists, output_file_0, key_skill_name, value_skill_name);
+
+    QString value_NULL = QString::fromStdString("");
+
+    // 1: open and read the template
+    file_template_CMakeLists.open(QIODevice::Text | QIODevice::ReadOnly);
+    QString dataText = file_template_CMakeLists.readAll();
+
+    // 2: replace
+
+    // 2.1: name
+    dataText.replace(key_skill_name, value_skill_name);
+
+    // 2.2:  ADDITIONAL_THRIFT_PROTOCOLS
+    QRegularExpression KEY_ADDITIONAL_THRIFT_PROTOCOLS("@ADDITIONAL_THRIFT_PROTOCOLS@");
+    string all_protocols = "";
+    // list of protocols
+    for (int i=0; i<SD.UsedServices.size(); i++){
+        all_protocols =  all_protocols + "\n    " + SD.UsedServices[i].thrift_protocol.toStdString() + "_protocol";
+    }
+    QString value_ADDITIONAL_THRIFT_PROTOCOLS = QString::fromStdString(all_protocols);
+    dataText.replace( KEY_ADDITIONAL_THRIFT_PROTOCOLS, value_ADDITIONAL_THRIFT_PROTOCOLS);
+
+    // 3: create new file and insert the dataText
     QFile output_file_0(path_new_skill + "CMakeLists.txt");
-    ReplaceKeyInsideTemplate (path_new_skill, file_template_CMakeLists, output_file_0, key_skill_name, value_skill_name);
+    if( output_file_0.open(QFile::WriteOnly | QFile::Truncate)) {
+        QTextStream out(& output_file_0);
+        out << dataText;
+    }
+     output_file_0.close();
 
     // **********************************++ "main.cpp" **********************************++
-    // create new file
-    QFile output_file_main(path_new_skill + "main.cpp");
-    ReplaceKeyInsideTemplate (path_new_skill, file_template_main, output_file_main, key_skill_name, value_skill_name);
+
+    // 1: open and read the template
+    file_template_main.open(QIODevice::Text | QIODevice::ReadOnly);
+    dataText.clear();
+    dataText = file_template_main.readAll();
+
+    // 2: replace
+
+    // 2.1: name
+    dataText.replace(key_skill_name, value_skill_name);
+
+    // 2.3 @KEY_CONSTRUCTOR_ATTRIBUTES_p1_PASSED_ARGS@
+    QRegularExpression KEY_CONSTRUCTOR_ATTRIBUTES_p1_PASSED_ARGS("@KEY_CONSTRUCTOR_ATTRIBUTES_p1_PASSED_ARGS@");
+    string attrib_1_pass_args = "";
+    if( SD.add_constructor == true ){
+        vector<string> ListParamToAssign_name_instance = GenerateStringList_name_instance (SD.ListAttributesInitWithConstructor);
+        attrib_1_pass_args = GenerateListConstructorParametersPassArgs (ListParamToAssign_name_instance);
+    }
+    string attrib_1_pass_args_with_comma = ", " + attrib_1_pass_args;
+    QString value_CONSTRUCTOR_ATTRIBUTES_p1_PASS_ARGS_with_comma = QString::fromStdString(attrib_1_pass_args_with_comma);
+    if(SD.ListAttributesInitWithConstructor.size()>0){ // otherwise insert a not needed comma
+        dataText.replace(KEY_CONSTRUCTOR_ATTRIBUTES_p1_PASSED_ARGS, value_CONSTRUCTOR_ATTRIBUTES_p1_PASS_ARGS_with_comma);
+    }else{
+        dataText.replace(KEY_CONSTRUCTOR_ATTRIBUTES_p1_PASSED_ARGS, value_NULL);
+    }
+
+    // 2.4:  KEY_LIST_PUBLIC_ATTRIBUTES_main
+    QRegularExpression  KEY_LIST_PUBLIC_ATTRIBUTES_main("@KEY_LIST_PUBLIC_ATTRIBUTES_main@");
+
+    string all_instances_main = "";
+
+    // list of attributes (without value assigned)
+    for (int i=0; i<SD.UsedAttributes.size(); i++){
+        string single_instance = "";
+        if( SD.UsedAttributes[i].init_source.toStdString() != "initialize_inside_header"){
+            single_instance = "" + SD.UsedAttributes[i].data_type.toStdString() + " " + SD.UsedAttributes[i].name_instance.toStdString() + ";\n    " ;
+        }
+         all_instances_main =  all_instances_main + single_instance;
+    }
+
+//    cout << "\n\n\PRINT COMPONENTS -->  all_instances_main : " <<  all_instances_main << "\n\n\ " ;
+    QString value_LIST_PUBLIC_ATTRIBUTES_main = QString::fromStdString( all_instances_main);
+    dataText.replace( KEY_LIST_PUBLIC_ATTRIBUTES_main, value_LIST_PUBLIC_ATTRIBUTES_main);
+
+
+    // 3: create new file and insert the dataText
+    QFile  output_file_main(path_new_skill + "main.cpp");
+    if( output_file_main.open(QFile::WriteOnly | QFile::Truncate)) {
+        QTextStream out(& output_file_main);
+        out << dataText;
+    }
+     output_file_main.close();
 
     // **********************************++ "Skill.h" **********************************++
 
     // 1: open and read the template
     file_template_NAMESkill_h.open(QIODevice::Text | QIODevice::ReadOnly);
-    QString dataText = file_template_NAMESkill_h.readAll();
+    dataText.clear();
+    dataText = file_template_NAMESkill_h.readAll();
 
     // 2: replace
 
@@ -282,7 +372,6 @@ int SkillGenerator::write()
         attrib_1 = GenerateListConstructorParameters (ListParamToAssign_data_type, ListParamToAssign_name_instance);
     }
     string attrib_1_with_comma = ", " + attrib_1;
-    QString value_NULL = QString::fromStdString("");
     QString value_CONSTRUCTOR_ATTRIBUTES_p1_with_comma = QString::fromStdString(attrib_1_with_comma);
     if(SD.ListAttributesInitWithConstructor.size()>0){ // otherwise insert a not needed comma
         dataText.replace(KEY_CONSTRUCTOR_ATTRIBUTES_p1, value_CONSTRUCTOR_ATTRIBUTES_p1_with_comma);
@@ -397,7 +486,8 @@ int SkillGenerator::write()
         string single_instance = "";
         if( SD.UsedAttributes[i].init_source.toStdString() == "initialize_inside_header"){
             single_instance = "" + SD.UsedAttributes[i].data_type.toStdString() + " " + SD.UsedAttributes[i].name_instance.toStdString() + " { " + SD.UsedAttributes[i].value.toStdString() + " };\n    " ;
-        }else{
+        }
+        else{
             single_instance = "" + SD.UsedAttributes[i].data_type.toStdString() + " " + SD.UsedAttributes[i].name_instance.toStdString() + ";\n    " ;
         }
         all_instances = all_instances + single_instance;
@@ -456,11 +546,11 @@ int SkillGenerator::write()
 
         if(Skill_Config.specify_port_name_attribute){
             // additional name spec if needed
-            string port_name_specific = " + " + Skill_Config.port_name_list[0];
-            single_port = "    if (!client_port.open(\"/" + SD.UsedServices[i].name_instance.toStdString() + "Client/\"" + port_name_specific + ")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
+            string port_name_specific = Skill_Config.port_name_list[0];
+            single_port = "    if (!client_port.open(\"/" + SD.UsedServices[i].name_instance.toStdString() + "Client/" + port_name_specific + "\")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
 
         }else{
-            single_port = "    if (!client_port.open(\"/" + SD.UsedServices[i].name_instance.toStdString() + "Client)) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
+            single_port = "    if (!client_port.open(\"/" + SD.UsedServices[i].name_instance.toStdString() + "Client\")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
         }
 
         all_ports = all_ports + single_port;
@@ -475,7 +565,7 @@ int SkillGenerator::write()
     QRegularExpression KEY_OPEN_CONNECTIONS_TO_COMPONENTS("@OPEN_CONNECTIONS_TO_COMPONENTS@");
     string all_components ="";
     for (int i=0; i<SD.UsedServices.size(); i++){
-        all_components = all_components + "    if (!yarp::os::Network::connect(client_port.getName(), \"/" + SD.UsedServices[i].component_type.toStdString()  + "\", \"" + SD.UsedServices[i].connect_type.toStdString() + "\")) {\n        qWarning(\"Error! Could not connect to server /fakeBattery\");\n        return false;\n    }\n" ;
+        all_components = all_components + "    if (!yarp::os::Network::connect(client_port.getName(), \"/" + SD.UsedServices[i].thrift_protocol.toStdString()  + "\", \"" + SD.UsedServices[i].connect_type.toStdString() + "\")) {\n        qWarning(\"Error! Could not connect to server /fakeBattery\");\n        return false;\n    }\n" ;
     }
     all_components = "    // open connections to components\n\n" + all_components;
     QString value_OPEN_CONNECTIONS_TO_COMPONENTS = QString::fromStdString(all_components);

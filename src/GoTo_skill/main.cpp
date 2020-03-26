@@ -31,7 +31,10 @@ int main(int argc, char **argv)
 
     QString skillName = parser.value("skill-name");
 
-    GoToSkill bt(skillName.toStdString());
+    const std::string location;
+    
+
+    GoToSkill bt(skillName.toStdString() , location);
     if (!bt.start()) {
         return 1;
     }

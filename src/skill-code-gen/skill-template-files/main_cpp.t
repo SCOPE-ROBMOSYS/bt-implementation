@@ -31,7 +31,9 @@ int main(int argc, char **argv)
 
     QString skillName = parser.value("skill-name");
 
-    @KEY_SKILL_NAME@Skill bt(skillName.toStdString());
+    @KEY_LIST_PUBLIC_ATTRIBUTES_main@
+
+    @KEY_SKILL_NAME@Skill bt(skillName.toStdString() @KEY_CONSTRUCTOR_ATTRIBUTES_p1_PASSED_ARGS@);
     if (!bt.start()) {
         return 1;
     }

@@ -4,8 +4,8 @@ if(RE-GENERATE-SKILLS)
        OUTPUT dummy.txt #../GoTo_skill/SomeSource.h SomeSource.cpp #
        #remove old dirs
 #       COMMAND rm -r  ../src/BatteryLevel_skill
-#       COMMAND rm -r  ../src/BatteryNotCharging_skill
-#       COMMAND rm -r  ../src/GoTo_skill
+#       COMMAND sudo rm -r  ../src/BatteryNotCharging_skill
+#       COMMAND sudo rm -r  ../src/GoTo_skill
        #create new dirs
        MESSAGE "-------------------DEBUG"
        COMMAND mkdir -p ../src/BatteryLevel_skill
