@@ -6,7 +6,10 @@
 ################################################################################
 
 # Create the skill (state machine executable)
+
 add_executable(BatteryNotChargingSkill)
+#add_custom_target(BatteryNotCharging ALL
+#    DEPENDS dummy.txt)
 target_include_directories(BatteryNotChargingSkill
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}

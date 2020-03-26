@@ -2,11 +2,22 @@ set(RE-GENERATE-SKILLS TRUE)
 set(suffix SkillStateMachine.scxml)
 set(SKILL_NAME BatteryLevel)
 
+set(LIST_OF_SKILLS BatteryLevel BatteryNotCharging GoTo)
+
+foreach(_ARG ${LIST_OF_SKILLS})
+    MESSAGE ("-------------------DEBUG foreach")
+endforeach()
+
 if(RE-GENERATE-SKILLS)
     add_custom_command(
        COMMENT "################# Skills auto-generation commands inside SkillAutogen.cmake."
        DEPENDS skill-code-gen
        OUTPUT dummy.txt #../GoTo_skill/SomeSource.h SomeSource.cpp #
+
+#       foreach(_ARG ${LIST_OF_SKILLS})
+#           MESSAGE ("-------------------DEBUG foreach")
+#       endforeach()
+
        #remove old dirs
 #       COMMAND rm -r  ../src/BatteryLevel_skill
 #       COMMAND sudo rm -r  ../src/BatteryNotCharging_skill

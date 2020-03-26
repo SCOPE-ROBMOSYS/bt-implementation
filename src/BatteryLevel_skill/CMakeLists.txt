@@ -6,7 +6,10 @@
 ################################################################################
 
 # Create the skill (state machine executable)
+
 add_executable(BatteryLevelSkill)
+#add_custom_target(BatteryLevel ALL
+#    DEPENDS dummy.txt)
 target_include_directories(BatteryLevelSkill
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}

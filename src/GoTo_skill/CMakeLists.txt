@@ -6,7 +6,10 @@
 ################################################################################
 
 # Create the skill (state machine executable)
+
 add_executable(GoToSkill)
+#add_custom_target(GoTo ALL
+#    DEPENDS dummy.txt)
 target_include_directories(GoToSkill
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
