@@ -15,7 +15,7 @@
 #define DEBUG_STATE_MACHINE
 
 GoToSkill::GoToSkill(std::string name, std::string location) :
-        dataModel(std::move(location), std::move(name)),
+        dataModel(std::move(location), name),
         name(std::move(name))
 {
     stateMachine.setDataModel(&dataModel);
@@ -33,6 +33,16 @@ GoToSkill::GoToSkill(std::string name, std::string location) :
         if(!active) {
             qDebug() << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
         }
+    });
+
+    stateMachine.connectToState("wrapperLock", [](bool active) {
+    if(active) {
+        qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+    }
+    qDebug() << QTime::currentTime().toString() << (active ? "entered" : "exited") << "the wrapperLock state";
+    if(!active) {
+        qDebug() << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
+    }
     });
 
     stateMachine.connectToState("sendrequest", [](bool active) {
@@ -168,6 +178,9 @@ ReturnStatus GoToSkill::request_status()
                 return BT_RUNNING;
             }
             if (state == "getstatus") {
+                return BT_RUNNING;
+            }
+            if (state == "wrapperLock") {
                 return BT_RUNNING;
             }
         }

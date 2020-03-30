@@ -32,4 +32,5 @@ target_link_libraries(GoToSkill
     YARP::YARP_os
     YARP::YARP_init
     GoTo_protocol
-    BT_protocol)
+    BT_protocol
+    Blackboard_protocol)

@@ -16,6 +16,7 @@
 #include <QDebug>
 
 #include "GoTo.h"
+#include "Blackboard.h"
 #include <yarp/os/Network.h>
 #include <yarp/os/RpcClient.h>
 
@@ -56,10 +57,12 @@ public:
     yarp::os::Network yarp;
     yarp::os::RpcClient client_port;
     GoTo goTo;
+    Blackboard blackboard;
 
     const std::string location;
     const std::string skillID;
-    const std::int32_t currVal;
+    std::int32_t currVal;
+    const std::string resourceName = "navigation";
 };
 
 Q_DECLARE_METATYPE(::GoToSkillDataModel*)
