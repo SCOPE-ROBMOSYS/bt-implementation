@@ -72,12 +72,12 @@ void SkillGenerator::ConfigGeneration(){
     SD_.skill_name = QString::fromStdString(str_first_part);
 
     // create new folder
-    SD_.path_skill_folder = Qpath_root_package + "src/" + SD_.skill_name + "_skill/";
-    QDir dir_new_skill;
-    if(!dir_new_skill.exists(SD_.path_skill_folder))
-    {
-        dir_new_skill.mkpath(SD_.path_skill_folder); // qDebug()<<"\ndirectory now exists\n\n";
-    }
+//    SD_.path_skill_folder = Qpath_root_package + "src/" + SD_.skill_name + "_skill/";
+//    QDir dir_new_skill;
+//    if(!dir_new_skill.exists(SD_.path_skill_folder))
+//    {
+//        dir_new_skill.mkpath(SD_.path_skill_folder); // qDebug()<<"\ndirectory now exists\n\n";
+//    }
 
     // **********************************++ !read config **********************************++
     string file_with_path = path_root_package + "src/skill-code-gen/input-files/config-skills/";
@@ -151,38 +151,38 @@ string SkillGenerator::GenerateListConstructorParametersAssign (vector<string> L
     return output;
 }
 
-void SkillGenerator::Generate_CMakeLists(){ // (const QFile template_file){
+//void SkillGenerator::Generate_CMakeLists(){ // (const QFile template_file){
 
-    QFile template_file (path_template_ + "CMakeLists_txt.t");
+//    QFile template_file (path_template_ + "CMakeLists_txt.t");
 
-    // 1: open and read the template
-    template_file.open(QIODevice::Text | QIODevice::ReadOnly);
-    QString dataText = template_file.readAll();
+//    // 1: open and read the template
+//    template_file.open(QIODevice::Text | QIODevice::ReadOnly);
+//    QString dataText = template_file.readAll();
 
-    // 2: replace
+//    // 2: replace
 
-    // 2.1: name
-//    QRegularExpression key_skill_name("@KEY_SKILL_NAME@");
-    dataText.replace(K_.key_skill_name, SD_.skill_name);
+//    // 2.1: name
+////    QRegularExpression key_skill_name("@KEY_SKILL_NAME@");
+//    dataText.replace(K_.key_skill_name, SD_.skill_name);
 
-    // 2.2:  ADDITIONAL_THRIFT_PROTOCOLS
-    QRegularExpression KEY_ADDITIONAL_THRIFT_PROTOCOLS("@ADDITIONAL_THRIFT_PROTOCOLS@");
-    string all_protocols = "";
-    // list of protocols
-    for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
-        all_protocols =  all_protocols + "\n    " + SD_.UsedServices[i].thrift_protocol.toStdString() + "_protocol";
-    }
-    QString value_ADDITIONAL_THRIFT_PROTOCOLS = QString::fromStdString(all_protocols);
-    dataText.replace( KEY_ADDITIONAL_THRIFT_PROTOCOLS, value_ADDITIONAL_THRIFT_PROTOCOLS);
+//    // 2.2:  ADDITIONAL_THRIFT_PROTOCOLS
+//    QRegularExpression KEY_ADDITIONAL_THRIFT_PROTOCOLS("@ADDITIONAL_THRIFT_PROTOCOLS@");
+//    string all_protocols = "";
+//    // list of protocols
+//    for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
+//        all_protocols =  all_protocols + "\n    " + SD_.UsedServices[i].thrift_protocol.toStdString() + "_protocol";
+//    }
+//    QString value_ADDITIONAL_THRIFT_PROTOCOLS = QString::fromStdString(all_protocols);
+//    dataText.replace( KEY_ADDITIONAL_THRIFT_PROTOCOLS, value_ADDITIONAL_THRIFT_PROTOCOLS);
 
-    // 3: create new file and insert the dataText
-    QFile output_file(SD_.path_skill_folder + "CMakeLists.txt");
-    if( output_file.open(QFile::WriteOnly | QFile::Truncate)) {
-        QTextStream out(& output_file);
-        out << dataText;
-    }
-    output_file.close();
-}
+//    // 3: create new file and insert the dataText
+//    QFile output_file(SD_.path_skill_folder + "CMakeLists.txt");
+//    if( output_file.open(QFile::WriteOnly | QFile::Truncate)) {
+//        QTextStream out(& output_file);
+//        out << dataText;
+//    }
+//    output_file.close();
+//}
 
 void SkillGenerator::Generate_Main(){
 
@@ -588,7 +588,7 @@ int SkillGenerator::write()
     }
 
     // **********************************++ !generate skill files **********************************++
-    Generate_CMakeLists();
+//    Generate_CMakeLists();
     Generate_Main();
     Generate_Skill_h();
     Generate_Skill_cpp();

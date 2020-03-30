@@ -46,4 +46,4 @@ target_compile_options(skill-code-gen
     -Wno-overloaded-virtual)
 
 # need to include .cmake file to generate the skills, launching the skill-code-gen executable
-include(SkillAutogen)
+#include(SkillAutogen)

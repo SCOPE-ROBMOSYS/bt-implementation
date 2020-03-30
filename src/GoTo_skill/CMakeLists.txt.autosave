@@ -36,12 +36,12 @@ target_include_directories(GoToSkill
     ${CMAKE_CURRENT_BINARY_DIR})
 
 message(" ----- qt5_add_statecharts -----")
-#qt5_add_statecharts(STATECHARTS_FILES GoToSkillStateMachine.scxml)
-#set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/GoToSkillStateMachine.cpp PROPERTIES SKIP_AUTOMOC TRUE)
+qt5_add_statecharts(STATECHARTS_FILES GoToSkillStateMachine.scxml)
+set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/GoToSkillStateMachine.cpp PROPERTIES SKIP_AUTOMOC TRUE)
 
-#target_sources(GoToSkill
-#  PRIVATE
-#    ${STATECHARTS_FILES})
+target_sources(GoToSkill
+  PRIVATE
+    ${STATECHARTS_FILES})
 
 target_link_libraries(GoToSkill
   PRIVATE

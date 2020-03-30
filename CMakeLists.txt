@@ -29,7 +29,7 @@ set(CMAKE_C_EXTENSIONS OFF)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(PATH_ROOT_TO_PACKAGE_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
-set(SKILL_SCXML_FILES_DIR "${PATH_ROOT_TO_PACKAGE_ROOT_DIR}/src/skill-code-gen/input-files")
+#set(SKILL_SCXML_FILES_DIR "${PATH_ROOT_TO_PACKAGE_ROOT_DIR}/src/skill-code-gen/input-files")
 
 # Pick up our CMake scripts - they are all in the cmake subdirectory.
 set(BT_IMPLEM_MODULE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")

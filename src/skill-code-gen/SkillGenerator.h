@@ -160,7 +160,7 @@ public:
     string GenerateListConstructorParametersPassArgs (vector<string> ListParamToAssign_name_instance);
 
     void ConfigGeneration();
-    void Generate_CMakeLists();
+//    void Generate_CMakeLists();
     void Generate_Main();
     void Generate_Skill_h();
     void Generate_Skill_cpp();
