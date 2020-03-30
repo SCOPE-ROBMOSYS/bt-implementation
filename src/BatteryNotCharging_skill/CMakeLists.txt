@@ -7,33 +7,9 @@
 
 # Create the skill (state machine executable)
 
+include(SkillAutogen)
+
 add_executable(BatteryNotChargingSkill)
-#add_custom_target(BatteryNotCharging ALL
-#    DEPENDS dummy.txt)
-target_include_directories(BatteryNotChargingSkill
-  PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR})
-target_sources(BatteryNotChargingSkill
-  PRIVATE
-    main.cpp
-    BatteryNotChargingSkill.cpp
-    BatteryNotChargingSkill.h
-    BatteryNotChargingSkillDataModel.cpp
-    BatteryNotChargingSkillDataModel.h)
-
-qt5_add_statecharts(STATECHARTS_FILES ${SKILL_SCXML_FILES_DIR}/BatteryNotChargingSkillStateMachine.scxml)
-set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/BatteryNotChargingSkillStateMachine.cpp PROPERTIES SKIP_AUTOMOC TRUE)
-
-target_sources(BatteryNotChargingSkill
-  PRIVATE
-    ${STATECHARTS_FILES})
-
-target_link_libraries(BatteryNotChargingSkill
-  PRIVATE
-    Qt5::Scxml
-    YARP::YARP_os
-    YARP::YARP_init
-    BT_protocol 
-    Battery_protocol
-    )
+generate_skills(SOURCES_FILES LIBRARIES BatteryNotChargingSkillStateMachine.scxml)
+target_sources(BatteryNotChargingSkill PRIVATE ${SOURCES_FILES})
+target_link_libraries(BatteryNotChargingSkill PRIVATE ${LIBRARIES})

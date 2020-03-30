@@ -19,13 +19,10 @@ add_subdirectory(Blackboard_protocol)
 # Code Generator
 add_subdirectory(skill-code-gen)
 
-# need to include .cmake file to generate the skills, launching the skill-code-gen executable
-#include(SkillAutogen)
-
 #Skills
 add_subdirectory(GoTo_skill)
-#add_subdirectory(BatteryLevel_skill)
-#add_subdirectory(BatteryNotCharging_skill)
+add_subdirectory(BatteryLevel_skill)
+add_subdirectory(BatteryNotCharging_skill)
 
 #components
 add_subdirectory(Battery_component)

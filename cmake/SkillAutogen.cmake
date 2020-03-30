@@ -19,14 +19,20 @@ function(generate_skills outfiles outlibs)
       endif()
     endforeach()
 
-    get_filename_component(outfilename ${it} NAME_WE)
     get_filename_component(infile ${it} ABSOLUTE)
+    get_filename_component(infile_name ${it} NAME_WE)
+
+    string(FIND ${infile_name} "SkillStateMachine" pos_end_skill_name_as_length REVERSE)
+    string(SUBSTRING ${infile_name} 0 ${pos_end_skill_name_as_length} skill_name)
+#    message ("infile_name: ${infile_name}")
+#    message ("position skill_name: ${pos_end_skill_name_as_length}")
+#    message ("skill_name: ${skill_name}")
 
     set(out_main "${CMAKE_CURRENT_BINARY_DIR}/main.cpp")
-    set(out_cpp "${CMAKE_CURRENT_BINARY_DIR}/GoToSkill.cpp")
-    set(out_h "${CMAKE_CURRENT_BINARY_DIR}/GoToSkill.h")
-    set(out_DataModel_cpp "${CMAKE_CURRENT_BINARY_DIR}/GoToSkillDataModel.cpp")
-    set(out_DataModel_h "${CMAKE_CURRENT_BINARY_DIR}/GoToSkillDataModel.h")
+    set(out_cpp "${CMAKE_CURRENT_BINARY_DIR}/${skill_name}Skill.cpp")
+    set(out_h "${CMAKE_CURRENT_BINARY_DIR}/${skill_name}Skill.h")
+    set(out_DataModel_cpp "${CMAKE_CURRENT_BINARY_DIR}/${skill_name}SkillDataModel.cpp")
+    set(out_DataModel_h "${CMAKE_CURRENT_BINARY_DIR}/${skill_name}SkillDataModel.h")
 
     unset(${outfiles})
     list(APPEND ${outfiles} ${out_main})
@@ -44,7 +50,7 @@ function(generate_skills outfiles outlibs)
 
   endforeach()
 
-  qt5_add_statecharts(STATECHARTS_FILES GoToSkillStateMachine.scxml OPTIONS ${ARGS_OPTIONS})
+  qt5_add_statecharts(STATECHARTS_FILES ${infile_name}.scxml OPTIONS ${ARGS_OPTIONS})
   set_source_files_properties(${STATECHARTS_FILES} PROPERTIES SKIP_AUTOMOC TRUE)
   list(APPEND ${outfiles} ${STATECHARTS_FILES})
 
