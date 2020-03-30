@@ -287,10 +287,10 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
                 <qt:editorinfo movePoint="-97.77;4.55"/>
             </transition>
             <onentry>
-                <log label="wrapperLock" expr="&quot;Inside wrapperLog&quot;"/>
+                <log label="wrapperLock" expr="&quot;Inside wrapperLock&quot;"/>
             </onentry>
             <onexit>
-                <log expr="&quot;Leaving wrapperLog&quot;" label="wrapperLock"/>
+                <log expr="&quot;Leaving wrapperLock&quot;" label="wrapperLock"/>
             </onexit>
         </state>
     </state>
