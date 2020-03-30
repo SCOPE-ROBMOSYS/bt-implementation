@@ -15,7 +15,7 @@
 #define DEBUG_STATE_MACHINE
 
 GoToSkill::GoToSkill(std::string name, std::string location) :
-        dataModel(std::move(location)),
+        dataModel(std::move(location), std::move(name)),
         name(std::move(name))
 {
     stateMachine.setDataModel(&dataModel);

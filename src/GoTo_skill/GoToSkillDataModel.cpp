@@ -10,8 +10,10 @@
 #include <QTimer>
 #include <QScxmlStateMachine>
 
-GoToSkillDataModel::GoToSkillDataModel(std::string location) :
-        location(std::move(location))
+GoToSkillDataModel::GoToSkillDataModel(std::string location, std::string skillID) :
+        location(std::move(location)),
+        skillID(std::move(skillID)),
+        currVal(0)
 {
     qDebug() << "GoToSkillDataModel::GoToSkillDataModel() called";
 }

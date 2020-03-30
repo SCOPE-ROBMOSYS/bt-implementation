@@ -49,7 +49,7 @@ class GoToSkillDataModel: public QScxmlCppDataModel
     Q_SCXML_DATAMODEL
 
 public:
-    GoToSkillDataModel(std::string location);
+    GoToSkillDataModel(std::string location, std::string skillID);
 
     bool setup(const QVariantMap& initialDataValues) override;
 
@@ -58,6 +58,8 @@ public:
     GoTo goTo;
 
     const std::string location;
+    const std::string skillID;
+    const std::int32_t currVal;
 };
 
 Q_DECLARE_METATYPE(::GoToSkillDataModel*)
