@@ -5,7 +5,11 @@
 #                                                                              #
 ################################################################################
 
-add_executable(skill-code-gen)
+set(SOURCES main.cpp)
+qt5_add_resources(SOURCES list_templates.qrc)
+
+add_executable(skill-code-gen ${SOURCES})
+
 target_sources(skill-code-gen
   PRIVATE
     main.cpp
@@ -44,6 +48,3 @@ target_compile_definitions(skill-code-gen
 target_compile_options(skill-code-gen
   PRIVATE
     -Wno-overloaded-virtual)
-
-# need to include .cmake file to generate the skills, launching the skill-code-gen executable
-#include(SkillAutogen)

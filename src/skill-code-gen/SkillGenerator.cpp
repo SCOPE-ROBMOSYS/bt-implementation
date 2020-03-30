@@ -47,37 +47,38 @@ void SkillGenerator::ConfigGeneration(){
 
     SD_.add_constructor = false; // default constructor
 
+    // used only for .conf files
     // **********************************++ !path & new folder **********************************++
-    //detect root path
-    string ss_whole = tu_->Path.toUtf8().constData(); //receive from outside
-    /* I need to
-    1) search the word "skill" inside the string  -->  std::string::find()
-        test_str.find("Skill") contains the pointer to the sub-string initial position
-    2) fetch string before that. */
-    string path_root_package = ss_whole.substr (0, ss_whole.rfind("src") ); // i.e. /home/scope/bt-implementation/
-    cout << "\n\n\nRoot --> " << path_root_package << "\n\n";
+        //detect root path
+        string ss_whole = tu_->Path.toUtf8().constData(); //receive from outside
+        /* I need to
+        1) search the word "skill" inside the string  -->  std::string::find()
+            test_str.find("Skill") contains the pointer to the sub-string initial position
+        2) fetch string before that. */
+        string path_root_package = ss_whole.substr (0, ss_whole.rfind("src") ); // i.e. /home/scope/bt-implementation/
+        cout << "\n\n\nRoot --> " << path_root_package << "\n\n";
 
-    // locate folder with template files
-    QString Qpath_root_package = QString::fromStdString(path_root_package);
-    string end_path_template = "src/skill-code-gen/skill-template-files/";
-    string path_template_str = path_root_package + end_path_template; // e.g. /home/scope/bt-implementation/src/skill-code-gen/skill-template-files/
+        // locate folder with template files
+        QString Qpath_root_package = QString::fromStdString(path_root_package);
+        string end_path_template = "src/skill-code-gen/skill-template-files/";
+        string path_template_str = path_root_package + end_path_template; // e.g. /home/scope/bt-implementation/src/skill-code-gen/skill-template-files/
 
-    path_template_ = QString::fromStdString(path_template_str);
+        path_template_ = QString::fromStdString(path_template_str);
 
-    //detect skill name
-    string ss = tu_->scxmlFileName.toUtf8().constData();
-//    bool found = ss.find("SkillStateMachine.scxml") != ss.npos; //    std::cout << "\n\n\nTEST\n\n\n" << found << " ||||| " << ss.find("SkillStateMachine.scxml") << "\n\n\nEND TEST\n\n\n";
-    string str_first_part = ss.substr (0, ss.find("SkillStateMachine.scxml") );
-    cout << "Skill name --> " << str_first_part << "\n\n";
-    SD_.skill_name = QString::fromStdString(str_first_part);
+        //detect skill name
+        string ss = tu_->scxmlFileName.toUtf8().constData();
+    //    bool found = ss.find("SkillStateMachine.scxml") != ss.npos; //    std::cout << "\n\n\nTEST\n\n\n" << found << " ||||| " << ss.find("SkillStateMachine.scxml") << "\n\n\nEND TEST\n\n\n";
+        string str_first_part = ss.substr (0, ss.find("SkillStateMachine.scxml") );
+        cout << "Skill name --> " << str_first_part << "\n\n";
+        SD_.skill_name = QString::fromStdString(str_first_part);
 
-    // create new folder
-//    SD_.path_skill_folder = Qpath_root_package + "src/" + SD_.skill_name + "_skill/";
-//    QDir dir_new_skill;
-//    if(!dir_new_skill.exists(SD_.path_skill_folder))
-//    {
-//        dir_new_skill.mkpath(SD_.path_skill_folder); // qDebug()<<"\ndirectory now exists\n\n";
-//    }
+        // create new folder
+    //    SD_.path_skill_folder = Qpath_root_package + "src/" + SD_.skill_name + "_skill/";
+    //    QDir dir_new_skill;
+    //    if(!dir_new_skill.exists(SD_.path_skill_folder))
+    //    {
+    //        dir_new_skill.mkpath(SD_.path_skill_folder); // qDebug()<<"\ndirectory now exists\n\n";
+    //    }
 
     // **********************************++ !read config **********************************++
     string file_with_path = path_root_package + "src/skill-code-gen/input-files/config-skills/";
@@ -151,42 +152,9 @@ string SkillGenerator::GenerateListConstructorParametersAssign (vector<string> L
     return output;
 }
 
-//void SkillGenerator::Generate_CMakeLists(){ // (const QFile template_file){
-
-//    QFile template_file (path_template_ + "CMakeLists_txt.t");
-
-//    // 1: open and read the template
-//    template_file.open(QIODevice::Text | QIODevice::ReadOnly);
-//    QString dataText = template_file.readAll();
-
-//    // 2: replace
-
-//    // 2.1: name
-////    QRegularExpression key_skill_name("@KEY_SKILL_NAME@");
-//    dataText.replace(K_.key_skill_name, SD_.skill_name);
-
-//    // 2.2:  ADDITIONAL_THRIFT_PROTOCOLS
-//    QRegularExpression KEY_ADDITIONAL_THRIFT_PROTOCOLS("@ADDITIONAL_THRIFT_PROTOCOLS@");
-//    string all_protocols = "";
-//    // list of protocols
-//    for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
-//        all_protocols =  all_protocols + "\n    " + SD_.UsedServices[i].thrift_protocol.toStdString() + "_protocol";
-//    }
-//    QString value_ADDITIONAL_THRIFT_PROTOCOLS = QString::fromStdString(all_protocols);
-//    dataText.replace( KEY_ADDITIONAL_THRIFT_PROTOCOLS, value_ADDITIONAL_THRIFT_PROTOCOLS);
-
-//    // 3: create new file and insert the dataText
-//    QFile output_file(SD_.path_skill_folder + "CMakeLists.txt");
-//    if( output_file.open(QFile::WriteOnly | QFile::Truncate)) {
-//        QTextStream out(& output_file);
-//        out << dataText;
-//    }
-//    output_file.close();
-//}
-
 void SkillGenerator::Generate_Main(){
 
-    QFile template_file (path_template_ + "main_cpp.t");
+    QFile template_file(":/skill-template-files/main_cpp.t");   //    QFile template_file (path_template_ + "main_cpp.t");
 
     // 1: open and read the template
     template_file.open(QIODevice::Text | QIODevice::ReadOnly);
@@ -241,7 +209,7 @@ void SkillGenerator::Generate_Main(){
 
 void SkillGenerator::Generate_Skill_h(){
 
-    QFile template_file (path_template_ + "Name_Skill_h.t");
+    QFile template_file(":/skill-template-files/Name_Skill_h.t");
 
     // 1: open and read the template
     template_file.open(QIODevice::Text | QIODevice::ReadOnly);
@@ -280,7 +248,7 @@ void SkillGenerator::Generate_Skill_h(){
 
 void SkillGenerator::Generate_Skill_cpp(){
 
-    QFile template_file (path_template_ + "Name_Skill_cpp.t");
+    QFile template_file(":/skill-template-files/Name_Skill_cpp.t");
 
     // 1: open and read the template
     template_file.open(QIODevice::Text | QIODevice::ReadOnly);
@@ -341,7 +309,7 @@ void SkillGenerator::Generate_Skill_cpp(){
 
 void SkillGenerator::Generate_Skill_DataModel_h(){
 
-    QFile template_file (path_template_ + "Name_SkillDataModel_h.t");
+    QFile template_file(":/skill-template-files/Name_SkillDataModel_h.t");
 
     // 1: open and read the template
     template_file.open(QIODevice::Text | QIODevice::ReadOnly);
@@ -414,7 +382,7 @@ void SkillGenerator::Generate_Skill_DataModel_h(){
 
 void SkillGenerator::Generate_Skill_DataModel_cpp(){
 
-    QFile template_file (path_template_ + "Name_SkillDataModel_cpp.t");
+    QFile template_file(":/skill-template-files/Name_SkillDataModel_cpp.t");
 
     // 1: open and read the template
     template_file.open(QIODevice::Text | QIODevice::ReadOnly);
@@ -588,7 +556,6 @@ int SkillGenerator::write()
     }
 
     // **********************************++ !generate skill files **********************************++
-//    Generate_CMakeLists();
     Generate_Main();
     Generate_Skill_h();
     Generate_Skill_cpp();
