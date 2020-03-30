@@ -54,7 +54,7 @@ void SkillGenerator::ConfigGeneration(){
     1) search the word "skill" inside the string  -->  std::string::find()
         test_str.find("Skill") contains the pointer to the sub-string initial position
     2) fetch string before that. */
-    string path_root_package = ss_whole.substr (0, ss_whole.find("src") ); // i.e. /home/scope/bt-implementation/
+    string path_root_package = ss_whole.substr (0, ss_whole.rfind("src") ); // i.e. /home/scope/bt-implementation/
     cout << "\n\n\nRoot --> " << path_root_package << "\n\n";
 
     // locate folder with template files

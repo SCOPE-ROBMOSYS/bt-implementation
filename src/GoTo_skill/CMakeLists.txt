@@ -10,44 +10,6 @@
 include(SkillAutogen)
 
 add_executable(GoToSkill)
-
-message(" ----- before -----")
-generate_skills(SOURCES_FILES GoToSkillStateMachine.scxml)
-message(" ----- after -----")
-
-message(" ----- SOURCES_FILES : ${SOURCES_FILES} ")
-#message(" ----- outfiles : ${outfiles} ")
-
-#add_custom_target(GoToSkill ALL
-#      DEPENDS ${SOURCES_FILES})
-
-target_sources(GoToSkill
-  PRIVATE
-     ${SOURCES_FILES})
-#    main.cpp
-#    GoToSkill.cpp
-#    GoToSkill.h
-#    GoToSkillDataModel.cpp
-#    GoToSkillDataModel.h)
-
-target_include_directories(GoToSkill
-  PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR})
-
-message(" ----- qt5_add_statecharts -----")
-#qt5_add_statecharts(STATECHARTS_FILES GoToSkillStateMachine.scxml)
-#set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/GoToSkillStateMachine.cpp PROPERTIES SKIP_AUTOMOC TRUE)
-
-#target_sources(GoToSkill
-#  PRIVATE
-#    ${STATECHARTS_FILES})
-
-target_link_libraries(GoToSkill
-  PRIVATE
-    Qt5::Scxml
-    YARP::YARP_os
-    YARP::YARP_init
-    BT_protocol
-    GoTo_protocol
-    )
+generate_skills(SOURCES_FILES LIBRARIES GoToSkillStateMachine.scxml)
+target_sources(GoToSkill PRIVATE ${SOURCES_FILES})
+target_link_libraries(GoToSkill PRIVATE ${LIBRARIES})
