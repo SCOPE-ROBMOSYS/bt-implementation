@@ -18,7 +18,6 @@
                 </ReactiveSequence>
             </ReactiveFallback>
             <Action ID="YARPAction" name="GoToDestination" port_name="goTo"/>
-            <Action ID="AlwaysRunning" name="Wait"/>
         </ReactiveSequence>
     </BehaviorTree>
     <!-- ////////// -->
