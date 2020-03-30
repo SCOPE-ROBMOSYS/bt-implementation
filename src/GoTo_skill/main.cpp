@@ -33,6 +33,8 @@ int main(int argc, char **argv)
     QString skillName = parser.value("skill-name");
     QString location = parser.value("location");
 
+    QCoreApplication::setApplicationName(skillName);
+
     GoToSkill bt(skillName.toStdString(), location.toStdString());
     if (!bt.start()) {
         return 1;
