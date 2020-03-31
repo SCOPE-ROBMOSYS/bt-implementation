@@ -78,6 +78,15 @@ services:
     container_name: yarp-server
     command: yarp server --read
 
+  IdComponent:
+    <<: *bt-implementation-base
+    container_name: IdComponent
+    command: sh -c "
+      yarp wait /root;
+      /usr/local/src/bt-implementation/build/bin/IdComponent"
+    depends_on:
+      - yarp-server
+
   transformServer:
     <<: *yarp-mesa-base
     container_name: transformServer

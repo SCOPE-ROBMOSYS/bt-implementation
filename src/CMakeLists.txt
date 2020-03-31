@@ -12,6 +12,7 @@ add_subdirectory(BT)
 add_subdirectory(BT_protocol)
 
 # Protocols used between Skill and Component
+add_subdirectory(Id_protocol)
 add_subdirectory(GoTo_protocol)
 add_subdirectory(Battery_protocol)
 add_subdirectory(Blackboard_protocol)
@@ -22,6 +23,7 @@ add_subdirectory(BatteryLevel_skill)
 add_subdirectory(BatteryNotCharging_skill)
 
 #components
+add_subdirectory(Id_component)
 add_subdirectory(Battery_component)
 add_subdirectory(GoTo_component)
 add_subdirectory(Blackboard_component)
