@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" binding="early" xmlns:qt="http://www.qt.io/2015/02/scxml-ext" name="GoToSkillStateMachine" datamodel="cplusplus:GoToSkillDataModel:GoToSkillDataModel.h" qt:editorversion="4.11.0" initial="wrapper">
-    <qt:editorinfo initialGeometry="3272.99;-777.33;-20;-20;40;40"/>
+    <qt:editorinfo initialGeometry="2576.15;-575.71;-20;-20;40;40"/>
     <state id="halted">
-        <qt:editorinfo scenegeometry="3150.94;177.98;3090.94;127.98;120;100" geometry="3150.94;177.98;-60;-50;120;100"/>
+        <qt:editorinfo scenegeometry="2910.17;-181.05;2850.17;-231.05;120;100" geometry="2910.17;-181.05;-60;-50;120;100"/>
         <onentry>
             <log label="halted" expr="&quot;Inside halted&quot;"/>
             <script>Connector connection(client_port.getName(), &quot;/GoToComponent&quot;, &quot;tcp&quot;);
@@ -17,7 +17,7 @@
         </transition>
     </state>
     <state id="wrapper" initial="idle">
-        <qt:editorinfo scenegeometry="83.23;-201.02;-301.31;-1672.85;3219.66;3047.34" geometry="83.23;-201.02;-384.54;-1471.83;3219.66;3047.34"/>
+        <qt:editorinfo scenegeometry="93.56;-203.08;-42.94;-1670.92;2129;3084.15" geometry="93.56;-203.08;-136.50;-1467.84;2129;3084.15"/>
         <onentry>
             <log label="wrapper" expr="&quot;Inside wrapper&quot;"/>
         </onentry>
@@ -25,7 +25,7 @@
             <log label="wrapper" expr="&quot;Leaving wrapper&quot;"/>
         </onexit>
         <state id="idle">
-            <qt:editorinfo scenegeometry="1092.46;-1393.81;1032.46;-1443.81;120;100" geometry="1010.88;-1192.79;-60;-50;120;100"/>
+            <qt:editorinfo scenegeometry="1106.92;-1402.07;1046.92;-1452.07;120;100" geometry="1010.88;-1192.79;-60;-50;120;100"/>
             <onentry>
                 <log label="wrapper.idle" expr="&quot;Inside idle&quot;"/>
                 <assign location="status" expr="Idle"/>
@@ -38,7 +38,7 @@
             </transition>
         </state>
         <state id="sendrequest">
-            <qt:editorinfo scenegeometry="1076.19;270.35;907.72;220.35;235.89;100" geometry="994.61;471.37;-168.47;-50;235.89;100"/>
+            <qt:editorinfo scenegeometry="1090.65;262.09;922.18;212.09;235.89;100" geometry="994.61;471.37;-168.47;-50;235.89;100"/>
             <onentry>
                 <log label="wrapper.sendrequest" expr="&quot;Inside sendrequest&quot;"/>
                 <script>Connector connection(client_port.getName(), &quot;/GoToComponent&quot;, &quot;tcp&quot;);
@@ -54,7 +54,7 @@
             <transition type="internal" event="REQUEST_SENT" target="getstatus"/>
         </state>
         <state id="getstatus">
-            <qt:editorinfo scenegeometry="1080.15;1299.29;897.68;1249.29;222.47;100" geometry="998.57;1500.31;-182.47;-50;222.47;100"/>
+            <qt:editorinfo scenegeometry="1094.61;1291.03;912.14;1241.03;222.47;100" geometry="998.57;1500.31;-182.47;-50;222.47;100"/>
             <onentry>
                 <log label="wrapper.getstatus" expr="&quot;Inside getstatus&quot;"/>
                 <script>Connector connection(client_port.getName(), &quot;/GoToComponent&quot;, &quot;tcp&quot;);
@@ -105,11 +105,15 @@
                 <log label="wrapper.getstatus" expr="&quot;Leaving getstatus&quot;"/>
             </onexit>
             <transition type="internal" event="STATUS_RUNNING" target="getstatus"/>
-            <transition type="internal" event="STATUS_SUCCESS" target="success"/>
-            <transition type="internal" event="STATUS_FAILED" target="failure"/>
+            <transition type="internal" event="STATUS_SUCCESS" target="wrapperUnlock_2">
+                <qt:editorinfo endTargetFactors="96.80;87.02"/>
+            </transition>
+            <transition type="internal" event="STATUS_FAILED" target="wrapperUnlock_1">
+                <qt:editorinfo endTargetFactors="2.89;90.79"/>
+            </transition>
         </state>
         <state id="success">
-            <qt:editorinfo scenegeometry="-222.96;1298.27;-282.96;1248.27;120;100" geometry="-304.54;1499.29;-60;-50;120;100"/>
+            <qt:editorinfo scenegeometry="88.63;1291.93;28.63;1241.93;120;100" geometry="-4.93;1495.01;-60;-50;120;100"/>
             <onentry>
                 <log label="wrapper.success" expr="&quot;Inside success&quot;"/>
             </onentry>
@@ -117,11 +121,11 @@
                 <log label="wrapper.success" expr="&quot;Leaving success&quot;"/>
             </onexit>
             <transition type="internal" event="TICK" target="idle">
-                <qt:editorinfo localGeometry="-19.70;-2692.08"/>
+                <qt:editorinfo localGeometry="0;-2687.80"/>
             </transition>
         </state>
         <state id="failure">
-            <qt:editorinfo scenegeometry="2560.29;1261.76;2500.29;1211.76;120;100" geometry="2478.71;1462.78;-60;-50;120;100"/>
+            <qt:editorinfo scenegeometry="2006.06;1275.58;1946.06;1225.58;120;100" geometry="1912.50;1478.66;-60;-50;120;100"/>
             <onentry>
                 <log label="wrapper.failure" expr="&quot;Inside failure&quot;"/>
             </onentry>
@@ -129,16 +133,16 @@
                 <log label="wrapper.failure" expr="&quot;Leaving failure&quot;"/>
             </onexit>
             <transition type="internal" event="TICK" target="idle">
-                <qt:editorinfo localGeometry="149.04;-2617.58"/>
+                <qt:editorinfo localGeometry="42.88;-2671.39"/>
             </transition>
         </state>
-        <transition type="internal" event="HALT" target="halted">
-            <qt:editorinfo startTargetFactors="99.63;64.06" endTargetFactors="43.43;85.48"/>
+        <transition type="internal" event="HALT" target="wrapperUnlock_3">
+            <qt:editorinfo startTargetFactors="99.63;64.06" endTargetFactors="3.32;37.32"/>
         </transition>
         <state id="wrapperLock" initial="lockKey">
-            <qt:editorinfo scenegeometry="438.64;-1047.42;710.35;-1258.45;751.11;1324.16" geometry="357.06;-846.40;271.71;-211.03;751.11;1324.16"/>
+            <qt:editorinfo scenegeometry="453.10;-1055.68;724.81;-1266.71;751.11;1324.16" geometry="357.06;-846.40;271.71;-211.03;751.11;1324.16"/>
             <state id="lockKey">
-                <qt:editorinfo scenegeometry="974.02;-1051.37;824.91;-1105.42;169.11;90.05" geometry="535.38;-3.95;-149.11;-54.05;169.11;90.05"/>
+                <qt:editorinfo scenegeometry="988.48;-1059.63;839.37;-1113.68;169.11;90.05" geometry="535.38;-3.95;-149.11;-54.05;169.11;90.05"/>
                 <transition type="external" event="LOCK_FALSE" target="lockKey">
                     <qt:editorinfo endTargetFactors="12.65;49.12"/>
                 </transition>
@@ -170,7 +174,7 @@
                 </onentry>
             </state>
             <state id="readData">
-                <qt:editorinfo scenegeometry="985.40;-737.21;737.48;-787.21;307.92;116" geometry="546.76;310.21;-247.92;-50;307.92;116"/>
+                <qt:editorinfo scenegeometry="999.86;-745.47;751.94;-795.47;307.92;116" geometry="546.76;310.21;-247.92;-50;307.92;116"/>
                 <transition type="external" event="DATA_EQUAL_ZERO" target="unlockBusy"/>
                 <transition type="external" event="DATA_GREATER_THAN_ZERO" target="writeData"/>
                 <onentry>
@@ -201,9 +205,9 @@
                 </onentry>
             </state>
             <state id="unlockBusy">
-                <qt:editorinfo scenegeometry="1390.56;-708.60;1184.72;-758.60;225.84;100" geometry="951.92;338.82;-205.84;-50;225.84;100"/>
+                <qt:editorinfo scenegeometry="1405.02;-716.86;1199.18;-766.86;225.84;100" geometry="951.92;338.82;-205.84;-50;225.84;100"/>
                 <transition type="external" event="UNLOCK_BUSY_TRUE" target="lockKey">
-                    <qt:editorinfo movePoint="-36.86;-101.38" endTargetFactors="92.62;51.74" localGeometry="-13.30;-350.23"/>
+                    <qt:editorinfo movePoint="-36.86;-101.38" endTargetFactors="92.62;51.74" localGeometry="-13.28;-350.23"/>
                 </transition>
                 <transition type="external" event="UNLOCK_BUSY_FALSE" target="unlockBusy">
                     <qt:editorinfo endTargetFactors="23.64;51.93"/>
@@ -233,13 +237,13 @@ qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_BU
                 </onentry>
             </state>
             <state id="writeData">
-                <qt:editorinfo scenegeometry="967.32;-483;778.26;-533;249.06;100" geometry="528.68;564.42;-189.06;-50;249.06;100"/>
+                <qt:editorinfo scenegeometry="981.78;-491.26;792.72;-541.26;249.06;100" geometry="528.68;564.42;-189.06;-50;249.06;100"/>
                 <transition type="external" event="WRITE_DATA_TRUE" target="unlockKey"/>
                 <onentry>
                     <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
-
+                    
                     DataBool ret = blackboard.writeDataInt32(skillID, &quot;navigation&quot;, currVal-1);
-
+                   
                    if(ret.reqEval ==VALID){
 	 //vai allo stato unlockKey
  QTimer::singleShot(0, stateMachine(), [&amp;](){
@@ -253,7 +257,7 @@ qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_BU
                 </onentry>
             </state>
             <state id="unlockKey">
-                <qt:editorinfo scenegeometry="977.99;-246.36;810.49;-296.36;187.50;116" geometry="539.35;801.06;-167.50;-50;187.50;116"/>
+                <qt:editorinfo scenegeometry="992.45;-254.62;824.95;-304.62;187.50;116" geometry="539.35;801.06;-167.50;-50;187.50;116"/>
                 <transition type="external" event="UNLOCK_FALSE" target="unlockKey">
                     <qt:editorinfo endTargetFactors="12.72;34.11"/>
                 </transition>
@@ -291,5 +295,350 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
                 <log expr="&quot;Leaving wrapperLock&quot;" label="wrapperLock"/>
             </onexit>
         </state>
+        <state id="wrapperUnlock_1" initial="lockKey_1">
+            <qt:editorinfo scenegeometry="1123.32;984.53;1395.03;746.29;406.80;622.21" geometry="1029.76;1187.61;271.71;-238.24;406.80;622.21"/>
+            <state id="lockKey_1">
+                <qt:editorinfo scenegeometry="1636.75;877.67;1487.64;823.62;169.11;120.05" geometry="513.43;-106.86;-149.11;-54.05;169.11;120.05"/>
+                <transition type="external" event="LOCK_FALSE" target="lockKey_1">
+                    <qt:editorinfo endTargetFactors="12.65;49.12"/>
+                </transition>
+                <transition type="external" event="LOCK_TRUE" target="readData_1">
+                    <qt:editorinfo endTargetFactors="49.26;9.39"/>
+                </transition>
+                <onentry>
+                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    DataBool ret = blackboard.lock(skillID, &quot;navigation&quot;);
+
+                   if(ret.reqEval != VALID){ 
+                        //rimani nello stato lockKey
+	//gestire la differenza tra key invalida e cliente non autorizzato??
+                       qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event LOCK_FALSE submitted&quot;;
+                            QScxmlEvent *e = new QScxmlEvent;
+                            e-&gt;setName(&quot;LOCK_FALSE&quot;);
+                            e-&gt;setEventType(QScxmlEvent::InternalEvent);
+                            e-&gt;setDelay(500);
+                            stateMachine()-&gt;submitEvent(e);
+                       }
+                    else{
+	//vai nello stato readData
+                         QTimer::singleShot(0, stateMachine(), [&amp;](){
+                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event LOCK_TRUE submitted&quot;;
+                        stateMachine()-&gt;submitEvent(&quot;LOCK_TRUE&quot;);
+                    });
+                     }</script>
+                </onentry>
+            </state>
+            <state id="readData_1">
+                <qt:editorinfo scenegeometry="2170.65;986.27;1922.73;936.27;267.92;100" geometry="575.28;21.34;-247.92;-50;267.92;100"/>
+                <transition type="external" event="DATA_READ" target="writeData_1"/>
+                <onentry>
+                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    DataInt32 ret = blackboard.readDataInt32(skillID, &quot;navigation&quot;);
+
+                   if(ret.reqEval ==VALID){
+	     currVal = ret.dataValue;
+	       //vai allo stato writeData
+                         QTimer::singleShot(0, stateMachine(), [&amp;](){
+                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event DATA_READ submitted&quot;;
+                        stateMachine()-&gt;submitEvent(&quot;DATA_READ&quot;);
+                    });
+
+                    }
+                    else{
+	//error??
+                     }</script>
+                </onentry>
+            </state>
+            <state id="writeData_1">
+                <qt:editorinfo scenegeometry="2153.80;1121.46;1964.74;1071.46;209.06;100" geometry="558.43;156.53;-189.06;-50;209.06;100"/>
+                <transition type="external" event="WRITE_DATA_TRUE" target="unlockKey_1"/>
+                <onentry>
+                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    DataBool ret = blackboard.writeDataInt32(skillID, &quot;navigation&quot;, currVal+1);
+
+                   if(ret.reqEval ==VALID){
+	 //vai allo stato unlockKey
+ QTimer::singleShot(0, stateMachine(), [&amp;](){
+                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event WRITE_DATA_TRUE submitted&quot;;
+                        stateMachine()-&gt;submitEvent(&quot;WRITE_DATA_TRUE&quot;);
+                    });
+                    }
+                    else{
+	//error??
+                     }</script>
+                </onentry>
+            </state>
+            <state id="unlockKey_1">
+                <qt:editorinfo scenegeometry="2126.04;1261.39;1958.54;1211.39;187.50;116" geometry="530.67;296.46;-167.50;-50;187.50;116"/>
+                <transition type="external" event="UNLOCK_FALSE" target="unlockKey_1">
+                    <qt:editorinfo endTargetFactors="12.72;34.11"/>
+                </transition>
+                <onentry>
+                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    DataBool ret = blackboard.unlock(skillID, &quot;navigation&quot;);
+
+                   if(ret.reqEval != VALID){ 
+	//rimani nello stato unlockKey
+	//gestire la differenza tra key invalida e cliente non autorizzato??
+qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_FALSE submitted&quot;;
+                            QScxmlEvent *e = new QScxmlEvent;
+                            e-&gt;setName(&quot;UNLOCK_FALSE&quot;);
+                            e-&gt;setEventType(QScxmlEvent::InternalEvent);
+                            e-&gt;setDelay(500);
+                            stateMachine()-&gt;submitEvent(e);
+                    }
+                    else{
+	//esci dal wrapperLock e manda la request alla navigation
+QTimer::singleShot(0, stateMachine(), [&amp;](){
+                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_TRUE submitted&quot;;
+                        stateMachine()-&gt;submitEvent(&quot;UNLOCK_TRUE&quot;);
+                    });
+                     }</script>
+                </onentry>
+                <transition type="external" event="UNLOCK_TRUE" target="failure">
+                    <qt:editorinfo endTargetFactors="8.29;55.29"/>
+                </transition>
+            </state>
+            <onentry>
+                <log label="wrapperLock" expr="&quot;Inside wrapperLock&quot;"/>
+            </onentry>
+            <onexit>
+                <log expr="&quot;Leaving wrapperLock&quot;" label="wrapperLock"/>
+            </onexit>
+        </state>
+        <state id="wrapperUnlock_2" initial="lockKey_2">
+            <qt:editorinfo scenegeometry="36.83;995.66;308.54;757.42;406.80;622.21" geometry="-56.73;1198.74;271.71;-238.24;406.80;622.21"/>
+            <state id="lockKey_2">
+                <qt:editorinfo scenegeometry="-62.19;-1783.70;-211.30;-1837.75;169.11;120.05" geometry="520.50;-106.86;-149.11;-54.05;169.11;120.05"/>
+                <transition type="external" event="LOCK_FALSE" target="lockKey_2">
+                    <qt:editorinfo endTargetFactors="12.65;49.12"/>
+                </transition>
+                <transition type="external" event="LOCK_TRUE" target="readData_2">
+                    <qt:editorinfo endTargetFactors="49.26;9.39"/>
+                </transition>
+                <onentry>
+                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    DataBool ret = blackboard.lock(skillID, &quot;navigation&quot;);
+
+                   if(ret.reqEval != VALID){ 
+                        //rimani nello stato lockKey
+	//gestire la differenza tra key invalida e cliente non autorizzato??
+                       qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event LOCK_FALSE submitted&quot;;
+                            QScxmlEvent *e = new QScxmlEvent;
+                            e-&gt;setName(&quot;LOCK_FALSE&quot;);
+                            e-&gt;setEventType(QScxmlEvent::InternalEvent);
+                            e-&gt;setDelay(500);
+                            stateMachine()-&gt;submitEvent(e);
+                       }
+                    else{
+	//vai nello stato readData
+                         QTimer::singleShot(0, stateMachine(), [&amp;](){
+                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event LOCK_TRUE submitted&quot;;
+                        stateMachine()-&gt;submitEvent(&quot;LOCK_TRUE&quot;);
+                    });
+                     }</script>
+                </onentry>
+            </state>
+            <state id="readData_2">
+                <qt:editorinfo scenegeometry="-7.41;-1655.50;-255.33;-1705.50;267.92;100" geometry="575.28;21.34;-247.92;-50;267.92;100"/>
+                <transition type="external" event="DATA_READ" target="writeData_2"/>
+                <onentry>
+                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    DataInt32 ret = blackboard.readDataInt32(skillID, &quot;navigation&quot;);
+
+                   if(ret.reqEval ==VALID){
+	     currVal = ret.dataValue;
+	       //vai allo stato writeData
+                         QTimer::singleShot(0, stateMachine(), [&amp;](){
+                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event DATA_READ submitted&quot;;
+                        stateMachine()-&gt;submitEvent(&quot;DATA_READ&quot;);
+                    });
+
+                    }
+                    else{
+	//error??
+                     }</script>
+                </onentry>
+            </state>
+            <state id="writeData_2">
+                <qt:editorinfo scenegeometry="-24.26;-1520.31;-213.32;-1570.31;209.06;100" geometry="558.43;156.53;-189.06;-50;209.06;100"/>
+                <transition type="external" event="WRITE_DATA_TRUE" target="unlockKey_2"/>
+                <onentry>
+                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    DataBool ret = blackboard.writeDataInt32(skillID, &quot;navigation&quot;, currVal+1);
+
+                   if(ret.reqEval ==VALID){
+	 //vai allo stato unlockKey
+ QTimer::singleShot(0, stateMachine(), [&amp;](){
+                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event WRITE_DATA_TRUE submitted&quot;;
+                        stateMachine()-&gt;submitEvent(&quot;WRITE_DATA_TRUE&quot;);
+                    });
+                    }
+                    else{
+	//error??
+                     }</script>
+                </onentry>
+            </state>
+            <state id="unlockKey_2">
+                <qt:editorinfo scenegeometry="298.85;1200.26;131.35;1150.26;187.50;116" geometry="530.67;296.46;-167.50;-50;187.50;116"/>
+                <transition type="external" event="UNLOCK_FALSE" target="unlockKey_2">
+                    <qt:editorinfo endTargetFactors="12.72;34.11"/>
+                </transition>
+                <onentry>
+                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    DataBool ret = blackboard.unlock(skillID, &quot;navigation&quot;);
+
+                   if(ret.reqEval != VALID){ 
+	//rimani nello stato unlockKey
+	//gestire la differenza tra key invalida e cliente non autorizzato??
+qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_FALSE submitted&quot;;
+                            QScxmlEvent *e = new QScxmlEvent;
+                            e-&gt;setName(&quot;UNLOCK_FALSE&quot;);
+                            e-&gt;setEventType(QScxmlEvent::InternalEvent);
+                            e-&gt;setDelay(500);
+                            stateMachine()-&gt;submitEvent(e);
+                    }
+                    else{
+	//esci dal wrapperLock e manda la request alla navigation
+QTimer::singleShot(0, stateMachine(), [&amp;](){
+                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_TRUE submitted&quot;;
+                        stateMachine()-&gt;submitEvent(&quot;UNLOCK_TRUE&quot;);
+                    });
+                     }</script>
+                </onentry>
+                <transition type="external" event="UNLOCK_TRUE" target="success">
+                    <qt:editorinfo endTargetFactors="85.71;52.67"/>
+                </transition>
+            </state>
+            <onentry>
+                <log label="wrapperLock" expr="&quot;Inside wrapperLock&quot;"/>
+            </onentry>
+            <onexit>
+                <log expr="&quot;Leaving wrapperLock&quot;" label="wrapperLock"/>
+            </onexit>
+        </state>
+    </state>
+    <state id="wrapperUnlock_3" initial="lockKey_3">
+        <qt:editorinfo scenegeometry="2123.72;306.88;2395.43;68.62;406.80;622.54" geometry="2123.72;306.88;271.71;-238.26;406.80;622.54"/>
+        <state id="lockKey_3">
+            <qt:editorinfo scenegeometry="-153.54;-2055.75;-302.65;-2109.80;169.11;120.05" geometry="520.50;-106.86;-149.11;-54.05;169.11;120.05"/>
+            <transition type="external" event="LOCK_FALSE" target="lockKey_3">
+                <qt:editorinfo endTargetFactors="12.65;49.12"/>
+            </transition>
+            <transition type="external" event="LOCK_TRUE" target="readData_3">
+                <qt:editorinfo endTargetFactors="49.26;9.39"/>
+            </transition>
+            <onentry>
+                <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    DataBool ret = blackboard.lock(skillID, &quot;navigation&quot;);
+
+                   if(ret.reqEval != VALID){ 
+                        //rimani nello stato lockKey
+	//gestire la differenza tra key invalida e cliente non autorizzato??
+                       qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event LOCK_FALSE submitted&quot;;
+                            QScxmlEvent *e = new QScxmlEvent;
+                            e-&gt;setName(&quot;LOCK_FALSE&quot;);
+                            e-&gt;setEventType(QScxmlEvent::InternalEvent);
+                            e-&gt;setDelay(500);
+                            stateMachine()-&gt;submitEvent(e);
+                       }
+                    else{
+	//vai nello stato readData
+                         QTimer::singleShot(0, stateMachine(), [&amp;](){
+                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event LOCK_TRUE submitted&quot;;
+                        stateMachine()-&gt;submitEvent(&quot;LOCK_TRUE&quot;);
+                    });
+                     }</script>
+            </onentry>
+        </state>
+        <state id="readData_3">
+            <qt:editorinfo scenegeometry="-98.76;-1927.55;-346.68;-1977.55;267.92;100" geometry="575.28;21.34;-247.92;-50;267.92;100"/>
+            <transition type="external" event="DATA_READ" target="writeData_3"/>
+            <onentry>
+                <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    DataInt32 ret = blackboard.readDataInt32(skillID, &quot;navigation&quot;);
+
+                   if(ret.reqEval ==VALID){
+	     currVal = ret.dataValue;
+	       //vai allo stato writeData
+                         QTimer::singleShot(0, stateMachine(), [&amp;](){
+                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event DATA_READ submitted&quot;;
+                        stateMachine()-&gt;submitEvent(&quot;DATA_READ&quot;);
+                    });
+
+                    }
+                    else{
+	//error??
+                     }</script>
+            </onentry>
+        </state>
+        <state id="writeData_3">
+            <qt:editorinfo scenegeometry="2683.36;463.41;2494.30;413.41;209.06;100" geometry="559.64;156.53;-189.06;-50;209.06;100"/>
+            <transition type="external" event="WRITE_DATA_TRUE" target="unlockKey_3"/>
+            <onentry>
+                <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    DataBool ret = blackboard.writeDataInt32(skillID, &quot;navigation&quot;, currVal+1);
+
+                   if(ret.reqEval ==VALID){
+	 //vai allo stato unlockKey
+ QTimer::singleShot(0, stateMachine(), [&amp;](){
+                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event WRITE_DATA_TRUE submitted&quot;;
+                        stateMachine()-&gt;submitEvent(&quot;WRITE_DATA_TRUE&quot;);
+                    });
+                    }
+                    else{
+	//error??
+                     }</script>
+            </onentry>
+        </state>
+        <state id="unlockKey_3">
+            <qt:editorinfo scenegeometry="2656.21;605.16;2488.71;555.16;187.50;116" geometry="532.49;298.28;-167.50;-50;187.50;116"/>
+            <transition type="external" event="UNLOCK_FALSE" target="unlockKey_3">
+                <qt:editorinfo endTargetFactors="12.72;34.11"/>
+            </transition>
+            <onentry>
+                <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    DataBool ret = blackboard.unlock(skillID, &quot;navigation&quot;);
+
+                   if(ret.reqEval != VALID){ 
+	//rimani nello stato unlockKey
+	//gestire la differenza tra key invalida e cliente non autorizzato??
+qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_FALSE submitted&quot;;
+                            QScxmlEvent *e = new QScxmlEvent;
+                            e-&gt;setName(&quot;UNLOCK_FALSE&quot;);
+                            e-&gt;setEventType(QScxmlEvent::InternalEvent);
+                            e-&gt;setDelay(500);
+                            stateMachine()-&gt;submitEvent(e);
+                    }
+                    else{
+	//esci dal wrapperLock e manda la request alla navigation
+QTimer::singleShot(0, stateMachine(), [&amp;](){
+                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_TRUE submitted&quot;;
+                        stateMachine()-&gt;submitEvent(&quot;UNLOCK_TRUE&quot;);
+                    });
+                     }</script>
+            </onentry>
+            <transition type="external" event="UNLOCK_TRUE" target="halted">
+                <qt:editorinfo endTargetFactors="49.07;90.04" localGeometry="340.82;0"/>
+            </transition>
+        </state>
+        <onentry>
+            <log label="wrapperLock" expr="&quot;Inside wrapperLock&quot;"/>
+        </onentry>
+        <onexit>
+            <log expr="&quot;Leaving wrapperLock&quot;" label="wrapperLock"/>
+        </onexit>
     </state>
 </scxml>

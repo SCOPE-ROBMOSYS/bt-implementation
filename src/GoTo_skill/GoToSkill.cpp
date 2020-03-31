@@ -45,6 +45,36 @@ GoToSkill::GoToSkill(std::string name, std::string location) :
     }
     });
 
+    stateMachine.connectToState("wrapperUnlock_1", [](bool active) {
+    if(active) {
+        qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+    }
+    qDebug() << QTime::currentTime().toString() << (active ? "entered" : "exited") << "the wrapperUnlock_1 state";
+    if(!active) {
+        qDebug() << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
+    }
+    });
+
+    stateMachine.connectToState("wrapperUnlock_2", [](bool active) {
+    if(active) {
+        qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+    }
+    qDebug() << QTime::currentTime().toString() << (active ? "entered" : "exited") << "the wrapperUnlock_2 state";
+    if(!active) {
+        qDebug() << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
+    }
+    });
+
+    stateMachine.connectToState("wrapperUnlock_3", [](bool active) {
+    if(active) {
+        qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+    }
+    qDebug() << QTime::currentTime().toString() << (active ? "entered" : "exited") << "the wrapperUnlock_3 state";
+    if(!active) {
+        qDebug() << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
+    }
+    });
+
     stateMachine.connectToState("sendrequest", [](bool active) {
         if(active) {
             qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
@@ -181,6 +211,15 @@ ReturnStatus GoToSkill::request_status()
                 return BT_RUNNING;
             }
             if (state == "wrapperLock") {
+                return BT_RUNNING;
+            }
+            if (state == "wrapperUnlock_1") {
+                return BT_RUNNING;
+            }
+            if (state == "wrapperUnlock_2") {
+                return BT_RUNNING;
+            }
+            if (state == "wrapperUnlock_3") {
                 return BT_RUNNING;
             }
         }
