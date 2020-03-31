@@ -37,5 +37,15 @@ bool GoToSkillDataModel::setup(const QVariantMap &initialDataValues)
         return false;
     }
 
+        if (!blackboard_port.open("/blackboardClient/" + location)) {
+        qWarning("Error! Cannot open YARP port");
+        return false;
+    }
+
+    if(!blackboard.yarp().attachAsClient(blackboard_port)) {
+        qWarning("Error! Could not attach as client");
+        return false;
+    }
+
     return true;
 }

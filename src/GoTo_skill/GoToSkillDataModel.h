@@ -56,6 +56,7 @@ public:
 
     yarp::os::Network yarp;
     yarp::os::RpcClient client_port;
+    yarp::os::RpcClient blackboard_port;
     GoTo goTo;
     Blackboard blackboard;
 
