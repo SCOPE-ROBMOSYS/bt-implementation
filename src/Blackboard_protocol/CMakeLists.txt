@@ -5,7 +5,6 @@
 #                                                                              #
 ################################################################################
 
-message("BB--------------------")
 # Create the Blackboard_protocol C++ Library
 add_library(Blackboard_protocol STATIC)
 yarp_add_idl(IDL_GEN_FILES blackboard_commands.thrift)
