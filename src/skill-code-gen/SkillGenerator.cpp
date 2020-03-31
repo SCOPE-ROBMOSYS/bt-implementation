@@ -43,7 +43,6 @@ int SkillGenerator::init(){
 }
 
 void SkillGenerator::ConfigGeneration(){
-    debug_ = false; // show comments
 
     SD_.add_constructor = false; // default constructor
 
@@ -56,7 +55,7 @@ void SkillGenerator::ConfigGeneration(){
             test_str.find("Skill") contains the pointer to the sub-string initial position
         2) fetch string before that. */
         string path_root_package = ss_whole.substr (0, ss_whole.rfind("src") ); // i.e. /home/scope/bt-implementation/
-        cout << "\n\n\nRoot --> " << path_root_package << "\n\n";
+        //cout << "\n\n\nRoot --> " << path_root_package << "\n\n";
 
         // locate folder with template files
         QString Qpath_root_package = QString::fromStdString(path_root_package);
@@ -67,9 +66,9 @@ void SkillGenerator::ConfigGeneration(){
 
         //detect skill name
         string ss = tu_->scxmlFileName.toUtf8().constData();
-    //    bool found = ss.find("SkillStateMachine.scxml") != ss.npos; //    std::cout << "\n\n\nTEST\n\n\n" << found << " ||||| " << ss.find("SkillStateMachine.scxml") << "\n\n\nEND TEST\n\n\n";
+        //bool found = ss.find("SkillStateMachine.scxml") != ss.npos; //    std::cout << "\n\n\nTEST\n\n\n" << found << " ||||| " << ss.find("SkillStateMachine.scxml") << "\n\n\nEND TEST\n\n\n";
         string str_first_part = ss.substr (0, ss.find("SkillStateMachine.scxml") );
-        cout << "Skill name --> " << str_first_part << "\n\n";
+        //cout << "Skill name --> " << str_first_part << "\n\n";
         SD_.skill_name = QString::fromStdString(str_first_part);
 
         // create new folder
@@ -268,9 +267,9 @@ void SkillGenerator::Generate_Skill_cpp(){
         string single_state_condit = "       if (state == \"" + actual_state_string + "\") {\n           return BT_" + SD_.ListStates[i].ReturnStatus + ";\n       }\n" ;
         all = all + single_state_condit;
     }
-    if(debug_){
+    #ifdef _DEBUG
         cout << all;
-    }
+    #endif
     QString value_all_states_condit = QString::fromStdString(all);
     dataText.replace(key_states, value_all_states_condit);
 
@@ -494,14 +493,14 @@ int SkillGenerator::write()
         for (DocumentModel::AbstractState* astate : doc->allStates) { // doc->allStates identifies all the states inside the scxml input file
             auto state = astate->asState();
             if (!state) {
-                if(debug_){
+                #ifdef _DEBUG
                     qDebug() << astate->id;
-                }
+                #endif
                 continue;
             }
-            if(debug_){
+            #ifdef _DEBUG
                 qDebug() << state->id << state->xmlLocation.line << state->xmlLocation.column << state->dataElements.size() << state->bt_status;
-            }
+            #endif
             // need to control the gerarchy of the states, s.t. the external "wrapper" is not tackled into the list
             State stato;
             stato.id = state->id;
@@ -517,11 +516,11 @@ int SkillGenerator::write()
                 // not a <data> element
                 continue;
             }
-            if (debug_){
+            #ifdef _DEBUG
                 cout << "\n\n ************ ACTUAL TEST************  \n\n ";
                 qDebug() << data->id << data->expr << data->cpp_type << data->thrift_protocol << data->service_type  << data->client_port_name << data->init_source << data->connect_type;
                 cout << "\n\n ************ end ACTUAL TEST************  \n\n ";
-            }
+            #endif
             // access to data element
             if (data->thrift_protocol != ""){ // means that the data represents a service!
                 Service service;
@@ -550,10 +549,10 @@ int SkillGenerator::write()
         }
     }
 
-    if (debug_){
+    #ifdef _DEBUG
         std::cout << "\n\n\n SKILL_DESCRIPTION SD_ : \n      ListStates size : " << SD_.ListStates.size() << "\n\n" ;
         qDebug() << " Print: " << SD_.ListStates[0].id << " " << SD_.ListStates[1].id << " " << SD_.ListStates[2].id << " " << SD_.ListStates[3].id << " .\n\n";
-    }
+    #endif
 
     // **********************************++ !generate skill files **********************************++
     Generate_Main();

@@ -31,6 +31,8 @@
 
 using namespace std;
 
+//#define _DEBUG // alternatively : cmake -DCMAKE_BUILD_TYPE=Debug ..
+
 struct TranslationUnit
 {
     TranslationUnit()
@@ -123,29 +125,19 @@ struct Values {
 
 };
 
-
-
 class SkillGenerator
 {
 public:
     SkillGenerator (TranslationUnit *tu);
+    int init();
 
-    TranslationUnit *tu_;
-
+private:    
     QString path_template_;
-
+    TranslationUnit *tu_;
     SkillDescription SD_;
     Keys K_;
     Values V_;
     SkillConfig Skill_Config_;
-
-    bool debug_;
-
-    //methods
-
-    int write(); // the former
-
-    int init();
 
     string to_upper(string str);
     string to_lower(string str);
@@ -159,16 +151,13 @@ public:
     string GenerateListConstructorParametersAssign (vector<string> ListMemberAttributes, vector<string> ListParamToAssign);
     string GenerateListConstructorParametersPassArgs (vector<string> ListParamToAssign_name_instance);
 
+    int write();
     void ConfigGeneration();
-//    void Generate_CMakeLists();
     void Generate_Main();
     void Generate_Skill_h();
     void Generate_Skill_cpp();
     void Generate_Skill_DataModel_h();
     void Generate_Skill_DataModel_cpp();
-
-private:
-
 };
 
 #endif // SKILLGENERATOR_H

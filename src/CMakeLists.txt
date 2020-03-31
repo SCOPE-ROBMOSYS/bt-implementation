@@ -23,6 +23,7 @@ add_subdirectory(skill-code-gen)
 add_subdirectory(GoTo_skill)
 add_subdirectory(BatteryLevel_skill)
 add_subdirectory(BatteryNotCharging_skill)
+add_subdirectory(IsAt_skill)
 
 #components
 add_subdirectory(Battery_component)

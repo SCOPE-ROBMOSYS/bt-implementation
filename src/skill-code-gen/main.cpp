@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
     }
 
     const QString scxmlFileName = inputFiles.at(0);
-    qDebug() << "\n ----------------- Skill Auto-generation ----------------- \nComplete path of input file -->" << scxmlFileName << "\n";
+    //qDebug() << "\n ----------------- Skill Auto-generation ----------------- \nComplete path of input file -->" << scxmlFileName << "\n";
 
     TranslationUnit options;
     options.stateMethods = cmdParser.isSet(optionStateMethods);
@@ -105,14 +105,14 @@ int main(int argc, char* argv[])
 
     QString mainClassName = cmdParser.value(optionClassName);
 
-    qDebug() << __LINE__;
+    //qDebug() << __LINE__;
 
     QFile file(scxmlFileName);
     if (!file.open(QFile::ReadOnly)) {
         errs << QStringLiteral("Error: cannot open input file %1").arg(scxmlFileName);
         return CannotOpenInputFileError;
     }
-    qDebug() << __LINE__;
+    //qDebug() << __LINE__;
 
     QXmlStreamReader reader(&file);
     QScxmlCompiler compiler(&reader);
@@ -125,7 +125,7 @@ int main(int argc, char* argv[])
         }
         return ParseError;
     }
-    qDebug() << __LINE__;
+    //qDebug() << __LINE__;
 
     auto mainDoc = QScxmlCompilerPrivate::get(&compiler)->scxmlDocument();
     if (mainDoc == nullptr) {
@@ -137,7 +137,7 @@ int main(int argc, char* argv[])
         return ScxmlVerificationError;
     }
 
-    qDebug() << __LINE__;
+    //qDebug() << __LINE__;
     if (mainClassName.isEmpty())
         mainClassName = mainDoc->root->name;
     if (mainClassName.isEmpty()) {
@@ -147,7 +147,7 @@ int main(int argc, char* argv[])
             mainClassName = mainClassName.left(dot);
     }
     qWarning() << mainClassName;
-    qDebug() << __LINE__;
+    //qDebug() << __LINE__;
 
     QList<DocumentModel::ScxmlDocument *> docs;
     collectAllDocuments(mainDoc, &docs);
@@ -166,7 +166,7 @@ int main(int argc, char* argv[])
     for (DocumentModel::ScxmlDocument *doc : qAsConst(docs)) {
         auto name = doc->root->name;
         auto prefix = name;
-        qDebug() << "\n\n DEBUG NAME: " << name << "\n\n";
+        //qDebug() << "\n\n DEBUG NAME: " << name << "\n\n";
         if (name.isEmpty()) {
             prefix = QStringLiteral("%1_StateMachine").arg(mainClassName);
             name = prefix;

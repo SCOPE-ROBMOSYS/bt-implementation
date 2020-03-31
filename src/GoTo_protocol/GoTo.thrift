@@ -17,4 +17,5 @@ service GoTo {
   void goTo(1: string destination);
   GoToStatus getStatus(1: string destination);
   void halt(1: string destination);
+  bool isAtLocation (1: string destination);
 }
