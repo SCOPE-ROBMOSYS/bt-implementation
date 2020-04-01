@@ -10,6 +10,7 @@
 #include <QTimer>
 #include <QDebug>
 #include <QTime>
+#include <qstatemachine.h>
 
 @KEY_SKILL_NAME@Skill::@KEY_SKILL_NAME@Skill(std::string name @KEY_CONSTRUCTOR_ATTRIBUTES_p1@) :
         name(std::move(name))@KEY_CONSTRUCTOR_ATTRIBUTES_p2@
@@ -58,5 +59,5 @@ ReturnStatus @KEY_SKILL_NAME@Skill::request_tick()
 
 void @KEY_SKILL_NAME@Skill::request_halt()
 {
-    stateMachine.submitEvent("HALT");
+    stateMachine.submitEvent("HALT",  QStateMachine::HighPriority);
 }
