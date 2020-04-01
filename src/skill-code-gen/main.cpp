@@ -179,13 +179,12 @@ int main(int argc, char* argv[])
         tu.classnameForDocument.insert(doc, name);
     }
 
-    QString try_str = docs.at(0)->root->cppDataModelClassName;
-    cout << "DOCS SIZE2 : " << docs.size() << "\n\n";
-    cout << "\n\nTRY : " << try_str.toStdString() ;
-    qDebug() << try_str;
+    // QString try_str = docs.at(0)->root->cppDataModelClassName;
+    // cout << "DOCS SIZE2 : " << docs.size() << "\n\n";
+    // cout << "\n\nTRY : " << try_str.toStdString() ;
+    // qDebug() << try_str;
 
     tu.Path = scxmlFileName;
     SkillGenerator generator(&tu);
     return generator.init(); //    return write(&tu);
 }
-
