@@ -20,7 +20,6 @@ add_subdirectory(Blackboard_protocol)
 # Code Generator
 add_subdirectory(skill-code-gen)
 
-add_subdirectory(BT)
 
 
 #include(SkillAutogen)
@@ -36,6 +35,7 @@ add_subdirectory(IsAt_skill)
 
 #add_subdirectory(BatteryLevel_skill)
 #add_subdirectory(BatteryNotCharging_skill)
+
 
 
 #components
