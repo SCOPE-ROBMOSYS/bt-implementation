@@ -440,7 +440,7 @@ void SkillGenerator::Generate_Skill_DataModel_cpp(){
     QRegularExpression KEY_OPEN_CONNECTIONS_TO_COMPONENTS("@OPEN_CONNECTIONS_TO_COMPONENTS@");
     string all_components ="";
     for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
-        all_components = all_components + "    if (!yarp::os::Network::connect(client_port.getName(), \"/" + SD_.UsedServices[i].thrift_protocol.toStdString()  + "\", \"" + SD_.UsedServices[i].connect_type.toStdString() + "\")) {\n        qWarning(\"Error! Could not connect to server\");\n        return false;\n    }\n" ;
+        all_components = all_components + "    if (!yarp::os::Network::connect(client_port.getName(), \"/" + SD_.UsedServices[i].thrift_protocol.toStdString()  + "Component\", \"" + SD_.UsedServices[i].connect_type.toStdString() + "\")) {\n        qWarning(\"Error! Could not connect to server\");\n        return false;\n    }\n" ;
     }
     all_components = "    // open connections to components\n\n" + all_components;
     QString value_OPEN_CONNECTIONS_TO_COMPONENTS = QString::fromStdString(all_components);
