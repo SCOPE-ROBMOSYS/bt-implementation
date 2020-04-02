@@ -210,16 +210,16 @@ ReturnStatus GoToSkill::request_status()
             if (state == "getstatus") {
                 return BT_RUNNING;
             }
-            if (state == "wrapperLock") {
+            if (state == "lockKey" || state == "lockKey_1" || state == "lockKey_2" || state == "lockKey_3") {
                 return BT_RUNNING;
             }
-            if (state == "wrapperUnlock_1") {
+            if (state == "readData" || state == "readData_1" || state == "readData_2" || state == "readData_3") {
                 return BT_RUNNING;
             }
-            if (state == "wrapperUnlock_2") {
+            if (state == "writeData" || state == "writeData_1" || state == "writeData_2" || state == "writeData_3") {
                 return BT_RUNNING;
             }
-            if (state == "wrapperUnlock_3") {
+            if (state == "unlockKey" || state == "unlockKey_1" || state == "unlockKey_2" || state == "unlockKey_3" || state == "unlockBusy") {
                 return BT_RUNNING;
             }
         }
