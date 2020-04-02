@@ -41,12 +41,6 @@
           scope:init_source="initialize_inside_header"
           />
 
-    <data id="i"
-          scope:cpp_type="int"
-          expr="none"
-          scope:init_source="define_in_class_constructor"
-          />
-
 </datamodel>
 
 
@@ -72,4 +66,3 @@
         <transition event="TICK" target="idle" />
     </state>
 </scxml>
-

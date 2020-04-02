@@ -30,7 +30,7 @@
     <data id="location"
           scope:cpp_type="const std::string"
           expr="none"
-          scope:init_source="define_in_class_constructor"
+          scope:init_source="parse_as_option"
           />
 
 </datamodel>
@@ -44,10 +44,10 @@
             <log label="wrapper" expr='"Leaving wrapper"'/>
         </onexit>
 
-        <state id="idle">
+        <state id="idle" scope:bt_status="idle">
             <onentry>
                 <log label="wrapper.idle" expr='"Inside idle"'/>
-                <assign location="status" expr="Idle"/>
+                <assign location="status" expr="idle"/>
             </onentry>
             <onexit>
                 <log label="wrapper.idle" expr='"Leaving idle"'/>
@@ -55,7 +55,7 @@
             <transition event="TICK" target="sendrequest" />
         </state>
 
-        <state id="sendrequest">
+        <state id="sendrequest" scope:bt_status="running">
             <onentry>
                 <log label="wrapper.sendrequest" expr='"Inside sendrequest"'/>
                 <script>
@@ -73,7 +73,7 @@
             <transition event="REQUEST_SENT" target="getstatus" />
         </state>
 
-        <state id="getstatus">
+        <state id="getstatus" scope:bt_status="running">
             <onentry>
                 <log label="wrapper.getstatus" expr='"Inside getstatus"'/>
                 <script>
@@ -130,7 +130,7 @@
             <transition event="STATUS_FAILED" target="failure" />
         </state>
 
-        <state id="success">
+        <state id="success" scope:bt_status="success">
             <onentry>
                 <log label="wrapper.success" expr='"Inside success"'/>
             </onentry>
@@ -140,7 +140,7 @@
             <transition event="TICK" target="idle" />
         </state>
 
-        <state id="failure">
+        <state id="failure" scope:bt_status="failure">
             <onentry>
                 <log label="wrapper.failure" expr='"Inside failure"'/>
             </onentry>
@@ -153,7 +153,7 @@
         <transition event="HALT" target="halted" />
     </state>
 
-    <state id="halted">
+    <state id="halted" scope:bt_status="idle">
         <onentry>
             <log label="halted" expr='"Inside halted"'/>
             <script>

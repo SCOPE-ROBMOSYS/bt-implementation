@@ -291,10 +291,10 @@ struct AbstractState: public StateContainer
     AbstractState *asAbstractState() override { return this; }
 };
 
-struct State: public AbstractState, public StateOrTransition
+struct State: public AbstractState, public StateOrTransition   // DocumentModel::State
 {
     enum Type { Normal, Parallel, Final };
-    enum BT_Status { Undefined, Idle, Success, Failure }; // 0 1 2 3   !HERE
+    enum BT_Status { Undefined, Idle, Success, Failure, Running }; // 0 1 2 3 4
 
     QStringList initial;
     QVector<DataElement *> dataElements;
@@ -304,7 +304,7 @@ struct State: public AbstractState, public StateOrTransition
     DoneData *doneData;
     QVector<Invoke *> invokes;
     Type type;
-    BT_Status bt_status; // add DANIELE
+    BT_Status bt_status;
 
     Transition *initialTransition; // when not set, it is filled during verification
 

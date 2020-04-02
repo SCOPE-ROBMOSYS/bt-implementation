@@ -86,7 +86,7 @@ void SkillGenerator::ConfigGeneration(){
     Skill_Config_ = Skill_Config_Reader.ReturnConfig();
 }
 
-string SkillGenerator::DecoderEnum (int id){  // enum BT_Status { Undefined, Idle, Success, Failure };
+string SkillGenerator::DecoderEnum (int id){  // enum BT_Status { Running, Idle, Success, Failure, Undefined };
     switch (id)
     {
     case 0:
@@ -97,8 +97,10 @@ string SkillGenerator::DecoderEnum (int id){  // enum BT_Status { Undefined, Idl
         return "SUCCESS";
     case 3:
         return "FAILURE";
+    case 4:
+        return "RUNNING";
     default:
-        return "IDLE";
+        return "ERROR_IN_SCXML";
     }
 }
 
@@ -122,6 +124,7 @@ string SkillGenerator::GenerateListConstructorParametersPassArgs (vector<string>
     string output ="";
     for(unsigned int i=0; i<ListParamToAssign_name_instance.size(); i++){
         output = output + ListParamToAssign_name_instance[i];
+        output = output + ".toStdString()";
         if(i!= (ListParamToAssign_name_instance.size()-1) ){
             output = output + ", ";
         }
@@ -168,12 +171,12 @@ void SkillGenerator::Generate_Main(){
     QRegularExpression KEY_CONSTRUCTOR_ATTRIBUTES_p1_PASSED_ARGS("@KEY_CONSTRUCTOR_ATTRIBUTES_p1_PASSED_ARGS@");
     string attrib_1_pass_args = "";
     if( SD_.add_constructor == true ){
-        vector<string> ListParamToAssign_name_instance = GenerateStringList_name_instance (SD_.ListAttributesInitWithConstructor);
+        vector<string> ListParamToAssign_name_instance = GenerateStringList_name_instance (SD_.ListAttributesParsedAsOption);
         attrib_1_pass_args = GenerateListConstructorParametersPassArgs (ListParamToAssign_name_instance);
     }
     string attrib_1_pass_args_with_comma = ", " + attrib_1_pass_args;
     QString value_CONSTRUCTOR_ATTRIBUTES_p1_PASS_ARGS_with_comma = QString::fromStdString(attrib_1_pass_args_with_comma);
-    if(SD_.ListAttributesInitWithConstructor.size()>0){ // otherwise insert a not needed comma
+    if(SD_.ListAttributesParsedAsOption.size()>0){ // otherwise insert a not needed comma
         dataText.replace(KEY_CONSTRUCTOR_ATTRIBUTES_p1_PASSED_ARGS, value_CONSTRUCTOR_ATTRIBUTES_p1_PASS_ARGS_with_comma);
     }else{
         dataText.replace(KEY_CONSTRUCTOR_ATTRIBUTES_p1_PASSED_ARGS, V_.empty);
@@ -182,30 +185,36 @@ void SkillGenerator::Generate_Main(){
     // 2.3 @KEY_ADDITIONAL_OPTION_PARSE@
     QRegularExpression  KEY_ADDITIONAL_OPTION_PARSE("@KEY_ADDITIONAL_OPTION_PARSE@");
     string all_instances_options = "";
-    for(unsigned int i=0; i<SD_.ListAttributesInitWithConstructor.size(); i++){
-        string single_instance = "    parser.addOption({{\"specific\", \"" + SD_.ListAttributesInitWithConstructor[i].name_instance.toStdString() + "\"}, \"The <name> of the " + SD_.ListAttributesInitWithConstructor[i].name_instance.toStdString() + ".\", \"" + SD_.ListAttributesInitWithConstructor[i].name_instance.toStdString() + "\", \"default_option_value\"});\n";
+    for(unsigned int i=0; i<SD_.ListAttributesParsedAsOption.size(); i++){
+        string single_instance = "    parser.addOption({{\"l\", \"" + SD_.ListAttributesParsedAsOption[i].name_instance.toStdString() + "\"}, \"The <" + SD_.ListAttributesParsedAsOption[i].name_instance.toStdString() + "> attribute.\", \"" + SD_.ListAttributesParsedAsOption[i].name_instance.toStdString() + "\", \"" + SD_.skill_name.toStdString() + "\"});\n";
         all_instances_options  =  all_instances_options + single_instance;
     }
     QString value_ADDITIONAL_OPTION_PARSE = QString::fromStdString(all_instances_options);
     dataText.replace( KEY_ADDITIONAL_OPTION_PARSE, value_ADDITIONAL_OPTION_PARSE);
 
-    // 2.4:  KEY_LIST_PUBLIC_ATTRIBUTES_main
-    QRegularExpression  KEY_LIST_PUBLIC_ATTRIBUTES_main("@KEY_LIST_PUBLIC_ATTRIBUTES_main@");
-
-    string all_instances_main = "";
-
-    // list of attributes (without value assigned)
-    for(unsigned int i=0; i<SD_.UsedAttributes.size(); i++){
-        string single_instance = "";
-        if( SD_.UsedAttributes[i].init_source.toStdString() != "initialize_inside_header"){
-            single_instance = "" + SD_.UsedAttributes[i].data_type.toStdString() + " " + SD_.UsedAttributes[i].name_instance.toStdString() + ";\n    " ;
-        }
-         all_instances_main =  all_instances_main + single_instance;
+    // 2.4 @KEY_ADDITIONAL_OPTION_ASSIGN@
+    QRegularExpression  KEY_ADDITIONAL_OPTION_ASSIGN("@KEY_ADDITIONAL_OPTION_ASSIGN@");
+    string all_instances_options_assign = "";
+    for(unsigned int i=0; i<SD_.ListAttributesParsedAsOption.size(); i++){
+        string single_instance = "    QString " + SD_.ListAttributesParsedAsOption[i].name_instance.toStdString() + " = parser.value(\""+ SD_.ListAttributesParsedAsOption[i].name_instance.toStdString() +"\");\n";
+        all_instances_options_assign  =  all_instances_options_assign + single_instance;
     }
+    QString value_ADDITIONAL_OPTION_ASSIGN = QString::fromStdString(all_instances_options_assign);
+    dataText.replace( KEY_ADDITIONAL_OPTION_ASSIGN, value_ADDITIONAL_OPTION_ASSIGN);
 
-//    cout << "\n\n\PRINT COMPONENTS -->  all_instances_main : " <<  all_instances_main << "\n\n\ " ;
-    QString value_LIST_PUBLIC_ATTRIBUTES_main = QString::fromStdString( all_instances_main);
-    dataText.replace( KEY_LIST_PUBLIC_ATTRIBUTES_main, value_LIST_PUBLIC_ATTRIBUTES_main);
+    // 2.4:  KEY_LIST_PUBLIC_ATTRIBUTES_main        REMOVED
+    // QRegularExpression  KEY_LIST_PUBLIC_ATTRIBUTES_main("@KEY_LIST_PUBLIC_ATTRIBUTES_main@");
+    // string all_instances_main = "";
+    // // list of attributes (without value assigned)
+    // for(unsigned int i=0; i<SD_.UsedAttributes.size(); i++){
+    //     string single_instance = "";
+    //     if( SD_.UsedAttributes[i].init_source.toStdString() != "initialize_inside_header"){
+    //         single_instance = "" + SD_.UsedAttributes[i].data_type.toStdString() + " " + SD_.UsedAttributes[i].name_instance.toStdString() + ";\n    " ;
+    //     }
+    //      all_instances_main =  all_instances_main + single_instance;
+    // }
+    // QString value_LIST_PUBLIC_ATTRIBUTES_main = QString::fromStdString( all_instances_main);
+    // dataText.replace( KEY_LIST_PUBLIC_ATTRIBUTES_main, value_LIST_PUBLIC_ATTRIBUTES_main);
 
     // 3: create new file and insert the dataText
     QFile output_file(SD_.path_skill_folder + "main.cpp");
@@ -233,14 +242,14 @@ void SkillGenerator::Generate_Skill_h(){
 //    QRegularExpression KEY_CONSTRUCTOR_ATTRIBUTES_p1("@KEY_CONSTRUCTOR_ATTRIBUTES_p1@");
     string attrib_1 = "";
     if( SD_.add_constructor == true ){
-        vector<string> ListParamToAssign_data_type     = GenerateStringList_data_type (SD_.ListAttributesInitWithConstructor);
-        vector<string> ListParamToAssign_name_instance = GenerateStringList_name_instance (SD_.ListAttributesInitWithConstructor);
+        vector<string> ListParamToAssign_data_type     = GenerateStringList_data_type (SD_.ListAttributesParsedAsOption);
+        vector<string> ListParamToAssign_name_instance = GenerateStringList_name_instance (SD_.ListAttributesParsedAsOption);
         attrib_1 = GenerateListConstructorParameters (ListParamToAssign_data_type, ListParamToAssign_name_instance);
     }
     string attrib_1_with_comma = ", " + attrib_1;
     QString value_CONSTRUCTOR_ATTRIBUTES_p1_with_comma = QString::fromStdString(attrib_1_with_comma);
     V_.value_CONSTRUCTOR_ATTRIBUTES_p1_with_comma = value_CONSTRUCTOR_ATTRIBUTES_p1_with_comma; // assign the global value to exploit the value globally
-    if(SD_.ListAttributesInitWithConstructor.size()>0){ // otherwise insert a not needed comma
+    if(SD_.ListAttributesParsedAsOption.size()>0){ // otherwise insert a not needed comma
         dataText.replace(K_.KEY_CONSTRUCTOR_ATTRIBUTES_p1, value_CONSTRUCTOR_ATTRIBUTES_p1_with_comma);
     }else{
         dataText.replace(K_.KEY_CONSTRUCTOR_ATTRIBUTES_p1, V_.empty);
@@ -286,7 +295,7 @@ void SkillGenerator::Generate_Skill_cpp(){
     // 2.3 @KEY_CONSTRUCTOR_ATTRIBUTES_p1@ + @KEY_CONSTRUCTOR_ATTRIBUTES_p2@
 
 //    QRegularExpression KEY_CONSTRUCTOR_ATTRIBUTES_p1("@KEY_CONSTRUCTOR_ATTRIBUTES_p1@");
-    if(SD_.ListAttributesInitWithConstructor.size()>0){
+    if(SD_.ListAttributesParsedAsOption.size()>0){
         dataText.replace(K_.KEY_CONSTRUCTOR_ATTRIBUTES_p1, V_.value_CONSTRUCTOR_ATTRIBUTES_p1_with_comma);
     }else{
         dataText.replace(K_.KEY_CONSTRUCTOR_ATTRIBUTES_p1, V_.empty);
@@ -297,7 +306,7 @@ void SkillGenerator::Generate_Skill_cpp(){
     if( SD_.add_constructor == true ){
         string space = ",\n        ";
         attrib_2 = attrib_2 + space;
-        vector<string> ListParamToAssign = GenerateStringList_name_instance(SD_.ListAttributesInitWithConstructor);
+        vector<string> ListParamToAssign = GenerateStringList_name_instance(SD_.ListAttributesParsedAsOption);
         vector<string> ListMemberAttributes;
         for(unsigned int i=0; i<ListParamToAssign.size(); i++){
             ListMemberAttributes.push_back("dataModel"); // to check!
@@ -371,8 +380,8 @@ void SkillGenerator::Generate_Skill_DataModel_h(){
     if( SD_.add_constructor == false ){ // it is also used in .cpp to insert the not default constructor
         construct = construct + SD_.skill_name.toStdString() + "SkillDataModel() = default;";
     }else{ // e.g.  GoToSkillDataModel(std::string location);
-        vector<string> ListParamToAssign_data_type     = GenerateStringList_data_type (SD_.ListAttributesInitWithConstructor);
-        vector<string> ListParamToAssign_name_instance = GenerateStringList_name_instance (SD_.ListAttributesInitWithConstructor);
+        vector<string> ListParamToAssign_data_type     = GenerateStringList_data_type (SD_.ListAttributesParsedAsOption);
+        vector<string> ListParamToAssign_name_instance = GenerateStringList_name_instance (SD_.ListAttributesParsedAsOption);
         string params = GenerateListConstructorParameters (ListParamToAssign_data_type, ListParamToAssign_name_instance);
         construct = construct + SD_.skill_name.toStdString() + "SkillDataModel(" + params +");";
     }
@@ -409,9 +418,9 @@ void SkillGenerator::Generate_Skill_DataModel_cpp(){
     string all_ports ="";
     for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
         string single_port = "";
-        if(Skill_Config_.specify_port_name_attribute){
+        if(SD_.ListAttributesParsedAsOption.size()==1){ // if(Skill_Config_.specify_port_name_attribute)
             // additional name spec if needed
-            string port_name_specific = Skill_Config_.port_name_list[0];
+            string port_name_specific = SD_.ListAttributesParsedAsOption[0].name_instance.toStdString(); //Skill_Config_.port_name_list[0];
             single_port = "    if (!client_port.open(\"/" + SD_.UsedServices[i].name_instance.toStdString() + "Client/" + port_name_specific + "\")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
 
         }else{
@@ -429,7 +438,7 @@ void SkillGenerator::Generate_Skill_DataModel_cpp(){
     QRegularExpression KEY_OPEN_CONNECTIONS_TO_COMPONENTS("@OPEN_CONNECTIONS_TO_COMPONENTS@");
     string all_components ="";
     for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
-        all_components = all_components + "    if (!yarp::os::Network::connect(client_port.getName(), \"/" + SD_.UsedServices[i].thrift_protocol.toStdString()  + "\", \"" + SD_.UsedServices[i].connect_type.toStdString() + "\")) {\n        qWarning(\"Error! Could not connect to server /fakeBattery\");\n        return false;\n    }\n" ;
+        all_components = all_components + "    if (!yarp::os::Network::connect(client_port.getName(), \"/" + SD_.UsedServices[i].thrift_protocol.toStdString()  + "\", \"" + SD_.UsedServices[i].connect_type.toStdString() + "\")) {\n        qWarning(\"Error! Could not connect to server\");\n        return false;\n    }\n" ;
     }
     all_components = "    // open connections to components\n\n" + all_components;
     QString value_OPEN_CONNECTIONS_TO_COMPONENTS = QString::fromStdString(all_components);
@@ -441,13 +450,13 @@ void SkillGenerator::Generate_Skill_DataModel_cpp(){
 
         string attributes_init_string_intro = SD_.skill_name.toStdString() + "SkillDataModel::" + SD_.skill_name.toStdString() +"SkillDataModel("; // GoToSkillDataModel::GoToSkillDataModel
 
-        vector<string> ListParamToAssign_data_type     = GenerateStringList_data_type (SD_.ListAttributesInitWithConstructor);
-        vector<string> ListParamToAssign_name_instance = GenerateStringList_name_instance (SD_.ListAttributesInitWithConstructor);
+        vector<string> ListParamToAssign_data_type     = GenerateStringList_data_type (SD_.ListAttributesParsedAsOption);
+        vector<string> ListParamToAssign_name_instance = GenerateStringList_name_instance (SD_.ListAttributesParsedAsOption);
         string attributes_init_string_part_1 = GenerateListConstructorParameters (ListParamToAssign_data_type, ListParamToAssign_name_instance);
 
         string attributes_init_string_mid =") :\n                        ";
 
-        vector<string> ListMemberAttributes = GenerateStringList_name_instance(SD_.ListAttributesInitWithConstructor);
+        vector<string> ListMemberAttributes = GenerateStringList_name_instance(SD_.ListAttributesParsedAsOption);
         vector<string> ListParamToAssign = ListMemberAttributes;
         string attributes_init_string_part_2 = GenerateListConstructorParametersAssign (ListMemberAttributes, ListParamToAssign);
 
@@ -547,9 +556,9 @@ int SkillGenerator::write()
                 attribute.value = data->expr;
                 attribute.init_source = data->init_source;
                 SD_.UsedAttributes.push_back(attribute);
-                if(attribute.init_source.toStdString() == "define_in_class_constructor"){
+                if(attribute.init_source.toStdString() == "parse_as_option"){
                    SD_.add_constructor = true;
-                   SD_.ListAttributesInitWithConstructor.push_back(attribute);
+                   SD_.ListAttributesParsedAsOption.push_back(attribute);
                 }
             }else if(data->client_port_name != ""){ // not needed
                 ClientPort port;

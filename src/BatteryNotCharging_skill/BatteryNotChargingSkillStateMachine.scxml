@@ -31,11 +31,11 @@
 </datamodel>
 
 
-    <state id="idle">
+    <state id="idle" scope:bt_status="idle">
         <transition event="TICK" target="get" />
     </state>
 
-    <state id="get">
+    <state id="get" scope:bt_status="idle">
         <onentry>
             <script>
 <!--                Connector connection(client_port.getName(), "/BatteryComponent", "tcp");-->
@@ -49,11 +49,11 @@
         <transition event="STATUS_FAILED" target="failure" />
     </state>
 
-    <state id="success">
+    <state id="success" scope:bt_status="success">
         <transition event="TICK" target="idle" />
     </state>
 
-    <state id="failure">
+    <state id="failure" scope:bt_status="failure">
         <transition event="TICK" target="idle" />
     </state>
 </scxml>

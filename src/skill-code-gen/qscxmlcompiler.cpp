@@ -1471,6 +1471,10 @@ bool QScxmlCompilerPrivate::preReadElementState()
             newState->bt_status = DocumentModel::State::Success;
         } else if (bt_status == QLatin1String("failure")) {
             newState->bt_status = DocumentModel::State::Failure;
+        } else if (bt_status == QLatin1String("running")) {
+            newState->bt_status = DocumentModel::State::Running;
+        // } else if (bt_status == QLatin1String("failure")) {
+        //     newState->bt_status = DocumentModel::State::Failure;
         } else {
             addError(QStringLiteral("Unsupperted bt_status type '%1'")
                  .arg(bt_status));

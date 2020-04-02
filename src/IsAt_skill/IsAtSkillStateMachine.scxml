@@ -30,7 +30,7 @@
     <data id="location"
           scope:cpp_type="const std::string"
           expr="none"
-          scope:init_source="define_in_class_constructor"
+          scope:init_source="parse_as_option"
           />
 
     <data id="is_at_dest"
