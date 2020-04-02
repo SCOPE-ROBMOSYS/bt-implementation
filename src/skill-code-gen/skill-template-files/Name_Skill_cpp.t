@@ -42,13 +42,13 @@ bool @KEY_SKILL_NAME@Skill::start()
 
 ReturnStatus @KEY_SKILL_NAME@Skill::request_status()
 {
-    auto states = stateMachine.activeStateNames();
+    while (true) {
+        auto states = stateMachine.activeStateNames();
 
-    for (const auto& state : states) {
+        for (const auto& state : states) {
 @KEY_SKILL_STATES@
+        }
     }
-    // error
-    return BT_FAILURE;
 }
 
 ReturnStatus @KEY_SKILL_NAME@Skill::request_tick()

@@ -38,7 +38,7 @@
     <data id="level"
           scope:cpp_type="double"
           expr="0.0"
-          scope:init_source="initialize_inside_header"
+          scope:init_source="not_initialize"
           />
 
 </datamodel>

@@ -283,8 +283,10 @@ void SkillGenerator::Generate_Skill_cpp(){
     for(unsigned int i=0; i<SD_.ListStates.size(); i++){
         auto actual_state = SD_.ListStates[i].id;
         string actual_state_string = actual_state.toUtf8().constData();
-        string single_state_condit = "       if (state == \"" + actual_state_string + "\") {\n           return BT_" + SD_.ListStates[i].ReturnStatus + ";\n       }\n" ;
-        all = all + single_state_condit;
+        if (actual_state_string!="wrapper"){
+            string single_state_condit = "              if (state == \"" + actual_state_string + "\") {\n                  return BT_" + SD_.ListStates[i].ReturnStatus + ";\n              }\n" ;
+            all = all + single_state_condit;
+        }
     }
     #ifdef _DEBUG
         cout << all;
