@@ -319,7 +319,7 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
                         stateMachine()-&gt;submitEvent(&quot;LOCK_TRUE&quot;);
                     });
                      }</script>
-                    <log label="wrapperUnlock_2.lockKey_2" expr="&quot;Inside wrapperLock.lockKey&quot;"/>
+                    <log label="wrapperUnlock_2.lockKey_2" expr="&quot;Inside wrapperUnlock_2.lockKey_2&quot;"/>
                 </onentry>
             </state>
             <state id="readData_2">
@@ -641,7 +641,7 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
             <log label="wrapperUnlock_3" expr="&quot;Inside wrapperUnlock_3&quot;"/>
         </onentry>
         <onexit>
-            <log expr="&quot;Leaving wrapperLock&quot;" label="wrapperLock"/>
+            <log expr="&quot;Leaving wrapperLock&quot;" label="wrapperUnlock_3"/>
         </onexit>
     </state>
 </scxml>

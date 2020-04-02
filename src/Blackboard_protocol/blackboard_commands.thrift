@@ -5,10 +5,10 @@
  *                                                                            *
  ******************************************************************************/
 enum requestEvaluation{
-  UNKNOWN = 0,
-  VALID = 1,
-  INVALID_KEY = 2,
-  UNAUTHORIZED_CLIENT = 3
+  UNKNOWN,
+  VALID,
+  INVALID_KEY,
+  UNAUTHORIZED_CLIENT
 }
 
 struct DataInt32 {
