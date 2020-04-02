@@ -131,7 +131,7 @@ public:
     SkillGenerator (TranslationUnit *tu);
     int init();
 
-private:    
+private:
     QString path_template_;
     TranslationUnit *tu_;
     SkillDescription SD_;

@@ -23,6 +23,8 @@ int main(int argc, char **argv)
 
     parser.addOption({{"n", "skill-name"}, "The <name> of the skill (implies the port opened).", "name", "@KEY_SKILL_NAME@"});
 
+@KEY_ADDITIONAL_OPTION_PARSE@
+
     // Process the actual command line arguments given by the user
     parser.process(app);
 

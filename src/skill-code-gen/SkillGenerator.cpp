@@ -179,6 +179,16 @@ void SkillGenerator::Generate_Main(){
         dataText.replace(KEY_CONSTRUCTOR_ATTRIBUTES_p1_PASSED_ARGS, V_.empty);
     }
 
+    // 2.3 @KEY_ADDITIONAL_OPTION_PARSE@
+    QRegularExpression  KEY_ADDITIONAL_OPTION_PARSE("@KEY_ADDITIONAL_OPTION_PARSE@");
+    string all_instances_options = "";
+    for(unsigned int i=0; i<SD_.ListAttributesInitWithConstructor.size(); i++){
+        string single_instance = "    parser.addOption({{\"specific\", \"" + SD_.ListAttributesInitWithConstructor[i].name_instance.toStdString() + "\"}, \"The <name> of the " + SD_.ListAttributesInitWithConstructor[i].name_instance.toStdString() + ".\", \"" + SD_.ListAttributesInitWithConstructor[i].name_instance.toStdString() + "\", \"default_option_value\"});\n";
+        all_instances_options  =  all_instances_options + single_instance;
+    }
+    QString value_ADDITIONAL_OPTION_PARSE = QString::fromStdString(all_instances_options);
+    dataText.replace( KEY_ADDITIONAL_OPTION_PARSE, value_ADDITIONAL_OPTION_PARSE);
+
     // 2.4:  KEY_LIST_PUBLIC_ATTRIBUTES_main
     QRegularExpression  KEY_LIST_PUBLIC_ATTRIBUTES_main("@KEY_LIST_PUBLIC_ATTRIBUTES_main@");
 
