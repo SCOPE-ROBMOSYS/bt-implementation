@@ -25,7 +25,7 @@
             <log label="wrapper" expr="&quot;Leaving wrapper&quot;"/>
         </onexit>
         <state id="idle">
-            <qt:editorinfo geometry="1010.88;-1192.79;-60;-50;120;100" scenegeometry="1120.68;-1394.22;1060.68;-1444.22;120;100"/>
+            <qt:editorinfo geometry="1010.88;-1192.79;-60;-50;120;100" scenegeometry="1112.60;-1394.22;1052.60;-1444.22;120;100"/>
             <onentry>
                 <log label="wrapper.idle" expr="&quot;Inside idle&quot;"/>
                 <assign location="status" expr="Idle"/>
@@ -113,7 +113,7 @@
             </transition>
         </state>
         <state id="success">
-            <qt:editorinfo geometry="-50.42;1482.07;-60;-50;120;100" scenegeometry="59.38;1280.64;-0.62;1230.64;120;100"/>
+            <qt:editorinfo geometry="-52.03;1482.07;-60;-50;120;100" scenegeometry="49.69;1280.64;-10.31;1230.64;120;100"/>
             <onentry>
                 <log label="wrapper.success" expr="&quot;Inside success&quot;"/>
             </onentry>
@@ -121,7 +121,7 @@
                 <log label="wrapper.success" expr="&quot;Leaving success&quot;"/>
             </onexit>
             <transition type="internal" event="TICK" target="idle">
-                <qt:editorinfo endTargetFactors="29.50;65.35" localGeometry="-17.53;-2631.25" startTargetFactors="50.31;21.73"/>
+                <qt:editorinfo endTargetFactors="29.50;65.35" localGeometry="-15.92;-2631.25" startTargetFactors="50.31;21.73"/>
             </transition>
         </state>
         <transition type="internal" event="HALT" target="halted">
