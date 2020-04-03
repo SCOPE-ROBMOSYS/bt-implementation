@@ -419,23 +419,40 @@ void SkillGenerator::Generate_Skill_DataModel_cpp(){
     // 2.2  @OPEN_PORTS_AND_ATTACH_CLIENTS@
     QRegularExpression KEY_OPEN_PORTS_AND_ATTACH_CLIENTS("@OPEN_PORTS_AND_ATTACH_CLIENTS@");
 
+    // string merge ="";
+    // string all_clients ="";
+    // //string all_ports ="";
+    // string single_port = "";
+    // if(SD_.ListAttributesParsedAsOption.size()==1){ // if(Skill_Config_.specify_port_name_attribute)
+    //     // additional name spec if needed
+    //     string port_name_specific = SD_.ListAttributesParsedAsOption[0].name_instance.toStdString(); //Skill_Config_.port_name_list[0];
+    //     single_port = "    if (!client_port.open(\"/" + SD_.skill_name.toStdString() + "Client/\" + " + port_name_specific + ")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
+    // }else{
+    //     single_port = "    if (!client_port.open(\"/" + SD_.skill_name.toStdString() + "Client\")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
+    // }
+    // for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
+    //     string single_client = "    if(!" + SD_.UsedServices[i].name_instance.toStdString() + ".yarp().attachAsClient(client_port)) {\n       qWarning(\"Error! Could not attach as client\");\n       return false;\n    }\n";
+    //     all_clients = all_clients + single_client;
+    // }
+    // merge = "    // open port\n\n" + single_port + "    // attach services as clients\n\n" + all_clients;
+
     string merge ="";
     string all_clients ="";
-    //string all_ports ="";
+    string all_ports ="";
     string single_port = "";
-    if(SD_.ListAttributesParsedAsOption.size()==1){ // if(Skill_Config_.specify_port_name_attribute)
-        // additional name spec if needed
-        string port_name_specific = SD_.ListAttributesParsedAsOption[0].name_instance.toStdString(); //Skill_Config_.port_name_list[0];
-        single_port = "    if (!client_port.open(\"/" + SD_.skill_name.toStdString() + "Client/\" + " + port_name_specific + ")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
-
-    }else{
-        single_port = "    if (!client_port.open(\"/" + SD_.skill_name.toStdString() + "Client\")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
-    }
     for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
+        if(SD_.ListAttributesParsedAsOption.size()==1){ // if(Skill_Config_.specify_port_name_attribute)
+            // additional name spec if needed
+            string port_name_specific = SD_.ListAttributesParsedAsOption[0].name_instance.toStdString(); //Skill_Config_.port_name_list[0];
+            single_port = "    if (!client_port.open(\"/" + SD_.UsedServices[i].name_instance.toStdString() + "Client/\" + " + port_name_specific + ")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
+        }else{
+            single_port = "    if (!client_port.open(\"/" + SD_.UsedServices[i].name_instance.toStdString() + "Client\")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
+        }
+        all_ports = all_ports + single_port;
         string single_client = "    if(!" + SD_.UsedServices[i].name_instance.toStdString() + ".yarp().attachAsClient(client_port)) {\n       qWarning(\"Error! Could not attach as client\");\n       return false;\n    }\n";
         all_clients = all_clients + single_client;
     }
-    merge = "    // open port\n\n" + single_port + "    // attach services as clients\n\n" + all_clients;
+    merge = "    // open ports\n\n" + all_ports + "    // attach services as clients\n\n" + all_clients;
 
     QString value_OPEN_PORTS_AND_ATTACH_CLIENTS = QString::fromStdString(merge);
     dataText.replace(KEY_OPEN_PORTS_AND_ATTACH_CLIENTS, value_OPEN_PORTS_AND_ATTACH_CLIENTS);
