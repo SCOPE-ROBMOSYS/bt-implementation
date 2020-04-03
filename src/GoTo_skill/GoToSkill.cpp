@@ -222,6 +222,9 @@ ReturnStatus GoToSkill::request_status()
             if (state == "unlockKey" || state == "unlockKey_1" || state == "unlockKey_2" || state == "unlockKey_3" || state == "unlockBusy") {
                 return BT_RUNNING;
             }
+            if (state == "wrongKey") {
+                return BT_FAILURE;
+            }
         }
     }
 }
