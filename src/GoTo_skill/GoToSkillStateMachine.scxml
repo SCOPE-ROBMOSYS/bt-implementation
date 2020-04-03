@@ -587,11 +587,11 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
                         stateMachine()-&gt;submitEvent(&quot;UNLOCK_TRUE&quot;);
                     });
                      }</script>
-                    <log label="wrapperUnlock_1.unlockKey_1" expr="&quot;Inside wrapperUnlock_1.unlockKey_1"/>
+                    <log label="wrapperUnlock_1.unlockKey_1" expr="&quot;Inside wrapperUnlock_1.unlockKey_1&quot;"/>
                 </onentry>
                 <transition type="external" event="UNLOCK_TRUE" target="failure"/>
                 <onexit>
-                    <log label="wrapperUnlock_1.unlockKey_1" expr="&quot;Leaving wrapperUnlock_1.unlockKey_1"/>
+                    <log label="wrapperUnlock_1.unlockKey_1" expr="&quot;Leaving wrapperUnlock_1.unlockKey_1&quot;"/>
                 </onexit>
             </state>
             <onentry>
@@ -684,10 +684,10 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
                     else{
 	//error??
                      }</script>
-                <log label="wrapperUnlock_3.writeData_3" expr="&quot;Inside wrapperUnlock_3.writeData_3"/>
+                <log label="wrapperUnlock_3.writeData_3" expr="&quot;Inside wrapperUnlock_3.writeData_3&quot;"/>
             </onentry>
             <onexit>
-                <log label="wrapperUnlock_3.writeData_3" expr="&quot;Leaving wrapperUnlock_3.writeData_3"/>
+                <log label="wrapperUnlock_3.writeData_3" expr="&quot;Leaving wrapperUnlock_3.writeData_3&quot;"/>
             </onexit>
         </state>
         <state id="unlockKey_3">
@@ -717,13 +717,13 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
                         stateMachine()-&gt;submitEvent(&quot;UNLOCK_TRUE&quot;);
                     });
                      }</script>
-                <log label="wrapperUnlock_3.unlockKey_3" expr="&quot;Inside wrapperUnlock_3.unlockKey_3"/>
+                <log label="wrapperUnlock_3.unlockKey_3" expr="&quot;Inside wrapperUnlock_3.unlockKey_3&quot;"/>
             </onentry>
             <transition type="external" event="UNLOCK_TRUE" target="wrapper">
                 <qt:editorinfo endTargetFactors="98.72;57.74"/>
             </transition>
             <onexit>
-                <log label="wrapperUnlock_3.unlockKey_3" expr="&quot;Leaving wrapperUnlock_3.unlockKey_3"/>
+                <log label="wrapperUnlock_3.unlockKey_3" expr="&quot;Leaving wrapperUnlock_3.unlockKey_3&quot;"/>
             </onexit>
         </state>
         <onentry>
