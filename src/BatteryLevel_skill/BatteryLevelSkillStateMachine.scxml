@@ -51,7 +51,6 @@
     <state id="get" scope:bt_status="idle">
     <onentry>
         <script>
-            Connector connection(client_port.getName(), "/BatteryComponent", "tcp");
             double level = batteryReader.level();
             QTimer::singleShot(0, stateMachine(), [=](){
                 stateMachine()->submitEvent((level > 20) ? "STATUS_SUCCESS" : "STATUS_FAILED");

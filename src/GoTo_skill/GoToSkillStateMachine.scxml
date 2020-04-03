@@ -77,7 +77,7 @@
             <onentry>
                 <log label="wrapper.getstatus" expr='"Inside getstatus"'/>
                 <script>
-                    Connector connection(client_port.getName(), "/GoToComponent", "tcp");
+                  <!--    Connector connection(client_port.getName(), "/GoToComponent", "tcp"); -->
 
                     GoToStatus ret = goTo.getStatus(location);
 
@@ -157,7 +157,6 @@
         <onentry>
             <log label="halted" expr='"Inside halted"'/>
             <script>
-                Connector connection(client_port.getName(), "/GoToComponent", "tcp");
                 goTo.halt(location);
             </script>
             <send event="RESET" delay="2s"/>
