@@ -307,7 +307,7 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
                     <qt:editorinfo endTargetFactors="45.24;12.10" movePoint="-56.84;-2.27"/>
                 </transition>
                 <onexit>
-                    <log label="wrapperLock.unlockKey" expr="&quot;Inside wrapperLock.unlockKey&quot;"/>
+                    <log label="wrapperLock.unlockKey" expr="&quot;Leaving wrapperLock.unlockKey&quot;"/>
                 </onexit>
             </state>
             <onentry>
