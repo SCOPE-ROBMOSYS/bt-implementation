@@ -7,6 +7,7 @@ ARG cmake_parallel=8
 ENV CMAKE_BUILD_PARALLEL_LEVEL=${cmake_parallel}
 
 #RUN export DISPLAY=:0.0
+#RUN apt-get install qtcreator
 
 # Build bt-implementation project
 COPY . /usr/local/src/bt-implementation/

@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 
 @KEY_ADDITIONAL_OPTION_ASSIGN@
 
-    QCoreApplication::setApplicationName(skillName);
+    //QCoreApplication::setApplicationName(skillName);
 
     @KEY_SKILL_NAME@Skill bt(skillName.toStdString() @KEY_CONSTRUCTOR_ATTRIBUTES_p1_PASSED_ARGS@);
     if (!bt.start()) {
