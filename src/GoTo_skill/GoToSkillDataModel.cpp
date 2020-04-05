@@ -10,9 +10,8 @@
 #include <QTimer>
 #include <QScxmlStateMachine>
 
-GoToSkillDataModel::GoToSkillDataModel(std::string location, std::string skillID) :
+GoToSkillDataModel::GoToSkillDataModel(std::string location) :
         location(std::move(location)),
-        skillID(std::move(skillID)),
         currVal(0)
 {
     qDebug() << "GoToSkillDataModel::GoToSkillDataModel() called";
@@ -27,6 +26,18 @@ bool GoToSkillDataModel::setup(const QVariantMap &initialDataValues)
         return false;
     }
 
+    if (!id_port.open("...")) {
+        qWarning("Error! Cannot open YARP port");
+        return false;
+    }
+
+    if(!idService.yarp().attachAsClient(id_port)) {
+        qWarning("Error! Could not attach as client");
+        return false;
+    }
+
+    skillID = idService.request_id("goToClient_" + location);
+
     if (!client_port.open("/goToClient/" + location)) {
         qWarning("Error! Cannot open YARP port");
         return false;
@@ -37,7 +48,7 @@ bool GoToSkillDataModel::setup(const QVariantMap &initialDataValues)
         return false;
     }
 
-        if (!blackboard_port.open("/blackboardClient/" + location)) {
+    if (!blackboard_port.open("/blackboardClient/" + location)) {
         qWarning("Error! Cannot open YARP port");
         return false;
     }
@@ -46,6 +57,7 @@ bool GoToSkillDataModel::setup(const QVariantMap &initialDataValues)
         qWarning("Error! Could not attach as client");
         return false;
     }
+
 
     return true;
 }

@@ -17,6 +17,7 @@
 
 #include "GoTo.h"
 #include "Blackboard.h"
+#include "IdService.h"
 #include <yarp/os/Network.h>
 #include <yarp/os/RpcClient.h>
 
@@ -50,18 +51,20 @@ class GoToSkillDataModel: public QScxmlCppDataModel
     Q_SCXML_DATAMODEL
 
 public:
-    GoToSkillDataModel(std::string location, std::string skillID);
+    GoToSkillDataModel(std::string location);
 
     bool setup(const QVariantMap& initialDataValues) override;
 
     yarp::os::Network yarp;
     yarp::os::RpcClient client_port;
     yarp::os::RpcClient blackboard_port;
+    yarp::os::RpcClient id_port;
     GoTo goTo;
     Blackboard blackboard;
+    IdService idService;
 
     const std::string location;
-    const std::string skillID;
+    std::string skillID;
     std::int32_t currVal;
     const std::string resourceName = "navigation";
 };
