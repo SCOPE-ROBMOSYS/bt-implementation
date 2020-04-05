@@ -12,7 +12,8 @@
 
 GoToSkillDataModel::GoToSkillDataModel(std::string location) :
         location(std::move(location)),
-        currVal(0)
+        currVal(0),
+        resourceCount(0)
 {
     qDebug() << "GoToSkillDataModel::GoToSkillDataModel() called";
 }

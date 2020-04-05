@@ -66,6 +66,7 @@ public:
     const std::string location;
     std::string skillID;
     std::int32_t currVal;
+    std::int32_t resourceCount;
     const std::string resourceName = "navigation";
 };
 

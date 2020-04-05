@@ -210,7 +210,7 @@ ReturnStatus GoToSkill::request_status()
             if (state == "getstatus") {
                 return BT_RUNNING;
             }
-            if (state == "lockKey" || state == "lockKey_1" || state == "lockKey_2" || state == "lockKey_3") {
+            if (state == "lockKey" || state == "lockKey_1" || state == "lockKey_2" || state == "lockKey_3" || state == "checkResource") {
                 return BT_RUNNING;
             }
             if (state == "readData" || state == "readData_1" || state == "readData_2" || state == "readData_3") {
