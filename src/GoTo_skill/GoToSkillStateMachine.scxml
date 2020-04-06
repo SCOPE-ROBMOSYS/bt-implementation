@@ -77,7 +77,6 @@
                 <log label="wrapper.getstatus" expr='"Inside getstatus"'/>
                 <script>
                     GoToStatus ret = goTo.getStatus(location);
-
                     switch(ret) {
                     case RUNNING:
                         {
