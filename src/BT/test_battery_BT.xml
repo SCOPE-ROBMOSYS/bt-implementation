@@ -17,7 +17,10 @@
                     <Action ID="AlwaysRunning" name="Wait"/>
                 </ReactiveSequence>
             </ReactiveFallback>
-            <Action ID="YARPAction" name="GoToDestination" port_name="goTo"/>
+            <ReactiveFallback>
+                <Condition ID="YARPCondition" name="IsAtDestination" port_name=""/>
+                <Action ID="YARPAction" name="GoToDestination" port_name="goTo"/>
+            </ReactiveFallback>
         </ReactiveSequence>
     </BehaviorTree>
     <!-- ////////// -->
@@ -31,10 +34,3 @@
     </TreeNodesModel>
     <!-- ////////// -->
 </root>
-
-<!--<ReactiveFallback>
-    <Condition ID="YARPCondition" name="IsAtDestination" port_name=""/>
-    <Action ID="YARPAction" name="GoToDestination" port_name="goTo"/>
-</ReactiveFallback>-->
-
-
