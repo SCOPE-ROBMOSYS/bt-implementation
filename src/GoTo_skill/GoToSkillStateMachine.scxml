@@ -59,7 +59,6 @@
             <onentry>
                 <log label="wrapper.sendrequest" expr='"Inside sendrequest"'/>
                 <script>
-<!--                    Connector connection(client_port.getName(), "/GoToComponent", "tcp");-->
                     goTo.goTo(location);
                     QTimer::singleShot(0, stateMachine(), [&amp;](){
                         qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; "Event REQUEST_SENT submitted";
@@ -77,8 +76,6 @@
             <onentry>
                 <log label="wrapper.getstatus" expr='"Inside getstatus"'/>
                 <script>
-                  <!--    Connector connection(client_port.getName(), "/GoToComponent", "tcp"); -->
-
                     GoToStatus ret = goTo.getStatus(location);
 
                     switch(ret) {

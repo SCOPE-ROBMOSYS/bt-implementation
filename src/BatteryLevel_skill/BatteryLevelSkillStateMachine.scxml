@@ -37,8 +37,8 @@
 
     <data id="level"
           scope:cpp_type="double"
-          expr="0.0"
-          scope:init_source="not_initialize"
+          expr="100.0"
+          scope:init_source="initialize_inside_header"
           />
 
 </datamodel>
@@ -49,8 +49,8 @@
     </state>
 
     <state id="get" scope:bt_status="idle">
-    <onentry>
-        <script>
+        <onentry>
+            <script>
             double level = batteryReader.level();
             QTimer::singleShot(0, stateMachine(), [=](){
                 stateMachine()->submitEvent((level > 20) ? "STATUS_SUCCESS" : "STATUS_FAILED");
