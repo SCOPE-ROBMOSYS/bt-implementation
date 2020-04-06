@@ -284,7 +284,7 @@ void SkillGenerator::Generate_Skill_cpp(){
         auto actual_state = SD_.ListStates[i].id;
         string actual_state_string = actual_state.toUtf8().constData();
         if (actual_state_string!="wrapper"){
-            string single_state_condit = "              if (state == \"" + actual_state_string + "\") {\n                  return SKILL_" + SD_.ListStates[i].SkillAck + ";\n              }\n" ;
+            string single_state_condit = "              if (state == \"" + actual_state_string + "\") {\n                  return BT_" + SD_.ListStates[i].ReturnStatus + ";\n              }\n" ;
             all = all + single_state_condit;
         }
     }
@@ -351,7 +351,20 @@ void SkillGenerator::Generate_Skill_DataModel_h(){
     QString value_INCLUDE_THRIFT_SERVICE = QString::fromStdString(str_include);
     dataText.replace(KEY_INCLUDE_THRIFT_SERVICE, value_INCLUDE_THRIFT_SERVICE);
 
-    // 2.2: KEY_LIST_PUBLIC_ATTRIBUTES
+    // 2.2: @KEY_LIST_PORTS_SERVICES@
+    QRegularExpression KEY_LIST_PORTS_SERVICES("@KEY_LIST_PORTS_SERVICES@");
+    string all_instances_ports = "";
+    // list of services
+    for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
+        // e.g. yarp::os::RpcClient client_port_NAME;
+        string single_instance = "yarp::os::RpcClient client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ";\n    ";
+        all_instances_ports = all_instances_ports + single_instance;
+    }
+    QString value_LIST_PORTS_SERVICES = QString::fromStdString(all_instances_ports);
+    dataText.replace(KEY_LIST_PORTS_SERVICES, value_LIST_PORTS_SERVICES);
+
+
+    // 2.3: KEY_LIST_PUBLIC_ATTRIBUTES
     QRegularExpression KEY_LIST_PUBLIC_ATTRIBUTES("@KEY_LIST_PUBLIC_ATTRIBUTES@");
     string all_instances = "";
     // list of services
@@ -379,7 +392,7 @@ void SkillGenerator::Generate_Skill_DataModel_h(){
     QString value_LIST_PUBLIC_ATTRIBUTES = QString::fromStdString(all_instances);
     dataText.replace(KEY_LIST_PUBLIC_ATTRIBUTES, value_LIST_PUBLIC_ATTRIBUTES);
 
-    // 2.3 @CONSTRUCTOR@
+    // 2.4 @CONSTRUCTOR@
     QRegularExpression KEY_CONSTRUCTOR("@CONSTRUCTOR@");
     string construct = "";
     if( SD_.add_constructor == false ){ // it is also used in .cpp to insert the not default constructor
@@ -419,23 +432,40 @@ void SkillGenerator::Generate_Skill_DataModel_cpp(){
     // 2.2  @OPEN_PORTS_AND_ATTACH_CLIENTS@
     QRegularExpression KEY_OPEN_PORTS_AND_ATTACH_CLIENTS("@OPEN_PORTS_AND_ATTACH_CLIENTS@");
 
+    // string merge ="";
+    // string all_clients ="";
+    // //string all_ports ="";
+    // string single_port = "";
+    // if(SD_.ListAttributesParsedAsOption.size()==1){ // if(Skill_Config_.specify_port_name_attribute)
+    //     // additional name spec if needed
+    //     string port_name_specific = SD_.ListAttributesParsedAsOption[0].name_instance.toStdString(); //Skill_Config_.port_name_list[0];
+    //     single_port = "    if (!client_port.open(\"/" + SD_.skill_name.toStdString() + "Client/\" + " + port_name_specific + ")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
+    // }else{
+    //     single_port = "    if (!client_port.open(\"/" + SD_.skill_name.toStdString() + "Client\")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
+    // }
+    // for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
+    //     string single_client = "    if(!" + SD_.UsedServices[i].name_instance.toStdString() + ".yarp().attachAsClient(client_port)) {\n       qWarning(\"Error! Could not attach as client\");\n       return false;\n    }\n";
+    //     all_clients = all_clients + single_client;
+    // }
+    // merge = "    // open port\n\n" + single_port + "    // attach services as clients\n\n" + all_clients;
+
     string merge ="";
     string all_clients ="";
-    //string all_ports ="";
+    string all_ports ="";
     string single_port = "";
-    if(SD_.ListAttributesParsedAsOption.size()==1){ // if(Skill_Config_.specify_port_name_attribute)
-        // additional name spec if needed
-        string port_name_specific = SD_.ListAttributesParsedAsOption[0].name_instance.toStdString(); //Skill_Config_.port_name_list[0];
-        single_port = "    if (!client_port.open(\"/" + SD_.skill_name.toStdString() + "Client/\" + " + port_name_specific + ")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
-    }else{
-        single_port = "    if (!client_port.open(\"/" + SD_.skill_name.toStdString() + "Client\")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
-    }
-    // all_ports = all_ports + single_port;
     for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
-        string single_client = "    if(!" + SD_.UsedServices[i].name_instance.toStdString() + ".yarp().attachAsClient(client_port)) {\n       qWarning(\"Error! Could not attach as client\");\n       return false;\n    }\n";
+        if(SD_.ListAttributesParsedAsOption.size()==1){ // if(Skill_Config_.specify_port_name_attribute)
+            // additional name spec if needed
+            string port_name_specific = SD_.ListAttributesParsedAsOption[0].name_instance.toStdString(); //Skill_Config_.port_name_list[0];
+            single_port = "    if (!client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".open(\"/" + SD_.UsedServices[i].name_instance.toStdString() + "Client/\" + " + port_name_specific + ")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
+        }else{
+            single_port = "    if (!client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".open(\"/" + SD_.UsedServices[i].name_instance.toStdString() + "Client\")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
+        }
+        all_ports = all_ports + single_port;
+        string single_client = "    if(!" + SD_.UsedServices[i].name_instance.toStdString() + ".yarp().attachAsClient(client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ")) {\n       qWarning(\"Error! Could not attach as client\");\n       return false;\n    }\n";
         all_clients = all_clients + single_client;
     }
-    merge = "    // open port\n\n" + single_port + "    // attach services as clients\n\n" + all_clients;
+    merge = "    // open ports\n\n" + all_ports + "    // attach services as clients\n\n" + all_clients;
 
     QString value_OPEN_PORTS_AND_ATTACH_CLIENTS = QString::fromStdString(merge);
     dataText.replace(KEY_OPEN_PORTS_AND_ATTACH_CLIENTS, value_OPEN_PORTS_AND_ATTACH_CLIENTS);
@@ -444,7 +474,7 @@ void SkillGenerator::Generate_Skill_DataModel_cpp(){
     QRegularExpression KEY_OPEN_CONNECTIONS_TO_COMPONENTS("@OPEN_CONNECTIONS_TO_COMPONENTS@");
     string all_components ="";
     for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
-        all_components = all_components + "    if (!yarp::os::Network::connect(client_port.getName(), \"/" + SD_.UsedServices[i].thrift_protocol.toStdString()  + "Component\", \"" + SD_.UsedServices[i].connect_type.toStdString() + "\")) {\n        qWarning(\"Error! Could not connect to server\");\n        return false;\n    }\n" ;
+        all_components = all_components + "    if (!yarp::os::Network::connect(client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".getName(), \"/" + SD_.UsedServices[i].thrift_protocol.toStdString()  + "Component\", \"" + SD_.UsedServices[i].connect_type.toStdString() + "\")) {\n        qWarning(\"Error! Could not connect to server\");\n        return false;\n    }\n" ;
     }
     all_components = "    // open connections to components\n\n" + all_components;
     QString value_OPEN_CONNECTIONS_TO_COMPONENTS = QString::fromStdString(all_components);
@@ -529,8 +559,8 @@ int SkillGenerator::write()
             // need to control the gerarchy of the states, s.t. the external "wrapper" is not tackled into the list
             State stato;
             stato.id = state->id;
-            stato.SkillAckEnum = state->bt_status;
-            stato.SkillAck = DecoderEnum(state->bt_status);
+            stato.ReturnStatusEnum = state->bt_status;
+            stato.ReturnStatus = DecoderEnum(state->bt_status);
             SD_.ListStates.push_back(stato);
         }
 
