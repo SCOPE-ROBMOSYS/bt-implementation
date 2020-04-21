@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" binding="early" xmlns:qt="http://www.qt.io/2015/02/scxml-ext" name="GoToSkillStateMachine" datamodel="cplusplus:GoToSkillDataModel:GoToSkillDataModel.h" qt:editorversion="4.11.0" initial="wrapper">
-    <qt:editorinfo initialGeometry="2498.21;-957.28;-20;-20;40;40"/>
+    <qt:editorinfo initialGeometry="2467.79;-1355.11;-20;-20;40;40"/>
     <state id="halted">
         <qt:editorinfo scenegeometry="2910.17;-173.31;2850.17;-223.31;120;100" geometry="2910.17;-173.31;-60;-50;120;100"/>
         <onentry>
@@ -13,11 +13,11 @@
             <log label="halted" expr="&quot;Leaving halted&quot;"/>
         </onexit>
         <transition type="internal" event="RESET" target="wrapperUnlock_3">
-            <qt:editorinfo endTargetFactors="95.62;55.74" startTargetFactors="17.42;22.23"/>
+            <qt:editorinfo startTargetFactors="17.42;22.23" endTargetFactors="95.62;55.74"/>
         </transition>
     </state>
     <state id="wrapper" initial="idle">
-        <qt:editorinfo scenegeometry="101.72;-201.43;-34.78;-1669.27;2129;3084.15" geometry="101.72;-201.43;-136.50;-1467.84;2129;3084.15"/>
+        <qt:editorinfo scenegeometry="102.94;-202.65;-33.56;-1670.49;2129;3084.15" geometry="102.94;-202.65;-136.50;-1467.84;2129;3084.15"/>
         <onentry>
             <log label="wrapper" expr="&quot;Inside wrapper&quot;"/>
         </onentry>
@@ -25,7 +25,7 @@
             <log label="wrapper" expr="&quot;Leaving wrapper&quot;"/>
         </onexit>
         <state id="idle">
-            <qt:editorinfo scenegeometry="1112.60;-1394.22;1052.60;-1444.22;120;100" geometry="1010.88;-1192.79;-60;-50;120;100"/>
+            <qt:editorinfo scenegeometry="1113.82;-1395.44;1053.82;-1445.44;120;100" geometry="1010.88;-1192.79;-60;-50;120;100"/>
             <onentry>
                 <log label="wrapper.idle" expr="&quot;Inside idle&quot;"/>
                 <assign location="status" expr="Idle"/>
@@ -38,7 +38,7 @@
             </transition>
         </state>
         <state id="sendrequest">
-            <qt:editorinfo scenegeometry="1094.68;268.29;926.21;218.29;235.89;100" geometry="992.96;469.72;-168.47;-50;235.89;100"/>
+            <qt:editorinfo scenegeometry="1095.90;267.07;927.43;217.07;235.89;100" geometry="992.96;469.72;-168.47;-50;235.89;100"/>
             <onentry>
                 <log label="wrapper.sendrequest" expr="&quot;Inside sendrequest&quot;"/>
                 <script>Connector connection(client_port.getName(), &quot;/GoToComponent&quot;, &quot;tcp&quot;);
@@ -54,7 +54,7 @@
             <transition type="internal" event="REQUEST_SENT" target="getstatus"/>
         </state>
         <state id="getstatus">
-            <qt:editorinfo scenegeometry="1100.95;1298.88;918.48;1248.88;222.47;100" geometry="999.23;1500.31;-182.47;-50;222.47;100"/>
+            <qt:editorinfo scenegeometry="1102.17;1297.66;919.70;1247.66;222.47;100" geometry="999.23;1500.31;-182.47;-50;222.47;100"/>
             <onentry>
                 <log label="wrapper.getstatus" expr="&quot;Inside getstatus&quot;"/>
                 <script>Connector connection(client_port.getName(), &quot;/GoToComponent&quot;, &quot;tcp&quot;);
@@ -113,7 +113,7 @@
             </transition>
         </state>
         <state id="success">
-            <qt:editorinfo scenegeometry="49.69;1280.64;-10.31;1230.64;120;100" geometry="-52.03;1482.07;-60;-50;120;100"/>
+            <qt:editorinfo scenegeometry="50.91;1279.42;-9.09;1229.42;120;100" geometry="-52.03;1482.07;-60;-50;120;100"/>
             <onentry>
                 <log label="wrapper.success" expr="&quot;Inside success&quot;"/>
             </onentry>
@@ -121,16 +121,16 @@
                 <log label="wrapper.success" expr="&quot;Leaving success&quot;"/>
             </onexit>
             <transition type="internal" event="TICK" target="idle">
-                <qt:editorinfo endTargetFactors="29.50;65.35" startTargetFactors="50.31;21.73" localGeometry="-15.92;-2631.25"/>
+                <qt:editorinfo startTargetFactors="50.31;21.73" endTargetFactors="29.50;65.35" localGeometry="-15.92;-2631.24"/>
             </transition>
         </state>
         <transition type="internal" event="HALT" target="halted">
-            <qt:editorinfo endTargetFactors="36.67;83.25" startTargetFactors="99.63;64.06" localGeometry="807.82;35.05"/>
+            <qt:editorinfo startTargetFactors="99.63;64.06" endTargetFactors="36.67;83.25" localGeometry="806.61;36.27"/>
         </transition>
         <state id="wrapperLock" initial="lockKey">
-            <qt:editorinfo scenegeometry="458.78;-1047.83;730.49;-1258.86;751.11;1324.16" geometry="357.06;-846.40;271.71;-211.03;751.11;1324.16"/>
+            <qt:editorinfo scenegeometry="460;-1049.05;731.71;-1260.08;751.11;1324.16" geometry="357.06;-846.40;271.71;-211.03;751.11;1324.16"/>
             <state id="lockKey">
-                <qt:editorinfo scenegeometry="1178.27;-1055.01;1029.16;-1109.06;169.11;90.05" geometry="719.49;-7.18;-149.11;-54.05;169.11;90.05"/>
+                <qt:editorinfo scenegeometry="1179.49;-1056.23;1030.38;-1110.28;169.11;90.05" geometry="719.49;-7.18;-149.11;-54.05;169.11;90.05"/>
                 <transition type="external" event="LOCK_FALSE" target="lockKey">
                     <qt:editorinfo endTargetFactors="12.65;49.12"/>
                 </transition>
@@ -180,7 +180,7 @@
                 <transition type="external" event="INVALID_KEY" target="wrongKey"/>
             </state>
             <state id="readData">
-                <qt:editorinfo scenegeometry="1005.54;-737.62;757.62;-787.62;307.92;116" geometry="546.76;310.21;-247.92;-50;307.92;116"/>
+                <qt:editorinfo scenegeometry="1006.76;-738.84;758.84;-788.84;307.92;116" geometry="546.76;310.21;-247.92;-50;307.92;116"/>
                 <transition type="external" event="DATA_EQUAL_ZERO" target="unlockBusy"/>
                 <transition type="external" event="DATA_GREATER_THAN_ZERO" target="writeData"/>
                 <onentry>
@@ -215,9 +215,9 @@
                 </onexit>
             </state>
             <state id="unlockBusy">
-                <qt:editorinfo scenegeometry="1410.70;-709.01;1204.86;-759.01;225.84;100" geometry="951.92;338.82;-205.84;-50;225.84;100"/>
+                <qt:editorinfo scenegeometry="1411.92;-710.23;1206.08;-760.23;225.84;100" geometry="951.92;338.82;-205.84;-50;225.84;100"/>
                 <transition type="external" event="UNLOCK_BUSY_TRUE" target="lockKey">
-                    <qt:editorinfo endTargetFactors="92.62;51.74" localGeometry="-13.21;-353.45" movePoint="-36.86;-101.38"/>
+                    <qt:editorinfo movePoint="-36.86;-101.38" endTargetFactors="92.62;51.74" localGeometry="-13.21;-353.46"/>
                 </transition>
                 <transition type="external" event="UNLOCK_BUSY_FALSE" target="unlockBusy">
                     <qt:editorinfo endTargetFactors="23.64;51.93"/>
@@ -251,7 +251,7 @@ qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_BU
                 </onexit>
             </state>
             <state id="writeData">
-                <qt:editorinfo scenegeometry="987.46;-483.41;798.40;-533.41;249.06;100" geometry="528.68;564.42;-189.06;-50;249.06;100"/>
+                <qt:editorinfo scenegeometry="988.68;-484.63;799.62;-534.63;249.06;100" geometry="528.68;564.42;-189.06;-50;249.06;100"/>
                 <transition type="external" event="WRITE_DATA_TRUE" target="unlockKey"/>
                 <onentry>
                     <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
@@ -276,7 +276,7 @@ qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_BU
                 </onexit>
             </state>
             <state id="unlockKey">
-                <qt:editorinfo scenegeometry="998.13;-246.77;830.63;-296.77;187.50;116" geometry="539.35;801.06;-167.50;-50;187.50;116"/>
+                <qt:editorinfo scenegeometry="999.35;-247.99;831.85;-297.99;187.50;116" geometry="539.35;801.06;-167.50;-50;187.50;116"/>
                 <transition type="external" event="UNLOCK_FALSE" target="unlockKey">
                     <qt:editorinfo endTargetFactors="12.72;34.11"/>
                 </transition>
@@ -305,7 +305,7 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
                     <log label="wrapperLock.unlockKey" expr="&quot;Inside wrapperLock.unlockKey&quot;"/>
                 </onentry>
                 <transition type="external" event="UNLOCK_TRUE" target="sendrequest">
-                    <qt:editorinfo endTargetFactors="45.24;12.10" movePoint="-56.84;-2.27"/>
+                    <qt:editorinfo movePoint="-56.84;-2.27" endTargetFactors="45.24;12.10"/>
                 </transition>
                 <onexit>
                     <log label="wrapperLock.unlockKey" expr="&quot;Leaving wrapperLock.unlockKey&quot;"/>
@@ -318,9 +318,9 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
                 <log expr="&quot;Leaving wrapperLock&quot;" label="wrapperLock"/>
             </onexit>
             <state id="wrongKey">
-                <qt:editorinfo scenegeometry="844.61;-1048.11;784.61;-1098.11;120;100" geometry="385.83;-0.28;-60;-50;120;100"/>
+                <qt:editorinfo scenegeometry="844.61;-1050.55;784.61;-1100.55;120;100" geometry="384.61;-1.50;-60;-50;120;100"/>
                 <transition type="external" event="TICK" target="idle">
-                    <qt:editorinfo endTargetFactors="21.57;82.47" localGeometry="0;-313.64"/>
+                    <qt:editorinfo endTargetFactors="21.57;82.47" localGeometry="1.21;-312.42"/>
                 </transition>
                 <onentry>
                     <log label="wrapperLock.wrongKey" expr="&quot;Inside wrapperLock.wrongKey&quot;"/>
@@ -331,9 +331,9 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
             </state>
         </state>
         <state id="wrapperUnlock_2" initial="lockKey_2">
-            <qt:editorinfo scenegeometry="-70.29;984.31;201.42;746.07;406.80;622.21" geometry="-172.01;1185.74;271.71;-238.24;406.80;622.21"/>
+            <qt:editorinfo scenegeometry="-69.07;983.09;202.64;744.85;406.80;622.21" geometry="-172.01;1185.74;271.71;-238.24;406.80;622.21"/>
             <state id="lockKey_2">
-                <qt:editorinfo scenegeometry="450.21;877.45;301.10;823.40;169.11;120.05" geometry="520.50;-106.86;-149.11;-54.05;169.11;120.05"/>
+                <qt:editorinfo scenegeometry="451.43;876.23;302.32;822.18;169.11;120.05" geometry="520.50;-106.86;-149.11;-54.05;169.11;120.05"/>
                 <transition type="external" event="LOCK_FALSE" target="lockKey_2">
                     <qt:editorinfo endTargetFactors="12.65;49.12"/>
                 </transition>
@@ -369,7 +369,7 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
                 </onexit>
             </state>
             <state id="readData_2">
-                <qt:editorinfo scenegeometry="504.99;1005.65;257.07;955.65;267.92;100" geometry="575.28;21.34;-247.92;-50;267.92;100"/>
+                <qt:editorinfo scenegeometry="506.21;1004.43;258.29;954.43;267.92;100" geometry="575.28;21.34;-247.92;-50;267.92;100"/>
                 <transition type="external" event="DATA_READ" target="writeData_2"/>
                 <onentry>
                     <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
@@ -395,7 +395,7 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
                 </onexit>
             </state>
             <state id="writeData_2">
-                <qt:editorinfo scenegeometry="488.14;1140.84;299.08;1090.84;209.06;100" geometry="558.43;156.53;-189.06;-50;209.06;100"/>
+                <qt:editorinfo scenegeometry="489.36;1139.62;300.30;1089.62;209.06;100" geometry="558.43;156.53;-189.06;-50;209.06;100"/>
                 <transition type="external" event="WRITE_DATA_TRUE" target="unlockKey_2"/>
                 <onentry>
                     <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
@@ -420,7 +420,7 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
                 </onexit>
             </state>
             <state id="unlockKey_2">
-                <qt:editorinfo scenegeometry="460.38;1280.77;292.88;1230.77;187.50;116" geometry="530.67;296.46;-167.50;-50;187.50;116"/>
+                <qt:editorinfo scenegeometry="461.60;1279.55;294.10;1229.55;187.50;116" geometry="530.67;296.46;-167.50;-50;187.50;116"/>
                 <transition type="external" event="UNLOCK_FALSE" target="unlockKey_2">
                     <qt:editorinfo endTargetFactors="12.72;34.11"/>
                 </transition>
@@ -463,7 +463,7 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
             </onexit>
         </state>
         <state id="failure">
-            <qt:editorinfo scenegeometry="2014.22;1277.23;1954.22;1227.23;120;100" geometry="1912.50;1478.66;-60;-50;120;100"/>
+            <qt:editorinfo scenegeometry="2015.44;1276.01;1955.44;1226.01;120;100" geometry="1912.50;1478.66;-60;-50;120;100"/>
             <onentry>
                 <log label="wrapper.failure" expr="&quot;Inside failure&quot;"/>
             </onentry>
@@ -475,9 +475,9 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
             </transition>
         </state>
         <state id="wrapperUnlock_1" initial="lockKey_1">
-            <qt:editorinfo scenegeometry="1167.20;976.44;1438.91;722.65;406.80;637.76" geometry="1065.48;1177.87;271.71;-253.79;406.80;637.76"/>
+            <qt:editorinfo scenegeometry="1168.42;975.22;1440.13;721.43;406.80;637.76" geometry="1065.48;1177.87;271.71;-253.79;406.80;637.76"/>
             <state id="lockKey_1">
-                <qt:editorinfo scenegeometry="1685.50;854.97;1536.39;800.92;169.11;120.05" geometry="518.30;-121.47;-149.11;-54.05;169.11;120.05"/>
+                <qt:editorinfo scenegeometry="1686.72;853.75;1537.61;799.70;169.11;120.05" geometry="518.30;-121.47;-149.11;-54.05;169.11;120.05"/>
                 <transition type="external" event="LOCK_FALSE" target="lockKey_1">
                     <qt:editorinfo endTargetFactors="12.65;49.12"/>
                 </transition>
@@ -513,7 +513,7 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
                 </onexit>
             </state>
             <state id="readData_1">
-                <qt:editorinfo scenegeometry="1742.48;997.78;1494.56;947.78;267.92;100" geometry="575.28;21.34;-247.92;-50;267.92;100"/>
+                <qt:editorinfo scenegeometry="1743.70;996.56;1495.78;946.56;267.92;100" geometry="575.28;21.34;-247.92;-50;267.92;100"/>
                 <transition type="external" event="DATA_READ" target="writeData_1"/>
                 <onentry>
                     <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
@@ -539,7 +539,7 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
                 </onexit>
             </state>
             <state id="writeData_1">
-                <qt:editorinfo scenegeometry="1725.63;1132.97;1536.57;1082.97;209.06;100" geometry="558.43;156.53;-189.06;-50;209.06;100"/>
+                <qt:editorinfo scenegeometry="1726.85;1131.75;1537.79;1081.75;209.06;100" geometry="558.43;156.53;-189.06;-50;209.06;100"/>
                 <transition type="external" event="WRITE_DATA_TRUE" target="unlockKey_1"/>
                 <onentry>
                     <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
@@ -564,7 +564,7 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
                 </onexit>
             </state>
             <state id="unlockKey_1">
-                <qt:editorinfo scenegeometry="1697.87;1272.90;1530.37;1222.90;187.50;116" geometry="530.67;296.46;-167.50;-50;187.50;116"/>
+                <qt:editorinfo scenegeometry="1699.09;1271.68;1531.59;1221.68;187.50;116" geometry="530.67;296.46;-167.50;-50;187.50;116"/>
                 <transition type="external" event="UNLOCK_FALSE" target="unlockKey_1">
                     <qt:editorinfo endTargetFactors="12.72;34.11"/>
                 </transition>
@@ -606,9 +606,9 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
         </state>
     </state>
     <state id="wrapperUnlock_3" initial="checkResource">
-        <qt:editorinfo scenegeometry="2053.91;-204.12;2325.62;-678.38;445.91;858.54" geometry="2053.91;-204.12;271.71;-474.26;445.91;858.54"/>
+        <qt:editorinfo scenegeometry="2059.77;-205.34;2158.19;-776.95;619.20;955.89" geometry="2059.77;-205.34;98.42;-571.61;619.20;955.89"/>
         <state id="lockKey_3">
-            <qt:editorinfo scenegeometry="2575.52;-358.54;2426.41;-412.59;169.11;120.05" geometry="521.61;-154.42;-149.11;-54.05;169.11;120.05"/>
+            <qt:editorinfo scenegeometry="2581.38;-359.76;2432.27;-413.81;169.11;120.05" geometry="521.61;-154.42;-149.11;-54.05;169.11;120.05"/>
             <transition type="external" event="LOCK_FALSE" target="lockKey_3">
                 <qt:editorinfo endTargetFactors="12.65;49.12"/>
             </transition>
@@ -644,7 +644,7 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
             </onexit>
         </state>
         <state id="readData_3">
-            <qt:editorinfo scenegeometry="2629.19;-182.78;2381.27;-232.78;267.92;100" geometry="575.28;21.34;-247.92;-50;267.92;100"/>
+            <qt:editorinfo scenegeometry="2635.05;-184;2387.13;-234;267.92;100" geometry="575.28;21.34;-247.92;-50;267.92;100"/>
             <transition type="external" event="DATA_READ" target="writeData_3"/>
             <onentry>
                 <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
@@ -670,7 +670,7 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
             </onexit>
         </state>
         <state id="writeData_3">
-            <qt:editorinfo scenegeometry="2613.55;-47.59;2424.49;-97.59;209.06;100" geometry="559.64;156.53;-189.06;-50;209.06;100"/>
+            <qt:editorinfo scenegeometry="2619.41;-48.81;2430.35;-98.81;209.06;100" geometry="559.64;156.53;-189.06;-50;209.06;100"/>
             <transition type="external" event="WRITE_DATA_TRUE" target="unlockKey_3"/>
             <onentry>
                 <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
@@ -695,7 +695,7 @@ QTimer::singleShot(0, stateMachine(), [&amp;](){
             </onexit>
         </state>
         <state id="unlockKey_3">
-            <qt:editorinfo scenegeometry="2586.40;94.16;2418.90;44.16;187.50;116" geometry="532.49;298.28;-167.50;-50;187.50;116"/>
+            <qt:editorinfo scenegeometry="2592.26;92.94;2424.76;42.94;187.50;116" geometry="532.49;298.28;-167.50;-50;187.50;116"/>
             <transition type="external" event="UNLOCK_FALSE" target="unlockKey_3">
                 <qt:editorinfo endTargetFactors="12.72;34.11"/>
             </transition>
@@ -739,7 +739,7 @@ qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_FA
                 <log label="wrapperUnlock_3.unlockKey_3" expr="&quot;Leaving wrapperUnlock_3.unlockKey_3&quot;"/>
             </onexit>
             <transition type="external" event="TO_CHECK_RESOURCE" target="checkResource">
-                <qt:editorinfo endTargetFactors="84.68;53.75" localGeometry="173.84;-0.46;173.84;-610.41" movePoint="-11.06;290.88"/>
+                <qt:editorinfo movePoint="-11.06;290.88" endTargetFactors="84.68;53.75" localGeometry="173.84;-0.45;173.84;-610.25"/>
             </transition>
         </state>
         <onentry>
@@ -749,13 +749,13 @@ qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_FA
             <log expr="&quot;Leaving wrapperUnlock_3&quot;" label="wrapperUnlock_3"/>
         </onexit>
         <state id="checkResource">
-            <qt:editorinfo scenegeometry="2566.75;-509.79;2420.27;-559.79;177.22;100" geometry="512.84;-305.67;-146.48;-50;177.22;100"/>
+            <qt:editorinfo scenegeometry="2572.61;-513.45;2426.13;-563.45;177.22;100" geometry="512.84;-308.11;-146.48;-50;177.22;100"/>
             <transition type="external" event="FREE_UP" target="lockKey_3"/>
             <transition type="external" event="TO_IDLE" target="wrapper">
-                <qt:editorinfo endTargetFactors="98.64;39.19" movePoint="-26.54;-19.91"/>
+                <qt:editorinfo movePoint="-4.64;-28.43" endTargetFactors="99.30;33.82"/>
             </transition>
             <onentry>
-                <script>if(resourceCount==0){
+       <!--         <script>if(resourceCount==0){
                         //vai nello stato idle
                          QTimer::singleShot(0, stateMachine(), [&amp;](){
                         qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event TO_IDLE submitted&quot;;
@@ -768,8 +768,13 @@ else{
                         qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event FREE_UP submitted&quot;;
                         stateMachine()-&gt;submitEvent(&quot;FREE_UP&quot;);
                     });
-}</script>
+}</script> -->
                 <log label="wrapperUnlock_3.checkResource" expr="&quot;Inside wrapperUnlock_3.checkResource&quot;"/>
+                <if cond="resourceCount==0">
+                    <send event="TO_IDLE"/>
+                    <else/>
+                    <send event="FREE_UP"/>
+                </if>
             </onentry>
             <onexit>
                 <log label="wrapperUnlock_3.checkResource" expr="&quot;Leaving wrapperUnlock_3.checkResource&quot;"/>
