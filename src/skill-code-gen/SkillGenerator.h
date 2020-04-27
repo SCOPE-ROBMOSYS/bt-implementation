@@ -64,8 +64,8 @@ enum {
 
 struct State{
     QString id;
-    int ReturnStatusEnum;
-    string ReturnStatus;
+    int SkillAckEnum;
+    string SkillAck;
 };
 
 struct Service{

@@ -284,7 +284,7 @@ void SkillGenerator::Generate_Skill_cpp(){
         auto actual_state = SD_.ListStates[i].id;
         string actual_state_string = actual_state.toUtf8().constData();
         if (actual_state_string!="wrapper"){
-            string single_state_condit = "              if (state == \"" + actual_state_string + "\") {\n                  return BT_" + SD_.ListStates[i].ReturnStatus + ";\n              }\n" ;
+            string single_state_condit = "              if (state == \"" + actual_state_string + "\") {\n                  return BT_" + SD_.ListStates[i].SkillAck + ";\n              }\n" ;
             all = all + single_state_condit;
         }
     }
@@ -546,8 +546,8 @@ int SkillGenerator::write()
             // need to control the gerarchy of the states, s.t. the external "wrapper" is not tackled into the list
             State stato;
             stato.id = state->id;
-            stato.ReturnStatusEnum = state->bt_status;
-            stato.ReturnStatus = DecoderEnum(state->bt_status);
+            stato.SkillAckEnum = state->bt_status;
+            stato.SkillAck = DecoderEnum(state->bt_status);
             SD_.ListStates.push_back(stato);
         }
 

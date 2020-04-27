@@ -12,10 +12,10 @@
 
 #pragma once
 
-#include <BT_request.h>
+#include <Skill_request.h>
 #include <behaviortree_cpp_v3/action_node.h>
 #include <yarp/os/RpcClient.h>
-#include <BT_request.h>
+#include <Skill_request.h>
 
 using namespace std;
 using namespace BT;
@@ -34,7 +34,7 @@ private:
     string m_carrier;
     yarp::os::RpcClient m_rpc_client;
 protected:
-    mutable BT_request m_bt_request; // mutable because status() is const
+    mutable Skill_request m_bt_request; // mutable because status() is const
 
 };
 

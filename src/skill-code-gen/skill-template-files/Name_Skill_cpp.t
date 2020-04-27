@@ -40,7 +40,7 @@ bool @KEY_SKILL_NAME@Skill::start()
     return true;
 }
 
-ReturnStatus @KEY_SKILL_NAME@Skill::request_status()
+SkillAck @KEY_SKILL_NAME@Skill::request_ack()
 {
     while (true) {
         auto states = stateMachine.activeStateNames();
@@ -51,13 +51,13 @@ ReturnStatus @KEY_SKILL_NAME@Skill::request_status()
     }
 }
 
-ReturnStatus @KEY_SKILL_NAME@Skill::request_tick()
+SkillAck @KEY_SKILL_NAME@Skill::send_start()
 {
     stateMachine.submitEvent("TICK");
-    return request_status();
+    return request_ack();
 }
 
-void @KEY_SKILL_NAME@Skill::request_halt()
+void @KEY_SKILL_NAME@Skill::send_stop()
 {
     stateMachine.submitEvent("HALT",  QStateMachine::HighPriority);
 }

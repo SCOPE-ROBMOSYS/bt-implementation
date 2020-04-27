@@ -7,7 +7,7 @@
 
 # pragma once
 
-#include <BT_request.h>
+#include <Skill_request.h>
 
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/Network.h>
@@ -16,16 +16,16 @@
 #include "@KEY_SKILL_NAME@SkillDataModel.h"
 
 class @KEY_SKILL_NAME@Skill:
-        public BT_request
+        public Skill_request
 {
 public:
     @KEY_SKILL_NAME@Skill(std::string name @KEY_CONSTRUCTOR_ATTRIBUTES_p1@);
 
     bool start();
 
-    ReturnStatus request_status() override;
-    ReturnStatus request_tick() override;
-    void request_halt() override;
+    SkillAck request_ack() override;
+    SkillAck send_start() override;
+    void send_stop() override;
 
 private:
     std::string name;

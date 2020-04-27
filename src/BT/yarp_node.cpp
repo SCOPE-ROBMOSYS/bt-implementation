@@ -12,7 +12,7 @@
 
 #include <yarp_node.h>
 #include <behaviortree_cpp_v3/leaf_node.h>
-#include <BT_request.h>
+#include <Skill_request.h>
 #include <iostream>
 #include <yarp/os/RpcClient.h>
 #include <yarp/os/LogStream.h>
@@ -61,22 +61,22 @@ NodeStatus YARPNode::tick()
 {
     yDebug() << "Node" << name << "ticked";
 
-    ReturnStatus status = m_bt_request.request_tick();
+    SkillAck status = m_bt_request.send_start();
 
-    while(status==BT_IDLE)
+    while(status==SKILL_IDLE)
     {
-        status = m_bt_request.request_status();
+        status = m_bt_request.request_ack();
         std::this_thread::sleep_for (std::chrono::milliseconds(100));
     }
 
     switch (status) {
-    case BT_RUNNING:
+    case SKILL_RUNNING:
        yDebug() << "Node" << name << "returns running";
         return NodeStatus::RUNNING;// may be two different enums (thrift and BT library). Making sure that the return status are the correct ones
-    case BT_SUCCESS:
+    case SKILL_SUCCESS:
        yDebug() << "Node" << name << "returns success";
         return NodeStatus::SUCCESS;
-    case BT_FAILURE:
+    case SKILL_FAILURE:
        yDebug() << "Node" << name << "returns failure";
         return NodeStatus::FAILURE;
     default:
@@ -90,18 +90,18 @@ NodeStatus YARPNode::tick()
 NodeStatus YARPNode::status() const
 {
     yDebug() << "Node" << name << "getting status";
-    ReturnStatus status = m_bt_request.request_status();
+    SkillAck status = m_bt_request.request_ack();
     switch (status) {
-    case BT_RUNNING:
+    case SKILL_RUNNING:
        yDebug() << "Node" << name << "returns running";
         return NodeStatus::RUNNING;// may be two different enums (thrift and BT library). Making sure that the return status are the correct ones
-    case BT_SUCCESS:
+    case SKILL_SUCCESS:
        yDebug() << "Node" << name << "returns success";
         return NodeStatus::SUCCESS;
-    case BT_FAILURE:
+    case SKILL_FAILURE:
        yDebug() << "Node" << name << "returns failure";
         return NodeStatus::FAILURE;
-    case BT_IDLE:
+    case SKILL_IDLE:
        yDebug() << "Node" << name << "returns failure";
         return NodeStatus::IDLE;
     default:
