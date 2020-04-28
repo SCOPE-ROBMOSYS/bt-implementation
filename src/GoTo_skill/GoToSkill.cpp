@@ -146,44 +146,50 @@ bool GoToSkill::start()
     return true;
 }
 
-ReturnStatus GoToSkill::request_status()
+SkillAck GoToSkill::request_ack()
 {
     while (true) {
         auto states = stateMachine.activeStateNames();
 
         for (const auto& state : states) {
             if (state == "idle") {
-                return BT_IDLE;
+              stateMachine.submitEvent("REQUEST_ACK");
+                return SKILL_IDLE;
             }
             if (state == "halted") {
-                return BT_RUNNING;
+              stateMachine.submitEvent("REQUEST_ACK");
+                return SKILL_RUNNING;
             }
             if (state == "success") {
-                return BT_SUCCESS;
+              stateMachine.submitEvent("REQUEST_ACK");
+                return SKILL_SUCCESS;
             }
             if (state == "failure") {
-                return BT_FAILURE;
+              stateMachine.submitEvent("REQUEST_ACK");
+                return SKILL_FAILURE;
             }
             if (state == "sendrequest") {
-                return BT_RUNNING;
+              stateMachine.submitEvent("REQUEST_ACK");
+                return SKILL_RUNNING;
             }
             if (state == "getstatus") {
-                return BT_RUNNING;
+              stateMachine.submitEvent("REQUEST_ACK");
+                return SKILL_RUNNING;
             }
         }
     }
 }
 
-ReturnStatus GoToSkill::request_tick()
+void GoToSkill::send_start()
 {
 #ifdef DEBUG_STATE_MACHINE
     qDebug() << QTime::currentTime().toString() << "Event TICK submitted";
 #endif
     stateMachine.submitEvent("TICK");
-    return request_status();
+  //  return request_ack();
 }
 
-void GoToSkill::request_halt()
+void GoToSkill::send_stop()
 {
 #ifdef DEBUG_STATE_MACHINE
     qDebug() << QTime::currentTime().toString() << "Event HALT submitted";

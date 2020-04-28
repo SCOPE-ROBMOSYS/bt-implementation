@@ -111,7 +111,7 @@
             <onexit>
                 <log label="wrapper.success" expr='"Leaving success"'/>
             </onexit>
-            <transition event="TICK" target="idle" />
+            <transition event="REQUEST_ACK" target="idle" />
         </state>
 
         <state id="failure">
@@ -121,7 +121,7 @@
             <onexit>
                 <log label="wrapper.failure" expr='"Leaving failure"'/>
             </onexit>
-            <transition event="TICK" target="idle" />
+            <transition event="REQUEST_ACK" target="idle" />
         </state>
 
         <transition event="HALT" target="halted" />

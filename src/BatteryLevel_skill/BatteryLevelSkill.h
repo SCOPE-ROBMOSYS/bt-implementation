@@ -8,7 +8,7 @@
 #ifndef BATTERYLEVEL_SKILL_BATTERYLEVELSKILL_H
 #define BATTERYLEVEL_SKILL_BATTERYLEVELSKILL_H
 
-#include <BT_request.h>
+#include <Skill_request.h>
 
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/Network.h>
@@ -17,16 +17,16 @@
 #include "BatteryLevelSkillDataModel.h"
 
 class BatteryLevelSkill:
-        public BT_request
+        public Skill_request
 {
 public:
     BatteryLevelSkill(std::string name);
 
     bool start();
 
-    ReturnStatus request_status() override;
-    ReturnStatus request_tick() override;
-    void request_halt() override;
+    SkillAck request_ack() override;
+    void send_start() override;
+    void send_stop() override;
 
 private:
     std::string name;

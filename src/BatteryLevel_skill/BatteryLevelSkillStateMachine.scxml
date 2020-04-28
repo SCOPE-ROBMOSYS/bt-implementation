@@ -30,10 +30,10 @@
     </state>
 
     <state id="success">
-        <transition event="TICK" target="idle" />
+        <transition event="REQUEST_ACK" target="idle" />
     </state>
 
     <state id="failure">
-        <transition event="TICK" target="idle" />
+        <transition event="REQUEST_ACK" target="idle" />
     </state>
 </scxml>

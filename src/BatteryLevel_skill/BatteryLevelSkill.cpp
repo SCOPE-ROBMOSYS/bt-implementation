@@ -37,36 +37,40 @@ bool BatteryLevelSkill::start()
     return true;
 }
 
-ReturnStatus BatteryLevelSkill::request_status()
+SkillAck BatteryLevelSkill::request_ack()
 {
     while (true) {
         auto states = stateMachine.activeStateNames();
 
         for (const auto& state : states) {
             if (state == "idle") {
-                return BT_IDLE;
+              stateMachine.submitEvent("REQUEST_ACK");
+                return SKILL_IDLE;
             }
             if (state == "get") {
-                return BT_IDLE;
+              stateMachine.submitEvent("REQUEST_ACK");
+                return SKILL_IDLE;
             }
             if (state == "success") {
-                return BT_SUCCESS;
+              stateMachine.submitEvent("REQUEST_ACK");
+                return SKILL_SUCCESS;
             }
             if (state == "failure") {
-                return BT_FAILURE;
+              stateMachine.submitEvent("REQUEST_ACK");
+                return SKILL_FAILURE;
             }
         }
     }
 }
 
 
-ReturnStatus BatteryLevelSkill::request_tick()
+void BatteryLevelSkill::send_start()
 {
     stateMachine.submitEvent("TICK");
-    return request_status();
+    //return request_ack();
 }
 
-void BatteryLevelSkill::request_halt()
+void BatteryLevelSkill::send_stop()
 {
     stateMachine.submitEvent("HALT");
 }
