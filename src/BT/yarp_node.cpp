@@ -59,14 +59,16 @@ bool YARPNode::init()
 
 NodeStatus YARPNode::tick()
 {
-    yDebug() << "Node" << name << "ticked";
+    yDebug() << "Node" << name << "ticked--------------------------------------------------------------------";
 
-    SkillAck status = m_bt_request.send_start();
-
+    m_bt_request.send_start();
+    SkillAck status = m_bt_request.request_ack();
     while(status==SKILL_IDLE)
     {
         status = m_bt_request.request_ack();
         std::this_thread::sleep_for (std::chrono::milliseconds(100));
+        yDebug() << "Node" << name << "WAITING--------------------------------------------------------------------";
+
     }
 
     switch (status) {

@@ -24,7 +24,7 @@ public:
     bool start();
 
     SkillAck request_ack() override;
-    SkillAck send_start() override;
+    void send_start() override;
     void send_stop() override;
 
 private:

@@ -15,28 +15,30 @@
  *   time step, but the task is not yet complete;
  * - "SKILL_IDLE" indicates that the node hasn't run yet.
  */
-enum SkillAck {SKILL_IDLE, SKILL_RUNNING, SKILL_SUCCESS, SKILL_FAILURE, BT_UNDEFINED}
+enum SkillAck {SKILL_IDLE, SKILL_RUNNING, SKILL_SUCCESS, SKILL_FAILURE, SKILL_STARTED, SKILL_STOPPED}
 
 service Skill_request {
 
     /**
-     * request_status  Get the status of the action on the server side.
+     * request_ack  Get the ack of the skill.
      *
-     * return              The enum indicating the status of the action on the server side.
+     * return              The enum indicating the ack of the skill..
      */
-    SkillAck request_ack();
+    SkillAck request_ack()
 
     /**
-     * request_tick  Send a Tick request to the server, along with its parameters.
+     * request_stop  Send a cmd_start skill.
      *
-     * return               The enum indicating the status of the action on the server side.
+     * return               void.
      */
-    SkillAck request_tick  ();
+
+    void send_start()
+
 
     /**
-     * request_halt  Send a Halt request to the server, along with its parameters.
+     * request_stop  Send a cmd_stop skill.
      *
      * return              void.
      */
-     void request_halt  ();
+      void send_stop()
 }

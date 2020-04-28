@@ -62,10 +62,10 @@
     </state>
 
     <state id="success" scope:bt_status="success">
-        <transition event="TICK" target="idle" />
+        <transition event="REQUEST_ACK" target="idle" />
     </state>
 
     <state id="failure" scope:bt_status="failure">
-        <transition event="TICK" target="idle" />
+        <transition event="REQUEST_ACK" target="idle" />
     </state>
 </scxml>

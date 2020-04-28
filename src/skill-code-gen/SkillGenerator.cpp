@@ -284,7 +284,7 @@ void SkillGenerator::Generate_Skill_cpp(){
         auto actual_state = SD_.ListStates[i].id;
         string actual_state_string = actual_state.toUtf8().constData();
         if (actual_state_string!="wrapper"){
-            string single_state_condit = "              if (state == \"" + actual_state_string + "\") {\n                  return BT_" + SD_.ListStates[i].SkillAck + ";\n              }\n" ;
+            string single_state_condit = "              if (state == \"" + actual_state_string + "\") {\n                  return SKILL_" + SD_.ListStates[i].SkillAck + ";\n              }\n" ;
             all = all + single_state_condit;
         }
     }

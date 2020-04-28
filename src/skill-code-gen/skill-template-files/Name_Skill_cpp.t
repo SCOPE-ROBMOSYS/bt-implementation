@@ -49,12 +49,14 @@ SkillAck @KEY_SKILL_NAME@Skill::request_ack()
 @KEY_SKILL_STATES@
         }
     }
+    stateMachine.submitEvent("REQUEST_ACK");
+
 }
 
-SkillAck @KEY_SKILL_NAME@Skill::send_start()
+void @KEY_SKILL_NAME@Skill::send_start()
 {
     stateMachine.submitEvent("TICK");
-    return request_ack();
+    //return request_ack();
 }
 
 void @KEY_SKILL_NAME@Skill::send_stop()
