@@ -26,7 +26,7 @@
             <onexit>
                 <log label="wrapper.idle" expr='"Leaving idle"'/>
             </onexit>
-            <transition event="TICK" target="sendrequest" />
+            <transition event="CMD_START" target="sendrequest" />
         </state>
 
         <state id="sendrequest">
@@ -111,7 +111,7 @@
             <onexit>
                 <log label="wrapper.success" expr='"Leaving success"'/>
             </onexit>
-            <transition event="REQUEST_ACK" target="idle" />
+            <transition event="CMD_OK" target="idle" />
         </state>
 
         <state id="failure">
@@ -121,10 +121,10 @@
             <onexit>
                 <log label="wrapper.failure" expr='"Leaving failure"'/>
             </onexit>
-            <transition event="REQUEST_ACK" target="idle" />
+            <transition event="CMD_OK" target="idle" />
         </state>
 
-        <transition event="HALT" target="halted" />
+        <transition event="CMD_STOP" target="halted" />
     </state>
 
     <state id="halted">

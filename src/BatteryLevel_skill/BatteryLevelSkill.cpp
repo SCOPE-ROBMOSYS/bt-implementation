@@ -39,24 +39,22 @@ bool BatteryLevelSkill::start()
 
 SkillAck BatteryLevelSkill::request_ack()
 {
+  stateMachine.submitEvent("CMD_OK");
+
     while (true) {
         auto states = stateMachine.activeStateNames();
 
         for (const auto& state : states) {
             if (state == "idle") {
-              stateMachine.submitEvent("REQUEST_ACK");
                 return SKILL_IDLE;
             }
             if (state == "get") {
-              stateMachine.submitEvent("REQUEST_ACK");
                 return SKILL_IDLE;
             }
             if (state == "success") {
-              stateMachine.submitEvent("REQUEST_ACK");
                 return SKILL_SUCCESS;
             }
             if (state == "failure") {
-              stateMachine.submitEvent("REQUEST_ACK");
                 return SKILL_FAILURE;
             }
         }
@@ -66,11 +64,11 @@ SkillAck BatteryLevelSkill::request_ack()
 
 void BatteryLevelSkill::send_start()
 {
-    stateMachine.submitEvent("TICK");
+    stateMachine.submitEvent("CMD_START");
     //return request_ack();
 }
 
 void BatteryLevelSkill::send_stop()
 {
-    stateMachine.submitEvent("HALT");
+    stateMachine.submitEvent("CMD_STOP");
 }
