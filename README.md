@@ -75,7 +75,7 @@ To change  the battery level, open a terminal window in the folder `bt-implement
 
 then write
 
-`SetBatteryCharge X`
+`setBatteryCharge X`
 
 with `X` the new value of the battery level (between 0 an 100), as below:
 
