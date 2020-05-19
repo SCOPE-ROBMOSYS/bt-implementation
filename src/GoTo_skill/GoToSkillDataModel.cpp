@@ -13,7 +13,10 @@
 GoToSkillDataModel::GoToSkillDataModel(std::string location) :
         location(std::move(location)),
         currVal(0),
-        resourceCount(0)
+        resourceCount(0),
+        retDataBool{false,UNKNOWN},
+        retDataInt32{0,UNKNOWN},
+        retGoToStatus{NOT_STARTED}
 {
     qDebug() << "GoToSkillDataModel::GoToSkillDataModel() called";
 }
@@ -36,8 +39,9 @@ bool GoToSkillDataModel::setup(const QVariantMap &initialDataValues)
         qWarning("Error! Could not attach as client");
         return false;
     }
-
-    skillID = idService.request_id("goToClient_" + location);
+    skillID = "goToClient_" + location;
+    //skillID = idService.request_id("goToClient_" + location);
+    qDebug() << "Skill id by idService is : " << QString::fromStdString(skillID)  ;
 
     if (!client_port.open("/goToClient/" + location)) {
         qWarning("Error! Cannot open YARP port");

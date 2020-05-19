@@ -1,784 +1,711 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" binding="early" xmlns:qt="http://www.qt.io/2015/02/scxml-ext" name="GoToSkillStateMachine" datamodel="cplusplus:GoToSkillDataModel:GoToSkillDataModel.h" qt:editorversion="4.11.0" initial="wrapper">
-    <qt:editorinfo initialGeometry="2467.79;-1355.11;-20;-20;40;40"/>
+<scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" binding="early" xmlns:qt="http://www.qt.io/2015/02/scxml-ext" name="GoToSkillStateMachine" datamodel="cplusplus:GoToSkillDataModel:GoToSkillDataModel.h" qt:editorversion="4.11.0" initial="idle">
+    <qt:editorinfo initialGeometry="1391.42;-1892.46;-20;-20;40;40"/>
     <state id="halted">
-        <qt:editorinfo scenegeometry="2910.17;-173.31;2850.17;-223.31;120;100" geometry="2910.17;-173.31;-60;-50;120;100"/>
+        <qt:editorinfo scenegeometry="4113.60;-199.15;4053.60;-249.15;120;100" geometry="4113.60;-199.15;-60;-50;120;100"/>
         <onentry>
             <log label="halted" expr="&quot;Inside halted&quot;"/>
             <script>Connector connection(client_port.getName(), &quot;/GoToComponent&quot;, &quot;tcp&quot;);
                 goTo.halt(location);</script>
-            <send event="RESET" delay="2s"/>
+            <raise event="RESET"/>
         </onentry>
         <onexit>
             <log label="halted" expr="&quot;Leaving halted&quot;"/>
         </onexit>
-        <transition type="internal" event="RESET" target="wrapperUnlock_3">
-            <qt:editorinfo startTargetFactors="17.42;22.23" endTargetFactors="95.62;55.74"/>
+        <transition type="internal" event="RESET" target="checkResource">
+            <qt:editorinfo endTargetFactors="77.30;33.11" startTargetFactors="17.42;22.23" localGeometry="0;-910.03"/>
         </transition>
     </state>
-    <state id="wrapper" initial="idle">
-        <qt:editorinfo scenegeometry="102.94;-202.65;-33.56;-1670.49;2129;3084.15" geometry="102.94;-202.65;-136.50;-1467.84;2129;3084.15"/>
+    <state id="unlockKey_3">
+        <qt:editorinfo scenegeometry="3826.45;-207.15;3658.95;-257.15;187.50;116" geometry="3826.45;-207.15;-167.50;-50;187.50;116"/>
+        <transition type="external" event="UNLOCK_FALSE" target="unlockKey_3" cond="retDataBool.reqEval != VALID">
+            <log expr="&quot;Transition UNLOCK_FALSE executed&quot;" label="unlockKey_3"/>
+        </transition>
         <onentry>
-            <log label="wrapper" expr="&quot;Inside wrapper&quot;"/>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    retDataBool = blackboard.unlock(skillID, resourceName);</script>
+            <log label="unlockKey_3" expr="&quot;Inside unlockKey_3 (to release resource) HALTED&quot;"/>
+            <if cond="retDataBool.reqEval != VALID">
+                <send event="UNLOCK_FALSE"/>
+                <else/>
+                <if cond="resourceCount==0">
+                    <send event="UNLOCK_TRUE"/>
+                    <else/>
+                    <send event="TO_CHECK_RESOURCE"/>
+                </if>
+            </if>
+        </onentry>
+        <transition type="internal" event="UNLOCK_TRUE" target="idle" cond="retDataBool.reqEval == VALID &amp;&amp; resourceCount==0">
+            <qt:editorinfo localGeometry="-156.59;0;-181.17;-1618.59" movePoint="12.92;22.15"/>
+            <log expr="&quot;Transition UNLOCK_TRUE executed&quot;" label="unlockKey_3"/>
+        </transition>
+        <onexit>
+            <log label="unlockKey_3" expr="&quot;Leaving unlockKey_3 (to release resource) HALTED&quot;"/>
+        </onexit>
+        <transition type="internal" event="TO_CHECK_RESOURCE" target="checkResource" cond="retDataBool.reqEval == VALID &amp;&amp; resourceCount &gt;0">
+            <qt:editorinfo endTargetFactors="84.68;53.75" localGeometry="241.39;0;241.39;-917.16" movePoint="-53.25;440.42"/>
+        </transition>
+    </state>
+    <state id="writeData_3">
+        <qt:editorinfo scenegeometry="3882.74;-454.25;3693.68;-504.25;209.06;100" geometry="3882.74;-454.25;-189.06;-50;209.06;100"/>
+        <transition type="internal" event="WRITE_DATA_TRUE" target="unlockKey_3" cond="retDataBool.reqEval ==VALID">
+            <log expr="&quot;Transition WRITE_DATA_TRUE executed&quot;" label="writeData_3"/>
+        </transition>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    retDataBool = blackboard.writeDataInt32(skillID, resourceName, currVal+1);
+
+                   if(retDataBool.reqEval ==VALID){
+	resourceCount -=1;
+                    }</script>
+            <log label="writeData_3" expr="&quot;Inside writeData_3 (to release resource) HALTED&quot;"/>
+            <if cond="retDataBool.reqEval ==VALID">
+                <send event="WRITE_DATA_TRUE"/>
+            </if>
         </onentry>
         <onexit>
-            <log label="wrapper" expr="&quot;Leaving wrapper&quot;"/>
+            <log label="writeData_3" expr="&quot;Leaving writeData_3 (to release resource) HALTED&quot;"/>
         </onexit>
-        <state id="idle">
-            <qt:editorinfo scenegeometry="1113.82;-1395.44;1053.82;-1445.44;120;100" geometry="1010.88;-1192.79;-60;-50;120;100"/>
-            <onentry>
-                <log label="wrapper.idle" expr="&quot;Inside idle&quot;"/>
-                <assign location="status" expr="Idle"/>
-            </onentry>
-            <onexit>
-                <log label="wrapper.idle" expr="&quot;Leaving idle&quot;"/>
-            </onexit>
-            <transition type="internal" event="TICK" target="wrapperLock">
-                <qt:editorinfo endTargetFactors="49.51;1.03"/>
-            </transition>
-        </state>
-        <state id="sendrequest">
-            <qt:editorinfo scenegeometry="1095.90;267.07;927.43;217.07;235.89;100" geometry="992.96;469.72;-168.47;-50;235.89;100"/>
-            <onentry>
-                <log label="wrapper.sendrequest" expr="&quot;Inside sendrequest&quot;"/>
-                <script>Connector connection(client_port.getName(), &quot;/GoToComponent&quot;, &quot;tcp&quot;);
-                    goTo.goTo(location);
-                    QTimer::singleShot(0, stateMachine(), [&amp;](){
-                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event REQUEST_SENT submitted&quot;;
-                        stateMachine()-&gt;submitEvent(&quot;REQUEST_SENT&quot;);
-                    });</script>
-            </onentry>
-            <onexit>
-                <log label="wrapper.sendrequest" expr="&quot;Leaving sendrequest&quot;"/>
-            </onexit>
-            <transition type="internal" event="REQUEST_SENT" target="getstatus"/>
-        </state>
-        <state id="getstatus">
-            <qt:editorinfo scenegeometry="1102.17;1297.66;919.70;1247.66;222.47;100" geometry="999.23;1500.31;-182.47;-50;222.47;100"/>
-            <onentry>
-                <log label="wrapper.getstatus" expr="&quot;Inside getstatus&quot;"/>
-                <script>Connector connection(client_port.getName(), &quot;/GoToComponent&quot;, &quot;tcp&quot;);
-
-                    GoToStatus ret = goTo.getStatus(location);
-
-                    switch(ret) {
-                    case RUNNING:
-                        {
-                            qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event STATUS_RUNNING submitted&quot;;
-                            QScxmlEvent *e = new QScxmlEvent;
-                            e-&gt;setName(&quot;STATUS_RUNNING&quot;);
-                            e-&gt;setEventType(QScxmlEvent::InternalEvent);
-                            e-&gt;setDelay(500);
-                            stateMachine()-&gt;submitEvent(e);
-                        }
-                        break;
-                    case SUCCESS:
-                        {
-                            QTimer::singleShot(0, stateMachine(), [&amp;](){
-                                qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event STATUS_SUCCESS submitted&quot;;
-                                stateMachine()-&gt;submitEvent(&quot;STATUS_SUCCESS&quot;);
-                            });
-                        }
-                        break;
-                    case ABORT:
-                        {
-                            QTimer::singleShot(0, stateMachine(), [&amp;](){
-                                qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event STATUS_FAILED submitted&quot;;
-                                stateMachine()-&gt;submitEvent(&quot;STATUS_FAILED&quot;);
-                            });
-                        }
-                        break;
-                    case NOT_STARTED:
-                        {
-                            QTimer::singleShot(0, stateMachine(), [&amp;](){
-                                qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event STATUS_FAILED submitted&quot;;
-                                stateMachine()-&gt;submitEvent(&quot;STATUS_FAILED&quot;);
-                            });
-                        }
-                        break;
-                    default:
-                        qFatal(&quot;We should never be here&quot;);
-                        break;
-                    }</script>
-            </onentry>
-            <onexit>
-                <log label="wrapper.getstatus" expr="&quot;Leaving getstatus&quot;"/>
-            </onexit>
-            <transition type="internal" event="STATUS_RUNNING" target="getstatus"/>
-            <transition type="internal" event="STATUS_SUCCESS" target="wrapperUnlock_2">
-                <qt:editorinfo endTargetFactors="88.21;88.51"/>
-            </transition>
-            <transition type="internal" event="STATUS_FAILED" target="wrapperUnlock_1">
-                <qt:editorinfo endTargetFactors="10.29;89.37"/>
-            </transition>
-        </state>
-        <state id="success">
-            <qt:editorinfo scenegeometry="50.91;1279.42;-9.09;1229.42;120;100" geometry="-52.03;1482.07;-60;-50;120;100"/>
-            <onentry>
-                <log label="wrapper.success" expr="&quot;Inside success&quot;"/>
-            </onentry>
-            <onexit>
-                <log label="wrapper.success" expr="&quot;Leaving success&quot;"/>
-            </onexit>
-            <transition type="internal" event="TICK" target="idle">
-                <qt:editorinfo startTargetFactors="50.31;21.73" endTargetFactors="29.50;65.35" localGeometry="-15.92;-2631.24"/>
-            </transition>
-        </state>
-        <transition type="internal" event="HALT" target="halted">
-            <qt:editorinfo startTargetFactors="99.63;64.06" endTargetFactors="36.67;83.25" localGeometry="806.61;36.27"/>
+    </state>
+    <state id="checkResource">
+        <qt:editorinfo scenegeometry="3856.08;-1120.06;3709.60;-1170.06;177.22;100" geometry="3856.08;-1120.06;-146.48;-50;177.22;100"/>
+        <transition type="internal" event="FREE_UP" target="lockKey_3" cond="resourceCount &gt; 0">
+            <log expr="&quot;Transition FREE_UP executed&quot;" label="checkResource"/>
         </transition>
-        <state id="wrapperLock" initial="lockKey">
-            <qt:editorinfo scenegeometry="460;-1049.05;731.71;-1260.08;751.11;1324.16" geometry="357.06;-846.40;271.71;-211.03;751.11;1324.16"/>
-            <state id="lockKey">
-                <qt:editorinfo scenegeometry="1179.49;-1056.23;1030.38;-1110.28;169.11;90.05" geometry="719.49;-7.18;-149.11;-54.05;169.11;90.05"/>
-                <transition type="external" event="LOCK_FALSE" target="lockKey">
-                    <qt:editorinfo endTargetFactors="12.65;49.12"/>
-                </transition>
-                <transition type="external" event="LOCK_TRUE" target="readData">
-                    <qt:editorinfo endTargetFactors="87.40;15.11"/>
-                </transition>
-                <onentry>
-                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+        <transition type="internal" event="TO_IDLE" target="idle" cond="resourceCount==0">
+            <qt:editorinfo endTargetFactors="82.30;20.74" localGeometry="0;-726.94" movePoint="-4.64;-28.43"/>
+            <log expr="&quot;Transition TO_IDLE executed&quot;" label="checkResource"/>
+        </transition>
+        <onentry>
+            <log label="checkResource" expr="&quot;Inside checkResource (to release resource) HALTED&quot;"/>
+            <if cond="resourceCount==0">
+                <send event="TO_IDLE"/>
+                <else/>
+                <send event="FREE_UP"/>
+            </if>
+        </onentry>
+        <onexit>
+            <log label="checkResource" expr="&quot;Leaving checkResource (to release resource) HALTED&quot;"/>
+        </onexit>
+    </state>
+    <state id="lockKey_3">
+        <qt:editorinfo scenegeometry="3862.76;-870.66;3713.65;-924.71;169.11;120.05" geometry="3862.76;-870.66;-149.11;-54.05;169.11;120.05"/>
+        <transition type="external" event="LOCK_FALSE" target="lockKey_3" cond="retDataBool.reqEval  != VALID">
+            <log expr="&quot;Transition LOCK_FALSE executed&quot;" label="lockKey_3"/>
+        </transition>
+        <transition type="internal" event="LOCK_TRUE" target="readData_3" cond="retDataBool.reqEval  == VALID">
+            <qt:editorinfo endTargetFactors="49.26;9.39"/>
+            <log expr="&quot;Transition LOCK_TRUE executed&quot;" label="lockKey_3"/>
+        </transition>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
 
-                    DataBool ret = blackboard.lock(skillID, resourceName);
-	
-                    switch(ret.reqEval) {
-                    case VALID:
-                        {
-                          //vai nello stato readData
-                         QTimer::singleShot(0, stateMachine(), [&amp;](){
-                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event LOCK_TRUE submitted&quot;;
-                        stateMachine()-&gt;submitEvent(&quot;LOCK_TRUE&quot;);
-                          });
-                        }
-                        break;
-                       case INVALID_KEY:
-                        {
-                          //vai nello stato wrongKey e ritorna failure
-                         QTimer::singleShot(0, stateMachine(), [&amp;](){
-                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event INVALID_KEY submitted&quot;;
-                        stateMachine()-&gt;submitEvent(&quot;INVALID_KEY&quot;);
-                          });
-                        }
-                        break;
-	default:
-                         //rimani nello stato lockKey
-	  //gestire la differenza tra key invalida e cliente non autorizzato??
-                       qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event LOCK_FALSE submitted&quot;;
-                            QScxmlEvent *e = new QScxmlEvent;
-                            e-&gt;setName(&quot;LOCK_FALSE&quot;);
-                            e-&gt;setEventType(QScxmlEvent::InternalEvent);
-                            e-&gt;setDelay(500);
-                            stateMachine()-&gt;submitEvent(e);
-                        break;
+                   retDataBool = blackboard.lock(skillID, resourceName);</script>
+            <log label="lockKey_3" expr="&quot;Inside lockKey_3 (to release resource) HALTED&quot;"/>
+            <if cond="retDataBool.reqEval  != VALID">
+                <send event="LOCK_FALSE" delay="500ms"/>
+                <else/>
+                <send event="LOCK_TRUE"/>
+            </if>
+        </onentry>
+        <onexit>
+            <log label="lockKey_3" expr="&quot;Leaving lockKey_3 (to release resource) HALTED&quot;"/>
+        </onexit>
+    </state>
+    <state id="readData_3">
+        <qt:editorinfo scenegeometry="3912.17;-641.74;3664.25;-691.74;267.92;100" geometry="3912.17;-641.74;-247.92;-50;267.92;100"/>
+        <transition type="internal" event="DATA_READ" target="writeData_3" cond="retDataInt32.reqEval ==VALID">
+            <log expr="&quot;Transition DATA_READ executed&quot;" label="readData_3"/>
+        </transition>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    retDataInt32 = blackboard.readDataInt32(skillID, resourceName);
+	if(retDataInt32.reqEval ==VALID){
+	         currVal=retDataInt32.dataValue;
+	}</script>
+            <log label="readData_3" expr="&quot;Inside readData_3 (to release resource) HALTED&quot;"/>
+            <if cond="retDataInt32.reqEval ==VALID">
+                <send event="DATA_READ"/>
+            </if>
+        </onentry>
+        <onexit>
+            <log label="readData_3" expr="&quot;Leaving readData_3 (to release resource) HALTED&quot;"/>
+        </onexit>
+    </state>
+    <state id="failure">
+        <qt:editorinfo scenegeometry="3343.75;947.47;3283.75;897.47;120;100" geometry="3343.75;947.47;-60;-50;120;100"/>
+        <onentry>
+            <log label="failure" expr="&quot;Inside failure&quot;"/>
+        </onentry>
+        <onexit>
+            <log label="failure" expr="&quot;Leaving failure&quot;"/>
+        </onexit>
+        <transition type="external" event="TICK" target="idle">
+            <qt:editorinfo endTargetFactors="81.04;71.80" localGeometry="-0.79;-2743.41" movePoint="44.04;1384.20"/>
+        </transition>
+        <transition type="external" event="HALT" target="halted">
+            <qt:editorinfo endTargetFactors="25.37;74.94" localGeometry="297.87;0"/>
+        </transition>
+    </state>
+    <state id="unlockKey_1">
+        <qt:editorinfo scenegeometry="3136.55;939.47;2969.05;889.47;187.50;116" geometry="3136.55;939.47;-167.50;-50;187.50;116"/>
+        <transition type="external" event="UNLOCK_FALSE" target="unlockKey_1" cond="retDataBool.reqEval != VALID"/>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    retDataBool = blackboard.unlock(skillID, resourceName);</script>
+            <log label="unlockKey_1" expr="&quot;Inside unlockKey_1 (to release resource) FAILED&quot;"/>
+            <if cond="retDataBool.reqEval != VALID">
+                <send event="UNLOCK_FALSE"/>
+                <else/>
+                <send event="UNLOCK_TRUE"/>
+            </if>
+        </onentry>
+        <transition type="internal" event="UNLOCK_TRUE" target="failure" cond="retDataBool.reqEval == VALID"/>
+        <onexit>
+            <log label="wrapperUnlock_1.unlockKey_1" expr="&quot;Leaving wrapperUnlock_1.unlockKey_1&quot;"/>
+        </onexit>
+    </state>
+    <state id="writeData_1">
+        <qt:editorinfo scenegeometry="2809.69;947.47;2620.63;897.47;209.06;100" geometry="2809.69;947.47;-189.06;-50;209.06;100"/>
+        <transition type="internal" event="WRITE_DATA_TRUE" target="unlockKey_1" cond="retDataBool.reqEval ==VALID"/>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    retDataBool = blackboard.writeDataInt32(skillID, resourceName, currVal+1);
+
+	if(retDataBool.reqEval ==VALID){
+	       resourceCount -=1;
                     }</script>
-                    <log label="wrapperLock.lockKey" expr="&quot;Inside wrapperLock.lockKey&quot;"/>
-                </onentry>
-                <onexit>
-                    <log label="wrapperLock.lockKey" expr="&quot;Leaving wrapperLock.lockKey&quot;"/>
-                </onexit>
-                <transition type="external" event="INVALID_KEY" target="wrongKey"/>
-            </state>
-            <state id="readData">
-                <qt:editorinfo scenegeometry="1006.76;-738.84;758.84;-788.84;307.92;116" geometry="546.76;310.21;-247.92;-50;307.92;116"/>
-                <transition type="external" event="DATA_EQUAL_ZERO" target="unlockBusy"/>
-                <transition type="external" event="DATA_GREATER_THAN_ZERO" target="writeData"/>
-                <onentry>
-                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+            <log label="writeData_1" expr="&quot;Inside writeData_1 (to release resource) FAILED&quot;"/>
+            <if cond="retDataBool.reqEval ==VALID">
+                <send event="WRITE_DATA_TRUE"/>
+            </if>
+        </onentry>
+        <onexit>
+            <log label="writeData_1" expr="&quot;Leaving writeData_1 (to release resource) FAILED&quot;"/>
+        </onexit>
+        <transition type="external" event="HALT" target="internal_unlockKey">
+            <qt:editorinfo endTargetFactors="17.92;55.65" localGeometry="0;-816.43;-2538.19;-814.22;-2538.19;-2144.62"/>
+        </transition>
+    </state>
+    <state id="readData_1">
+        <qt:editorinfo scenegeometry="2479.39;947.47;2231.47;897.47;267.92;100" geometry="2479.39;947.47;-247.92;-50;267.92;100"/>
+        <transition type="internal" event="DATA_READ" target="writeData_1" cond="retDataInt32.reqEval ==VALID"/>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
 
-                    DataInt32 ret = blackboard.readDataInt32(skillID, resourceName);
+                    retDataInt32 = blackboard.readDataInt32(skillID, resourceName);
 
-                   if(ret.reqEval ==VALID){
-	     currVal = ret.dataValue;
-	     if(currVal &gt;0){
-	       //vai allo stato writeData
-                         QTimer::singleShot(0, stateMachine(), [&amp;](){
-                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event DATA_GREATER_THAN_ZERO submitted&quot;;
-                        stateMachine()-&gt;submitEvent(&quot;DATA_GREATER_THAN_ZERO&quot;);
-                    });
-	      }
-	      else{
-	       //vai allo stato unlockBusy
-                         QTimer::singleShot(0, stateMachine(), [&amp;](){
-                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event DATA_EQUAL_ZERO submitted&quot;;
-                        stateMachine()-&gt;submitEvent(&quot;DATA_EQUAL_ZERO&quot;);
-                    });
-	      }
-                    }
-                    else{
-	//error??
-                     }</script>
-                    <log label="wrapperLock.readData" expr="&quot;Inside wrapperLock.readData&quot;"/>
-                </onentry>
-                <onexit>
-                    <log label="wrapperLock.readData" expr="&quot;Leaving wrapperLock.readData&quot;"/>
-                </onexit>
-            </state>
-            <state id="unlockBusy">
-                <qt:editorinfo scenegeometry="1411.92;-710.23;1206.08;-760.23;225.84;100" geometry="951.92;338.82;-205.84;-50;225.84;100"/>
-                <transition type="external" event="UNLOCK_BUSY_TRUE" target="lockKey">
-                    <qt:editorinfo movePoint="-36.86;-101.38" endTargetFactors="92.62;51.74" localGeometry="-13.21;-353.46"/>
-                </transition>
-                <transition type="external" event="UNLOCK_BUSY_FALSE" target="unlockBusy">
-                    <qt:editorinfo endTargetFactors="23.64;51.93"/>
-                </transition>
-                <onentry>
-                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+	if(retDataInt32.reqEval ==VALID){
+	         currVal=retDataInt32.dataValue;
+	}</script>
+            <log label="readData_1" expr="&quot;Inside readData_1 (to release resource) FAILED&quot;"/>
+            <if cond="retDataInt32.reqEval ==VALID">
+                <send event="DATA_READ"/>
+            </if>
+        </onentry>
+        <onexit>
+            <log label="readData_1" expr="&quot;Leaving readData_1 (to release resource) FAILED&quot;"/>
+        </onexit>
+        <transition type="external" event="HALT" target="internal_readData">
+            <qt:editorinfo endTargetFactors="87.69;56.96" localGeometry="0;-459.89"/>
+        </transition>
+    </state>
+    <state id="lockKey_1">
+        <qt:editorinfo scenegeometry="1976.56;941.50;1827.45;887.45;169.11;120.05" geometry="1976.56;941.50;-149.11;-54.05;169.11;120.05"/>
+        <transition type="external" event="LOCK_FALSE" target="lockKey_1" cond="retDataBool.reqEval != VALID"/>
+        <transition type="internal" event="LOCK_TRUE" target="readData_1" cond="retDataBool.reqEval == VALID">
+            <qt:editorinfo endTargetFactors="16.46;54.23"/>
+        </transition>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
 
-                    DataBool ret = blackboard.unlock(skillID, resourceName);
+                    retDataBool = blackboard.lock(skillID, resourceName);</script>
+            <log label="lockKey_1" expr="&quot;Inside lockKey_1 (to release resource) FAILED&quot;"/>
+            <if cond="retDataBool.reqEval != VALID">
+                <send event="LOCK_FALSE"/>
+                <else/>
+                <send event="LOCK_TRUE"/>
+            </if>
+        </onentry>
+        <onexit>
+            <log label="lockKey_1" expr="&quot;Leaving lockKey_1 (to release resource) FAILED&quot;"/>
+        </onexit>
+        <transition type="external" event="HALT" target="internal_lockKey">
+            <qt:editorinfo endTargetFactors="80.06;61.23" localGeometry="-2.94;-247.58"/>
+        </transition>
+    </state>
+    <state id="idle">
+        <qt:editorinfo scenegeometry="1523.78;-1817.74;1463.78;-1867.74;120;100" geometry="1523.78;-1817.74;-60;-50;120;100"/>
+        <onentry>
+            <log label="idle" expr="&quot;Inside idle&quot;"/>
+            <assign location="status" expr="Idle"/>
+        </onentry>
+        <onexit>
+            <log label="idle" expr="&quot;Leaving idle&quot;"/>
+        </onexit>
+        <transition type="external" event="TICK" target="lockKey">
+            <qt:editorinfo endTargetFactors="51.31;19.14" movePoint="-31;-56.83"/>
+        </transition>
+    </state>
+    <state id="getstatus">
+        <qt:editorinfo scenegeometry="1636.02;947.48;1453.55;897.48;222.47;100" geometry="1636.02;947.48;-182.47;-50;222.47;100"/>
+        <transition type="external" event="HALT" target="halted">
+            <qt:editorinfo endTargetFactors="36.67;83.25" startTargetFactors="51.47;88.26" localGeometry="2.25;123.53;2127.35;123.53"/>
+        </transition>
+        <onentry>
+            <log label="getstatus" expr="&quot;Inside getstatus&quot;"/>
+            <script>Connector connection(client_port.getName(), &quot;/GoToComponent&quot;, &quot;tcp&quot;);
 
-                   if(ret.reqEval != VALID){ 
-	//rimani nello stato unlockBusy
-	//gestire la differenza tra key invalida e cliente non autorizzato??
-qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_BUSY_FALSE submitted&quot;;
-                            QScxmlEvent *e = new QScxmlEvent;
-                            e-&gt;setName(&quot;UNLOCK_BUSY_FALSE&quot;);
+        retGoToStatus = goTo.getStatus(location);</script>
+            <if cond="retGoToStatus==RUNNING">
+                <send event="STATUS_RUNNING" delay="500ms"/>
+                <elseif cond="retGoToStatus==SUCCESS"/>
+                <send event="STATUS_SUCCESS"/>
+                <elseif cond="retGoToStatus==ABORT || retGoToStatus==NOT_STARTED"/>
+                <send event="STATUS_FAILED"/>
+            </if>
+        </onentry>
+        <transition type="internal" target="getstatus" cond="retGoToStatus==RUNNING" event="STATUS_RUNNING"/>
+        <transition type="internal" target="lockKey_2" cond="retGoToStatus==SUCCESS" event="STATUS_SUCCESS">
+            <qt:editorinfo endTargetFactors="79.04;48.18" localGeometry="-173.16;-2.19"/>
+        </transition>
+        <transition type="internal" target="lockKey_1" cond="retGoToStatus==ABORT || retGoToStatus==NOT_STARTED" event="STATUS_FAILED">
+            <qt:editorinfo endTargetFactors="23.19;46.15"/>
+        </transition>
+        <onexit>
+            <log label="getstatus" expr="&quot;Leaving getstatus&quot;"/>
+        </onexit>
+    </state>
+    <state id="wrongKey">
+        <qt:editorinfo scenegeometry="1841.57;-1702.68;1781.57;-1752.68;120;100" geometry="1841.57;-1702.68;-60;-50;120;100"/>
+        <transition type="external" event="TICK" target="idle">
+            <qt:editorinfo endTargetFactors="63.45;70.42" localGeometry="0;-69.05;-239.28;-69.05"/>
+        </transition>
+        <onentry>
+            <log label="wrongKey" expr="&quot;Inside wrongKey (to get resource)&quot;"/>
+        </onentry>
+        <onexit>
+            <log label="wrongKey" expr="&quot;Leaving wrongKey (to get resource)&quot;"/>
+        </onexit>
+        <transition type="external" event="HALT" target="internal_halted">
+            <qt:editorinfo endTargetFactors="82.34;22.11" localGeometry="-1482.71;0" movePoint="713.39;7.34"/>
+        </transition>
+    </state>
+    <state id="lockKey">
+        <qt:editorinfo scenegeometry="1588.34;-1557.15;1439.23;-1611.20;169.11;90.05" geometry="1588.34;-1557.15;-149.11;-54.05;169.11;90.05"/>
+        <transition type="internal" target="lockKey" cond="retDataBool.reqEval==UNAUTHORIZED_CLIENT" event="LOCK_FALSE">
+            <log label="lockKey" expr="&quot;Transition LOCK_FALSE executed&quot;"/>
+        </transition>
+        <transition type="internal" target="readData" cond="retDataBool.reqEval==VALID" event="LOCK_TRUE">
+            <qt:editorinfo endTargetFactors="46.40;10.14" movePoint="35.08;-1.85"/>
+            <log expr="&quot;Transition LOCK_TRUE executed&quot;" label="lockKey"/>
+        </transition>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                     retDataBool=blackboard.lock(skillID, resourceName);</script>
+            <log label="lockKey" expr="&quot;Inside lockKey (to get resource)&quot;"/>
+            <if cond="retDataBool.reqEval==UNAUTHORIZED_CLIENT">
+                <send event="LOCK_FALSE" delay="500ms"/>
+                <elseif cond="retDataBool.reqEval==VALID"/>
+                <send event="LOCK_TRUE"/>
+                <else/>
+                <send event="INVALID_KEY"/>
+            </if>
+        </onentry>
+        <onexit>
+            <log label="lockKey" expr="&quot;Leaving lockKey (to get resource)&quot;"/>
+        </onexit>
+        <transition type="external" target="wrongKey" cond="retDataBool.reqEval==INVALID_KEY" event="INVALID_KEY">
+            <qt:editorinfo localGeometry="317.79;0.01"/>
+            <log expr="&quot;Transition INVALID_KEY executed&quot;" label="lockKey"/>
+        </transition>
+    </state>
+    <state id="readData">
+        <qt:editorinfo scenegeometry="1631.31;-1325.55;1383.39;-1375.55;307.92;116" geometry="1631.31;-1325.55;-247.92;-50;307.92;116"/>
+        <transition type="internal" target="unlockBusy" cond="retDataInt32.reqEval ==VALID &amp;&amp; currVal==0" event="DATA_EQUAL_ZERO">
+            <qt:editorinfo endTargetFactors="73.07;89.74" localGeometry="-594.26;-2.48" movePoint="151.78;-24.99"/>
+            <log expr="&quot;Transition DATA_EQUAL_ZERO executed&quot;" label="readData"/>
+        </transition>
+        <transition type="internal" target="writeData" cond="retDataInt32.reqEval ==VALID &amp;&amp; currVal&gt;0" event="DATA_GREATER_THAN_ZERO">
+            <qt:editorinfo movePoint="83.08;7.38"/>
+            <log expr="&quot;Transition DATA_GREATER_THAN_ZERO executed&quot;" label="readData"/>
+        </transition>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    retDataInt32 = blackboard.readDataInt32(skillID, resourceName);
+
+	currVal=-1;
+	if(retDataInt32.reqEval ==VALID){
+	          currVal=retDataInt32.dataValue;
+	}</script>
+            <log label="readData" expr="&quot;Inside readData (to get resource)&quot;"/>
+            <if cond="retDataInt32.reqEval ==VALID &amp;&amp; currVal==0">
+                <send event="DATA_EQUAL_ZERO"/>
+                <elseif cond="retDataInt32.reqEval ==VALID &amp;&amp; currVal&gt;0"/>
+                <send event="DATA_GREATER_THAN_ZERO"/>
+            </if>
+        </onentry>
+        <onexit>
+            <log label="readData" expr="&quot;Leaving readData (to get resource)&quot;"/>
+        </onexit>
+        <transition type="external" event="HALT" target="internal_unlockKey">
+            <qt:editorinfo endTargetFactors="75.82;77.86" startTargetFactors="33.95;87.70" localGeometry="0.29;102.44" movePoint="-33.76;-19.08"/>
+        </transition>
+    </state>
+    <state id="writeData">
+        <qt:editorinfo scenegeometry="1601.88;-968.29;1412.82;-1018.29;249.06;100" geometry="1601.88;-968.29;-189.06;-50;249.06;100"/>
+        <transition type="external" target="unlockKey" cond="retDataBool.reqEval ==VALID" event="WRITE_DATA_TRUE">
+            <qt:editorinfo movePoint="-74.86;-10.28"/>
+            <log expr="&quot;Transition WRITE_DATA_TRUE executed&quot;" label="writeData"/>
+        </transition>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+                    
+                     retDataBool = blackboard.writeDataInt32(skillID, resourceName, currVal-1);
+	if(retDataBool.reqEval ==VALID){
+ 	      currVal =  currVal -1;
+	      resourceCount = resourceCount+1;
+                       }</script>
+            <log label="writeData" expr="&quot;Inside writeData (to get resource)&quot;"/>
+            <if cond="retDataBool.reqEval ==VALID">
+                <send event="WRITE_DATA_TRUE"/>
+            </if>
+        </onentry>
+        <onexit>
+            <log label="writeData" expr="&quot;Leaving writeData (to get resource)&quot;"/>
+        </onexit>
+        <transition type="external" event="HALT" target="rollback_writeData">
+            <qt:editorinfo endTargetFactors="90.12;35.34"/>
+        </transition>
+    </state>
+    <state id="unlockKey">
+        <qt:editorinfo scenegeometry="1611.10;-767.09;1443.60;-817.09;187.50;116" geometry="1611.10;-767.09;-167.50;-50;187.50;116"/>
+        <transition type="external" event="UNLOCK_FALSE" target="unlockKey" cond="retDataBool.reqEval != VALID">
+            <log expr="&quot;Transition UNLOCK_FALSE executed&quot;" label="unlockKey"/>
+        </transition>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    retDataBool = blackboard.unlock(skillID, resourceName);</script>
+            <log label="unlockKey" expr="&quot;Inside unlockKey (to get resource)&quot;"/>
+            <if cond="retDataBool.reqEval != VALID">
+                <send event="UNLOCK_FALSE"/>
+                <else/>
+                <send event="UNLOCK_TRUE"/>
+            </if>
+        </onentry>
+        <transition type="internal" event="UNLOCK_TRUE" target="sendrequest" cond="retDataBool.reqEval == VALID">
+            <qt:editorinfo endTargetFactors="45.24;12.10" movePoint="-63.23;-111.61"/>
+            <log expr="&quot;Transition UNLOCK_TRUE executed&quot;" label="unlockKey"/>
+        </transition>
+        <onexit>
+            <log label="unlockKey" expr="&quot;Leaving unlockKey (to get resource)&quot;"/>
+        </onexit>
+    </state>
+    <state id="sendrequest">
+        <qt:editorinfo scenegeometry="1601.98;-381.84;1433.51;-431.84;235.89;100" geometry="1601.98;-381.84;-168.47;-50;235.89;100"/>
+        <onentry>
+            <log label="sendrequest" expr="&quot;Inside sendrequest&quot;"/>
+            <script>Connector connection(client_port.getName(), &quot;/GoToComponent&quot;, &quot;tcp&quot;);
+                    goTo.goTo(location);
+   //                 QTimer::singleShot(0, stateMachine(), [&amp;](){  });
+                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event REQUEST_SENT submitted&quot;;
+	                        QScxmlEvent *e = new QScxmlEvent;
+                            e-&gt;setName(&quot;REQUEST_SENT&quot;);
                             e-&gt;setEventType(QScxmlEvent::InternalEvent);
                             e-&gt;setDelay(500);
-                            stateMachine()-&gt;submitEvent(e);
-                    }
-                    else{
-	//ritorna nello stato lockKey e invia RUNNING al BT
- QTimer::singleShot(0, stateMachine(), [&amp;](){
-                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_BUSY_TRUE submitted&quot;;
-                        stateMachine()-&gt;submitEvent(&quot;UNLOCK_BUSY_TRUE&quot;);
-                    });
-                     }</script>
-                    <log label="wrapperLock.unlockBusy" expr="&quot;Inside wrapperLock.unlockBusy&quot;"/>
-                </onentry>
-                <onexit>
-                    <log label="wrapperLock.unlockBusy" expr="&quot;Leaving wrapperLock.unlockBusy&quot;"/>
-                </onexit>
-            </state>
-            <state id="writeData">
-                <qt:editorinfo scenegeometry="988.68;-484.63;799.62;-534.63;249.06;100" geometry="528.68;564.42;-189.06;-50;249.06;100"/>
-                <transition type="external" event="WRITE_DATA_TRUE" target="unlockKey"/>
-                <onentry>
-                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
-                    
-                    DataBool ret = blackboard.writeDataInt32(skillID, resourceName, currVal-1);
-                   
-                   if(ret.reqEval ==VALID){
-	 //vai allo stato unlockKey
- QTimer::singleShot(0, stateMachine(), [&amp;](){
-                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event WRITE_DATA_TRUE submitted&quot;;
-                        stateMachine()-&gt;submitEvent(&quot;WRITE_DATA_TRUE&quot;);
-                    });
-	resourceCount +=1;
-                    }
-                    else{
-	//error??
-                     }</script>
-                    <log label="wrapperLock.writeData" expr="&quot;Inside wrapperLock.writeData&quot;"/>
-                </onentry>
-                <onexit>
-                    <log label="wrapperLock.writeData" expr="&quot;Leaving wrapperLock.writeData&quot;"/>
-                </onexit>
-            </state>
-            <state id="unlockKey">
-                <qt:editorinfo scenegeometry="999.35;-247.99;831.85;-297.99;187.50;116" geometry="539.35;801.06;-167.50;-50;187.50;116"/>
-                <transition type="external" event="UNLOCK_FALSE" target="unlockKey">
-                    <qt:editorinfo endTargetFactors="12.72;34.11"/>
-                </transition>
-                <onentry>
-                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+                        stateMachine()-&gt;submitEvent(e);</script>
+        </onentry>
+        <onexit>
+            <log label="sendrequest" expr="&quot;Leaving sendrequest&quot;"/>
+        </onexit>
+        <transition type="internal" event="REQUEST_SENT" target="getstatus">
+            <qt:editorinfo movePoint="-100.55;-566.80"/>
+        </transition>
+        <transition type="external" event="HALT" target="halted">
+            <qt:editorinfo endTargetFactors="18.59;70.02" localGeometry="214.44;2.49;214.44;353.95;2442.64;353.95" movePoint="-32.29;-198.16"/>
+        </transition>
+    </state>
+    <state id="internal_writeData">
+        <qt:editorinfo scenegeometry="1282.19;239.13;1093.13;189.13;209.06;100" geometry="1282.19;239.13;-189.06;-50;209.06;100"/>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    retDataBool = blackboard.writeDataInt32(skillID, resourceName, currVal+1);
+
+	if(retDataBool.reqEval ==VALID){
+	       resourceCount -=1;
+                    }</script>
+            <log label="internalWriteData" expr="&quot;Inside internalWriteData (to release resource) HALT&quot;"/>
+            <if cond="retDataBool.reqEval ==VALID">
+                <send event="WRITE_DATA_TRUE"/>
+            </if>
+        </onentry>
+        <onexit>
+            <log label="internal_writeData" expr="&quot;Leaving internal_writeData (to release resource) HALT&quot;"/>
+        </onexit>
+        <transition type="internal" event="WRITE_DATA_TRUE" target="internal_unlockKey" cond="retDataBool.reqEval ==VALID">
+            <qt:editorinfo endTargetFactors="21.79;67.70" localGeometry="0;-875.92;-745.38;-875.92;-745.38;-1422.30" movePoint="461.78;797.78"/>
+        </transition>
+    </state>
+    <state id="internal_readData">
+        <qt:editorinfo scenegeometry="1311.62;480.62;1063.70;430.62;267.92;100" geometry="1311.62;480.62;-247.92;-50;267.92;100"/>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    retDataInt32 = blackboard.readDataInt32(skillID, resourceName);
+
+	if(retDataInt32.reqEval ==VALID){
+	         currVal=retDataInt32.dataValue;
+	}</script>
+            <log label="internalReadData" expr="&quot;Inside internalReadData (to release resource) HALT&quot;"/>
+            <if cond="retDataInt32.reqEval ==VALID">
+                <send event="DATA_READ"/>
+            </if>
+        </onentry>
+        <onexit>
+            <log label="internal_readData" expr="&quot;Leaving internal_readData (to release resource) HALT&quot;"/>
+        </onexit>
+        <transition type="internal" event="DATA_READ" target="internal_writeData" cond="retDataInt32.reqEval ==VALID">
+            <qt:editorinfo movePoint="-27.69;1.85"/>
+        </transition>
+    </state>
+    <state id="internal_lockKey">
+        <qt:editorinfo scenegeometry="1262.21;680.43;1113.10;626.38;169.11;120.05" geometry="1262.21;680.43;-149.11;-54.05;169.11;120.05"/>
+        <transition type="external" event="LOCK_FALSE" target="internal_lockKey" cond="retDataBool.reqEval != VALID"/>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    retDataBool = blackboard.lock(skillID, resourceName);</script>
+            <log label="internal_lockKey" expr="&quot;Inside internal_lockKey (to release resource) HALT&quot;"/>
+            <if cond="retDataBool.reqEval != VALID">
+                <send event="LOCK_FALSE"/>
+                <else/>
+                <send event="LOCK_TRUE"/>
+            </if>
+        </onentry>
+        <onexit>
+            <log label="internal_lockKey" expr="&quot;Leaving internal_lockKey (to release resource) HALT&quot;"/>
+        </onexit>
+        <transition type="internal" event="LOCK_TRUE" target="internal_readData" cond="retDataBool.reqEval == VALID"/>
+    </state>
+    <state id="lockKey_2">
+        <qt:editorinfo scenegeometry="1262.22;941.50;1113.11;887.45;169.11;120.05" geometry="1262.22;941.50;-149.11;-54.05;169.11;120.05"/>
+        <transition type="external" event="LOCK_FALSE" target="lockKey_2" cond="retDataBool.reqEval != VALID">
+            <log expr="&quot;Transition LOCK_FALSE executed&quot;" label="lockKey_2"/>
+        </transition>
+        <transition type="internal" event="LOCK_TRUE" target="readData_2" cond="retDataBool.reqEval == VALID">
+            <qt:editorinfo endTargetFactors="90.24;50.43"/>
+            <log expr="&quot;Transition LOCK_TRUE executed&quot;" label="lockKey_2"/>
+        </transition>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                   retDataBool = blackboard.lock(skillID, resourceName);</script>
+            <log label="lockKey_2" expr="&quot;Inside lockKey_2 (to release resource) SUCCESS&quot;"/>
+            <if cond="retDataBool.reqEval != VALID">
+                <send event="LOCK_FALSE"/>
+                <else/>
+                <send event="LOCK_TRUE"/>
+            </if>
+        </onentry>
+        <onexit>
+            <log label="lockKey_2" expr="&quot;Leaving lockKey_2 (to release resource) SUCCESS&quot;"/>
+        </onexit>
+        <transition type="external" event="HALT" target="internal_lockKey">
+            <qt:editorinfo endTargetFactors="50.33;76.82"/>
+        </transition>
+    </state>
+    <state id="readData_2">
+        <qt:editorinfo scenegeometry="932.43;947.47;684.51;897.47;267.92;100" geometry="932.43;947.47;-247.92;-50;267.92;100"/>
+        <transition type="internal" event="DATA_READ" target="writeData_2" cond="retDataInt32.reqEval ==VALID">
+            <log expr="&quot;Transition DATA_READ executed&quot;" label="readData_2"/>
+        </transition>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    retDataInt32 = blackboard.readDataInt32(skillID, resourceName);
+	 
+	if(retDataInt32.reqEval ==VALID){
+	         currVal=retDataInt32.dataValue;
+	}</script>
+            <log label="readData_2" expr="&quot;Inside readData_2 (to release resource) SUCCESS&quot;"/>
+            <if cond="retDataInt32.reqEval ==VALID">
+                <send event="DATA_READ"/>
+            </if>
+        </onentry>
+        <onexit>
+            <log label="readData_2" expr="&quot;Leaving readData_2 (to release resource) SUCCESS&quot;"/>
+        </onexit>
+        <transition type="external" event="HALT" target="internal_readData">
+            <qt:editorinfo endTargetFactors="10.94;53.70" localGeometry="0;-463.15" movePoint="-12.92;192"/>
+        </transition>
+    </state>
+    <state id="writeData_2">
+        <qt:editorinfo scenegeometry="460.26;947.47;271.20;897.47;209.06;100" geometry="460.26;947.47;-189.06;-50;209.06;100"/>
+        <transition type="internal" event="WRITE_DATA_TRUE" target="unlockKey_2" cond="retDataBool.reqEval ==VALID">
+            <log expr="&quot;Transition WRITE_DATA_TRUE executed&quot;" label="writeData_2"/>
+        </transition>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    retDataBool = blackboard.writeDataInt32(skillID, resourceName, currVal+1);
+
+	if(retDataBool.reqEval ==VALID){
+	       resourceCount -=1;
+                    }</script>
+            <log label="writeData_2" expr="&quot;Inside writeData_2 (to release resource) SUCCESS&quot;"/>
+            <if cond="retDataBool.reqEval ==VALID">
+                <send event="WRITE_DATA_TRUE"/>
+            </if>
+        </onentry>
+        <onexit>
+            <log label="writeData_2" expr="&quot;Leaving writeData_2 (to release resource) SUCCESS&quot;"/>
+        </onexit>
+        <transition type="external" event="HALT" target="internal_unlockKey">
+            <qt:editorinfo endTargetFactors="6.81;37.05" localGeometry="0;-166.87;-263.98;-166.87;-263.98;-2166.19" movePoint="0;273.23"/>
+        </transition>
+    </state>
+    <state id="unlockBusy">
+        <qt:editorinfo scenegeometry="983.91;-1436.62;778.07;-1486.62;225.84;100" geometry="983.91;-1436.62;-205.84;-50;225.84;100"/>
+        <transition type="internal" event="UNLOCK_BUSY_TRUE" target="lockKey" cond="retDataBool.reqEval == VALID">
+            <qt:editorinfo endTargetFactors="11.73;76.79" localGeometry="1.50;-105.43" movePoint="94.71;14.61"/>
+            <log expr="&quot;Transition UNLOCK_BUSY_TRUE executed&quot;" label="unlockBusy"/>
+        </transition>
+        <transition type="external" event="UNLOCK_BUSY_FALSE" target="unlockBusy" cond="retDataBool.reqEval != VALID">
+            <log expr="&quot;Transition UNLOCK_BUSY_FALSE executed&quot;" label="unlockBusy"/>
+        </transition>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    retDataBool = blackboard.unlock(skillID, resourceName);</script>
+            <log label="unlockBusy" expr="&quot;Inside unlockBusy  (to get resource)&quot;"/>
+            <if cond="retDataBool.reqEval != VALID">
+                <send event="UNLOCK_BUSY_FALSE"/>
+                <else/>
+                <send event="UNLOCK_BUSY_TRUE"/>
+            </if>
+        </onentry>
+        <onexit>
+            <log label="unlockBusy" expr="&quot;Leaving unlockBusy (to get resource)&quot;"/>
+        </onexit>
+    </state>
+    <state id="internal_unlockKey">
+        <qt:editorinfo scenegeometry="917.36;-1211.70;749.86;-1261.70;187.50;116" geometry="917.36;-1211.70;-167.50;-50;187.50;116"/>
+        <transition type="external" event="UNLOCK_FALSE" target="internal_unlockKey">
+            <qt:editorinfo endTargetFactors="12.72;34.11"/>
+        </transition>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
 
                     DataBool ret = blackboard.unlock(skillID, resourceName);
 
                    if(ret.reqEval != VALID){ 
 	//rimani nello stato unlockKey
 	//gestire la differenza tra key invalida e cliente non autorizzato??
-qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_FALSE submitted&quot;;
+                            qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_FALSE submitted&quot;;
                             QScxmlEvent *e = new QScxmlEvent;
                             e-&gt;setName(&quot;UNLOCK_FALSE&quot;);
                             e-&gt;setEventType(QScxmlEvent::InternalEvent);
-                            e-&gt;setDelay(500);
+                            //e-&gt;setDelay(500);
                             stateMachine()-&gt;submitEvent(e);
                     }
                     else{
 	//esci dal wrapperLock e manda la request alla navigation
-QTimer::singleShot(0, stateMachine(), [&amp;](){
+                        QTimer::singleShot(0, stateMachine(), [&amp;](){
                         qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_TRUE submitted&quot;;
                         stateMachine()-&gt;submitEvent(&quot;UNLOCK_TRUE&quot;);
                     });
                      }</script>
-                    <log label="wrapperLock.unlockKey" expr="&quot;Inside wrapperLock.unlockKey&quot;"/>
-                </onentry>
-                <transition type="external" event="UNLOCK_TRUE" target="sendrequest">
-                    <qt:editorinfo movePoint="-56.84;-2.27" endTargetFactors="45.24;12.10"/>
-                </transition>
-                <onexit>
-                    <log label="wrapperLock.unlockKey" expr="&quot;Leaving wrapperLock.unlockKey&quot;"/>
-                </onexit>
-            </state>
-            <onentry>
-                <log label="wrapperLock" expr="&quot;Inside wrapperLock&quot;"/>
-            </onentry>
-            <onexit>
-                <log expr="&quot;Leaving wrapperLock&quot;" label="wrapperLock"/>
-            </onexit>
-            <state id="wrongKey">
-                <qt:editorinfo scenegeometry="844.61;-1050.55;784.61;-1100.55;120;100" geometry="384.61;-1.50;-60;-50;120;100"/>
-                <transition type="external" event="TICK" target="idle">
-                    <qt:editorinfo endTargetFactors="21.57;82.47" localGeometry="1.21;-312.42"/>
-                </transition>
-                <onentry>
-                    <log label="wrapperLock.wrongKey" expr="&quot;Inside wrapperLock.wrongKey&quot;"/>
-                </onentry>
-                <onexit>
-                    <log label="wrapperLock.wrongKey" expr="&quot;Leaving wrapperLock.wrongKey&quot;"/>
-                </onexit>
-            </state>
-        </state>
-        <state id="wrapperUnlock_2" initial="lockKey_2">
-            <qt:editorinfo scenegeometry="-69.07;983.09;202.64;744.85;406.80;622.21" geometry="-172.01;1185.74;271.71;-238.24;406.80;622.21"/>
-            <state id="lockKey_2">
-                <qt:editorinfo scenegeometry="451.43;876.23;302.32;822.18;169.11;120.05" geometry="520.50;-106.86;-149.11;-54.05;169.11;120.05"/>
-                <transition type="external" event="LOCK_FALSE" target="lockKey_2">
-                    <qt:editorinfo endTargetFactors="12.65;49.12"/>
-                </transition>
-                <transition type="external" event="LOCK_TRUE" target="readData_2">
-                    <qt:editorinfo endTargetFactors="49.26;9.39"/>
-                </transition>
-                <onentry>
-                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
-
-                    DataBool ret = blackboard.lock(skillID, resourceName);
-
-                   if(ret.reqEval != VALID){ 
-                        //rimani nello stato lockKey
-	//gestire la differenza tra key invalida e cliente non autorizzato??
-                       qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event LOCK_FALSE submitted&quot;;
-                            QScxmlEvent *e = new QScxmlEvent;
-                            e-&gt;setName(&quot;LOCK_FALSE&quot;);
-                            e-&gt;setEventType(QScxmlEvent::InternalEvent);
-                            e-&gt;setDelay(500);
-                            stateMachine()-&gt;submitEvent(e);
-                       }
-                    else{
-	//vai nello stato readData
-                         QTimer::singleShot(0, stateMachine(), [&amp;](){
-                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event LOCK_TRUE submitted&quot;;
-                        stateMachine()-&gt;submitEvent(&quot;LOCK_TRUE&quot;);
-                    });
-                     }</script>
-                    <log label="wrapperUnlock_2.lockKey_2" expr="&quot;Inside wrapperUnlock_2.lockKey_2&quot;"/>
-                </onentry>
-                <onexit>
-                    <log label="wrapperUnlock_2.lockKey_2" expr="&quot;Leaving wrapperUnlock_2.lockKey_2&quot;"/>
-                </onexit>
-            </state>
-            <state id="readData_2">
-                <qt:editorinfo scenegeometry="506.21;1004.43;258.29;954.43;267.92;100" geometry="575.28;21.34;-247.92;-50;267.92;100"/>
-                <transition type="external" event="DATA_READ" target="writeData_2"/>
-                <onentry>
-                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
-
-                    DataInt32 ret = blackboard.readDataInt32(skillID, resourceName);
-
-                   if(ret.reqEval ==VALID){
-	     currVal = ret.dataValue;
-	       //vai allo stato writeData
-                         QTimer::singleShot(0, stateMachine(), [&amp;](){
-                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event DATA_READ submitted&quot;;
-                        stateMachine()-&gt;submitEvent(&quot;DATA_READ&quot;);
-                    });
-
-                    }
-                    else{
-	//error??
-                     }</script>
-                    <log label="wrapperUnlock_2.readData_2" expr="&quot;Inside wrapperUnlock_2.readData_2&quot;"/>
-                </onentry>
-                <onexit>
-                    <log label="wrapperUnlock_2.readData_2" expr="&quot;Leaving wrapperUnlock_2.readData_2&quot;"/>
-                </onexit>
-            </state>
-            <state id="writeData_2">
-                <qt:editorinfo scenegeometry="489.36;1139.62;300.30;1089.62;209.06;100" geometry="558.43;156.53;-189.06;-50;209.06;100"/>
-                <transition type="external" event="WRITE_DATA_TRUE" target="unlockKey_2"/>
-                <onentry>
-                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
-
-                    DataBool ret = blackboard.writeDataInt32(skillID, resourceName, currVal+1);
-
-                   if(ret.reqEval ==VALID){
-	 //vai allo stato unlockKey
- QTimer::singleShot(0, stateMachine(), [&amp;](){
-                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event WRITE_DATA_TRUE submitted&quot;;
-                        stateMachine()-&gt;submitEvent(&quot;WRITE_DATA_TRUE&quot;);
-                    });
-	resourceCount -=1;
-                    }
-                    else{
-	//error??
-                     }</script>
-                    <log label="wrapperUnlock_2.writeData_2" expr="&quot;Inside wrapperUnlock_2.writeData_2&quot;"/>
-                </onentry>
-                <onexit>
-                    <log label="wrapperUnlock_2.writeData_2" expr="&quot;Leaving wrapperUnlock_2.writeData_2&quot;"/>
-                </onexit>
-            </state>
-            <state id="unlockKey_2">
-                <qt:editorinfo scenegeometry="461.60;1279.55;294.10;1229.55;187.50;116" geometry="530.67;296.46;-167.50;-50;187.50;116"/>
-                <transition type="external" event="UNLOCK_FALSE" target="unlockKey_2">
-                    <qt:editorinfo endTargetFactors="12.72;34.11"/>
-                </transition>
-                <onentry>
-                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
-
-                    DataBool ret = blackboard.unlock(skillID, resourceName);
-
-                   if(ret.reqEval != VALID){ 
-	//rimani nello stato unlockKey
-	//gestire la differenza tra key invalida e cliente non autorizzato??
-qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_FALSE submitted&quot;;
-                            QScxmlEvent *e = new QScxmlEvent;
-                            e-&gt;setName(&quot;UNLOCK_FALSE&quot;);
-                            e-&gt;setEventType(QScxmlEvent::InternalEvent);
-                            e-&gt;setDelay(500);
-                            stateMachine()-&gt;submitEvent(e);
-                    }
-                    else{
-	//esci dal wrapperUnlock e vai nello stato success
-QTimer::singleShot(0, stateMachine(), [&amp;](){
-                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_TRUE submitted&quot;;
-                        stateMachine()-&gt;submitEvent(&quot;UNLOCK_TRUE&quot;);
-                    });
-                     }</script>
-                    <log label="wrapperUnlock_2.unlockKey_2" expr="&quot;Inside wrapperUnlock_2.unlockKey_2&quot;"/>
-                </onentry>
-                <transition type="external" event="UNLOCK_TRUE" target="success">
-                    <qt:editorinfo endTargetFactors="73.60;67.94"/>
-                </transition>
-                <onexit>
-                    <log label="wrapperUnlock_2.unlockKey_2" expr="&quot;Leaving wrapperUnlock_2.unlockKey_2&quot;"/>
-                </onexit>
-            </state>
-            <onentry>
-                <log label="wrapperUnlock_2" expr="&quot;Inside wrapperUnlock_2&quot;"/>
-            </onentry>
-            <onexit>
-                <log expr="&quot;Leaving wrapperUnlock_2&quot;" label="wrapperUnlock_2"/>
-            </onexit>
-        </state>
-        <state id="failure">
-            <qt:editorinfo scenegeometry="2015.44;1276.01;1955.44;1226.01;120;100" geometry="1912.50;1478.66;-60;-50;120;100"/>
-            <onentry>
-                <log label="wrapper.failure" expr="&quot;Inside failure&quot;"/>
-            </onentry>
-            <onexit>
-                <log label="wrapper.failure" expr="&quot;Leaving failure&quot;"/>
-            </onexit>
-            <transition type="internal" event="TICK" target="idle">
-                <qt:editorinfo localGeometry="0;-2690.83"/>
-            </transition>
-        </state>
-        <state id="wrapperUnlock_1" initial="lockKey_1">
-            <qt:editorinfo scenegeometry="1168.42;975.22;1440.13;721.43;406.80;637.76" geometry="1065.48;1177.87;271.71;-253.79;406.80;637.76"/>
-            <state id="lockKey_1">
-                <qt:editorinfo scenegeometry="1686.72;853.75;1537.61;799.70;169.11;120.05" geometry="518.30;-121.47;-149.11;-54.05;169.11;120.05"/>
-                <transition type="external" event="LOCK_FALSE" target="lockKey_1">
-                    <qt:editorinfo endTargetFactors="12.65;49.12"/>
-                </transition>
-                <transition type="external" event="LOCK_TRUE" target="readData_1">
-                    <qt:editorinfo endTargetFactors="49.26;9.39"/>
-                </transition>
-                <onentry>
-                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
-
-                    DataBool ret = blackboard.lock(skillID, resourceName);
-
-                   if(ret.reqEval != VALID){ 
-                        //rimani nello stato lockKey
-	//gestire la differenza tra key invalida e cliente non autorizzato??
-                       qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event LOCK_FALSE submitted&quot;;
-                            QScxmlEvent *e = new QScxmlEvent;
-                            e-&gt;setName(&quot;LOCK_FALSE&quot;);
-                            e-&gt;setEventType(QScxmlEvent::InternalEvent);
-                            e-&gt;setDelay(500);
-                            stateMachine()-&gt;submitEvent(e);
-                       }
-                    else{
-	//vai nello stato readData
-                         QTimer::singleShot(0, stateMachine(), [&amp;](){
-                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event LOCK_TRUE submitted&quot;;
-                        stateMachine()-&gt;submitEvent(&quot;LOCK_TRUE&quot;);
-                    });
-                     }</script>
-                    <log label="wrapperUnlock_1.lockKey_1" expr="&quot;Inside wrapperUnlock_1.lockKey_1&quot;"/>
-                </onentry>
-                <onexit>
-                    <log label="wrapperUnlock_1.lockKey_1" expr="&quot;Leaving wrapperUnlock_1.lockKey_1&quot;"/>
-                </onexit>
-            </state>
-            <state id="readData_1">
-                <qt:editorinfo scenegeometry="1743.70;996.56;1495.78;946.56;267.92;100" geometry="575.28;21.34;-247.92;-50;267.92;100"/>
-                <transition type="external" event="DATA_READ" target="writeData_1"/>
-                <onentry>
-                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
-
-                    DataInt32 ret = blackboard.readDataInt32(skillID, resourceName);
-
-                   if(ret.reqEval ==VALID){
-	     currVal = ret.dataValue;
-	       //vai allo stato writeData
-                         QTimer::singleShot(0, stateMachine(), [&amp;](){
-                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event DATA_READ submitted&quot;;
-                        stateMachine()-&gt;submitEvent(&quot;DATA_READ&quot;);
-                    });
-
-                    }
-                    else{
-	//error??
-                     }</script>
-                    <log label="wrapperUnlock_1.readData_1" expr="&quot;Inside wrapperUnlock_1.readData_1&quot;"/>
-                </onentry>
-                <onexit>
-                    <log label="wrapperUnlock_1.readData_1" expr="&quot;Leaving wrapperUnlock_1.readData_1&quot;"/>
-                </onexit>
-            </state>
-            <state id="writeData_1">
-                <qt:editorinfo scenegeometry="1726.85;1131.75;1537.79;1081.75;209.06;100" geometry="558.43;156.53;-189.06;-50;209.06;100"/>
-                <transition type="external" event="WRITE_DATA_TRUE" target="unlockKey_1"/>
-                <onentry>
-                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
-
-                    DataBool ret = blackboard.writeDataInt32(skillID, resourceName, currVal+1);
-
-                   if(ret.reqEval ==VALID){
-	 //vai allo stato unlockKey
- QTimer::singleShot(0, stateMachine(), [&amp;](){
-                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event WRITE_DATA_TRUE submitted&quot;;
-                        stateMachine()-&gt;submitEvent(&quot;WRITE_DATA_TRUE&quot;);
-                    });
-	resourceCount -=1;
-                    }
-                    else{
-	//error??
-                     }</script>
-                    <log label="wrapperUnlock_1.writeData_1" expr="&quot;Inside wrapperUnlock_1.writeData_1&quot;"/>
-                </onentry>
-                <onexit>
-                    <log label="wrapperUnlock_1.writeData_1" expr="&quot;Leaving wrapperUnlock_1.writeData_1&quot;"/>
-                </onexit>
-            </state>
-            <state id="unlockKey_1">
-                <qt:editorinfo scenegeometry="1699.09;1271.68;1531.59;1221.68;187.50;116" geometry="530.67;296.46;-167.50;-50;187.50;116"/>
-                <transition type="external" event="UNLOCK_FALSE" target="unlockKey_1">
-                    <qt:editorinfo endTargetFactors="12.72;34.11"/>
-                </transition>
-                <onentry>
-                    <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
-
-                    DataBool ret = blackboard.unlock(skillID, resourceName);
-
-                   if(ret.reqEval != VALID){ 
-	//rimani nello stato unlockKey
-	//gestire la differenza tra key invalida e cliente non autorizzato??
-qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_FALSE submitted&quot;;
-                            QScxmlEvent *e = new QScxmlEvent;
-                            e-&gt;setName(&quot;UNLOCK_FALSE&quot;);
-                            e-&gt;setEventType(QScxmlEvent::InternalEvent);
-                            e-&gt;setDelay(500);
-                            stateMachine()-&gt;submitEvent(e);
-                    }
-                    else{
-	//esci dal wrapperUnlock e vai nello stato failure
-QTimer::singleShot(0, stateMachine(), [&amp;](){
-                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_TRUE submitted&quot;;
-                        stateMachine()-&gt;submitEvent(&quot;UNLOCK_TRUE&quot;);
-                    });
-                     }</script>
-                    <log label="wrapperUnlock_1.unlockKey_1" expr="&quot;Inside wrapperUnlock_1.unlockKey_1&quot;"/>
-                </onentry>
-                <transition type="external" event="UNLOCK_TRUE" target="failure"/>
-                <onexit>
-                    <log label="wrapperUnlock_1.unlockKey_1" expr="&quot;Leaving wrapperUnlock_1.unlockKey_1&quot;"/>
-                </onexit>
-            </state>
-            <onentry>
-                <log label="wrapperUnlock_1" expr="&quot;Inside wrapperUnlock_1&quot;"/>
-            </onentry>
-            <onexit>
-                <log expr="&quot;Leaving wrapperUnlock_1&quot;" label="wrapperUnlock_1"/>
-            </onexit>
-        </state>
-    </state>
-    <state id="wrapperUnlock_3" initial="checkResource">
-        <qt:editorinfo scenegeometry="2059.77;-205.34;2158.19;-776.95;619.20;955.89" geometry="2059.77;-205.34;98.42;-571.61;619.20;955.89"/>
-        <state id="lockKey_3">
-            <qt:editorinfo scenegeometry="2581.38;-359.76;2432.27;-413.81;169.11;120.05" geometry="521.61;-154.42;-149.11;-54.05;169.11;120.05"/>
-            <transition type="external" event="LOCK_FALSE" target="lockKey_3">
-                <qt:editorinfo endTargetFactors="12.65;49.12"/>
-            </transition>
-            <transition type="external" event="LOCK_TRUE" target="readData_3">
-                <qt:editorinfo endTargetFactors="49.26;9.39"/>
-            </transition>
-            <onentry>
-                <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
-
-                    DataBool ret = blackboard.lock(skillID, resourceName);
-
-                   if(ret.reqEval != VALID){ 
-                        //rimani nello stato lockKey
-	//gestire la differenza tra key invalida e cliente non autorizzato??
-                       qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event LOCK_FALSE submitted&quot;;
-                            QScxmlEvent *e = new QScxmlEvent;
-                            e-&gt;setName(&quot;LOCK_FALSE&quot;);
-                            e-&gt;setEventType(QScxmlEvent::InternalEvent);
-                            e-&gt;setDelay(500);
-                            stateMachine()-&gt;submitEvent(e);
-                       }
-                    else{
-	//vai nello stato readData
-                         QTimer::singleShot(0, stateMachine(), [&amp;](){
-                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event LOCK_TRUE submitted&quot;;
-                        stateMachine()-&gt;submitEvent(&quot;LOCK_TRUE&quot;);
-                    });
-                     }</script>
-                <log label="wrapperUnlock_3.lockKey_3" expr="&quot;Inside wrapperUnlock_3.lockKey_3&quot;"/>
-            </onentry>
-            <onexit>
-                <log label="wrapperUnlock_3.lockKey_3" expr="&quot;Leaving wrapperUnlock_3.lockKey_3&quot;"/>
-            </onexit>
-        </state>
-        <state id="readData_3">
-            <qt:editorinfo scenegeometry="2635.05;-184;2387.13;-234;267.92;100" geometry="575.28;21.34;-247.92;-50;267.92;100"/>
-            <transition type="external" event="DATA_READ" target="writeData_3"/>
-            <onentry>
-                <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
-
-                    DataInt32 ret = blackboard.readDataInt32(skillID, resourceName);
-
-                   if(ret.reqEval ==VALID){
-	     currVal = ret.dataValue;
-	       //vai allo stato writeData
-                         QTimer::singleShot(0, stateMachine(), [&amp;](){
-                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event DATA_READ submitted&quot;;
-                        stateMachine()-&gt;submitEvent(&quot;DATA_READ&quot;);
-                    });
-
-                    }
-                    else{
-	//error??
-                     }</script>
-                <log label="wrapperUnlock_3.readData_3" expr="&quot;Inside wrapperUnlock_3.readData_3&quot;"/>
-            </onentry>
-            <onexit>
-                <log label="wrapperUnlock_3.readData_3" expr="&quot;Leaving wrapperUnlock_3.readData_3&quot;"/>
-            </onexit>
-        </state>
-        <state id="writeData_3">
-            <qt:editorinfo scenegeometry="2619.41;-48.81;2430.35;-98.81;209.06;100" geometry="559.64;156.53;-189.06;-50;209.06;100"/>
-            <transition type="external" event="WRITE_DATA_TRUE" target="unlockKey_3"/>
-            <onentry>
-                <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
-
-                    DataBool ret = blackboard.writeDataInt32(skillID, resourceName, currVal+1);
-
-                   if(ret.reqEval ==VALID){
-	 //vai allo stato unlockKey
- QTimer::singleShot(0, stateMachine(), [&amp;](){
-                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event WRITE_DATA_TRUE submitted&quot;;
-                        stateMachine()-&gt;submitEvent(&quot;WRITE_DATA_TRUE&quot;);
-                    });
-	resourceCount -=1;
-                    }
-                    else{
-	//error??
-                     }</script>
-                <log label="wrapperUnlock_3.writeData_3" expr="&quot;Inside wrapperUnlock_3.writeData_3&quot;"/>
-            </onentry>
-            <onexit>
-                <log label="wrapperUnlock_3.writeData_3" expr="&quot;Leaving wrapperUnlock_3.writeData_3&quot;"/>
-            </onexit>
-        </state>
-        <state id="unlockKey_3">
-            <qt:editorinfo scenegeometry="2592.26;92.94;2424.76;42.94;187.50;116" geometry="532.49;298.28;-167.50;-50;187.50;116"/>
-            <transition type="external" event="UNLOCK_FALSE" target="unlockKey_3">
-                <qt:editorinfo endTargetFactors="12.72;34.11"/>
-            </transition>
-            <onentry>
-                <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
-
-                    DataBool ret = blackboard.unlock(skillID, resourceName);
-
-                   if(ret.reqEval != VALID){ 
-	//rimani nello stato unlockKey
-	//gestire la differenza tra key invalida e cliente non autorizzato??
-qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_FALSE submitted&quot;;
-                            QScxmlEvent *e = new QScxmlEvent;
-                            e-&gt;setName(&quot;UNLOCK_FALSE&quot;);
-                            e-&gt;setEventType(QScxmlEvent::InternalEvent);
-                            e-&gt;setDelay(500);
-                            stateMachine()-&gt;submitEvent(e);
-                    }
-                    else{
-	          if(resourceCount==0){
-		//esci dal wrapperUnlock e vai nello stato idle
-		QTimer::singleShot(0, stateMachine(), [&amp;](){
-                       	 qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event UNLOCK_TRUE submitted&quot;;
-                       	 stateMachine()-&gt;submitEvent(&quot;UNLOCK_TRUE&quot;);
-                  		  });
-	            }
-	            else{
-		//ritorna nello stato checkResourse
-		QTimer::singleShot(0, stateMachine(), [&amp;](){
-                       	 qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event TO_CHECK_RESOURCE submitted&quot;;
-                       	 stateMachine()-&gt;submitEvent(&quot;TO_CHECK_RESOURCE&quot;);
-                  		  });
-	           }
-                     }</script>
-                <log label="wrapperUnlock_3.unlockKey_3" expr="&quot;Inside wrapperUnlock_3.unlockKey_3&quot;"/>
-            </onentry>
-            <transition type="external" event="UNLOCK_TRUE" target="wrapper">
-                <qt:editorinfo endTargetFactors="98.72;57.74"/>
-            </transition>
-            <onexit>
-                <log label="wrapperUnlock_3.unlockKey_3" expr="&quot;Leaving wrapperUnlock_3.unlockKey_3&quot;"/>
-            </onexit>
-            <transition type="external" event="TO_CHECK_RESOURCE" target="checkResource">
-                <qt:editorinfo movePoint="-11.06;290.88" endTargetFactors="84.68;53.75" localGeometry="173.84;-0.45;173.84;-610.25"/>
-            </transition>
-        </state>
-        <onentry>
-            <log label="wrapperUnlock_3" expr="&quot;Inside wrapperUnlock_3&quot;"/>
+            <log label="internal_unlockKey" expr="&quot;Inside internal_unlockKey (to release resource) HALT&quot;"/>
         </onentry>
         <onexit>
-            <log expr="&quot;Leaving wrapperUnlock_3&quot;" label="wrapperUnlock_3"/>
+            <log label="internal_unlockKey" expr="&quot;Leaving internal_unlockKey (to release resource) HALT&quot;"/>
         </onexit>
-        <state id="checkResource">
-            <qt:editorinfo scenegeometry="2572.61;-513.45;2426.13;-563.45;177.22;100" geometry="512.84;-308.11;-146.48;-50;177.22;100"/>
-            <transition type="external" event="FREE_UP" target="lockKey_3"/>
-            <transition type="external" event="TO_IDLE" target="wrapper">
-                <qt:editorinfo movePoint="-4.64;-28.43" endTargetFactors="99.30;33.82"/>
-            </transition>
-            <onentry>
-       <!--         <script>if(resourceCount==0){
-                        //vai nello stato idle
-                         QTimer::singleShot(0, stateMachine(), [&amp;](){
-                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event TO_IDLE submitted&quot;;
-                        stateMachine()-&gt;submitEvent(&quot;TO_IDLE&quot;);
-                    });
-}
-else{
-	//vai nello stato lockKey_3
-                         QTimer::singleShot(0, stateMachine(), [&amp;](){
-                        qDebug() &lt;&lt; QTime::currentTime().toString() &lt;&lt; &quot;Event FREE_UP submitted&quot;;
-                        stateMachine()-&gt;submitEvent(&quot;FREE_UP&quot;);
-                    });
-}</script> -->
-                <log label="wrapperUnlock_3.checkResource" expr="&quot;Inside wrapperUnlock_3.checkResource&quot;"/>
-                <if cond="resourceCount==0">
-                    <send event="TO_IDLE"/>
-                    <else/>
-                    <send event="FREE_UP"/>
-                </if>
-            </onentry>
-            <onexit>
-                <log label="wrapperUnlock_3.checkResource" expr="&quot;Leaving wrapperUnlock_3.checkResource&quot;"/>
-            </onexit>
-        </state>
+        <transition type="internal" event="UNLOCK_TRUE" target="internal_halted">
+            <qt:editorinfo endTargetFactors="57.75;85.22" localGeometry="-0.14;-127.66;-514.26;-127.66" movePoint="215.18;43.59"/>
+        </transition>
+    </state>
+    <state id="rollback_writeData">
+        <qt:editorinfo scenegeometry="908.14;-950.38;719.08;-1000.38;249.06;100" geometry="908.14;-950.38;-189.06;-50;249.06;100"/>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+                    
+                    retDataBool = blackboard.writeDataInt32(skillID, resourceName, currVal+1);
+
+	if(retDataBool.reqEval ==VALID){
+ 	      currVal =  currVal +1;
+	      resourceCount = resourceCount-1;
+                       }</script>
+            <log label="rollback_writeData" expr="&quot;Inside rollback_writeData (to release resource) HALT&quot;"/>
+            <if cond="retDataBool.reqEval ==VALID">
+                <send event="WRITE_DATA_TRUE"/>
+            </if>
+        </onentry>
+        <onexit>
+            <log label="rollback_writeData" expr="&quot;Leaving rollback_writeData (to release resource) HALT&quot;"/>
+        </onexit>
+        <transition type="internal" event="WRITE_DATA_TRUE" target="internal_unlockKey" cond="retDataBool.reqEval ==VALID"/>
+    </state>
+    <state id="unlockKey_2">
+        <qt:editorinfo scenegeometry="83.84;939.47;-83.66;889.47;187.50;116" geometry="83.84;939.47;-167.50;-50;187.50;116"/>
+        <transition type="external" event="UNLOCK_FALSE" target="unlockKey_2" cond="retDataBool.reqEval != VALID">
+            <log expr="&quot;Transition UNLOCK_FALSE executed&quot;" label="unlockKey_2"/>
+        </transition>
+        <onentry>
+            <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
+
+                    retDataBool = blackboard.unlock(skillID, resourceName);</script>
+            <log label="unlockKey_2" expr="&quot;Inside unlockKey_2 (to release resource) SUCCESS&quot;"/>
+            <if cond="retDataBool.reqEval != VALID">
+                <send event="UNLOCK_FALSE"/>
+                <else/>
+                <send event="UNLOCK_TRUE"/>
+            </if>
+        </onentry>
+        <transition type="internal" event="UNLOCK_TRUE" target="success" cond="retDataBool.reqEval == VALID">
+            <qt:editorinfo endTargetFactors="73.60;67.94"/>
+            <log expr="&quot;Transition UNLOCK_TRUE executed&quot;" label="unlockKey_2"/>
+        </transition>
+        <onexit>
+            <log label="unlockKey_2" expr="&quot;Leaving unlockKey_2 (to release resource) SUCCESS&quot;"/>
+        </onexit>
+    </state>
+    <state id="internal_halted">
+        <qt:editorinfo scenegeometry="320.05;-1566.17;260.05;-1616.17;120;100" geometry="320.05;-1566.17;-60;-50;120;100"/>
+        <onentry>
+            <log label="internal_halted" expr="&quot;Inside to internal_halted (to release resource) HALT&quot;"/>
+            <script>Connector connection(client_port.getName(), &quot;/GoToComponent&quot;, &quot;tcp&quot;);
+                goTo.halt(location);</script>
+            <send event="RESET" delay="500ms"/>
+        </onentry>
+        <transition type="internal" event="RESET" target="idle">
+            <qt:editorinfo endTargetFactors="21.38;63.30" localGeometry="0;-228.99"/>
+        </transition>
+        <onexit>
+            <log label="internal_halted" expr="&quot;Leaving to internal_halted (to release resource) HALT&quot;"/>
+        </onexit>
+    </state>
+    <state id="success">
+        <qt:editorinfo scenegeometry="-330.82;934.17;-390.82;884.17;120;100" geometry="-330.82;934.17;-60;-50;120;100"/>
+        <onentry>
+            <log label="success" expr="&quot;Inside success&quot;"/>
+        </onentry>
+        <onexit>
+            <log label="success" expr="&quot;Leaving success&quot;"/>
+        </onexit>
+        <transition type="external" event="TICK" target="idle">
+            <qt:editorinfo endTargetFactors="10.39;40.78" startTargetFactors="50.31;21.73" localGeometry="-28.02;-2713.18"/>
+        </transition>
+        <transition type="external" event="HALT" target="halted">
+            <qt:editorinfo endTargetFactors="70.04;85.06" localGeometry="0.52;212.77;4066.27;226.96"/>
+        </transition>
     </state>
 </scxml>

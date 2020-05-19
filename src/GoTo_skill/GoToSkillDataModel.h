@@ -68,6 +68,9 @@ public:
     std::int32_t currVal;
     std::int32_t resourceCount;
     const std::string resourceName = "navigation";
+    DataBool retDataBool;
+    DataInt32 retDataInt32;
+    GoToStatus retGoToStatus;
 };
 
 Q_DECLARE_METATYPE(::GoToSkillDataModel*)
