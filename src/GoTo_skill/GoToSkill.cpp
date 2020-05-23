@@ -19,6 +19,7 @@ GoToSkill::GoToSkill(std::string name, std::string location) :
         name(std::move(name))
 {
     stateMachine.setDataModel(&dataModel);
+    qRegisterMetaType<QScxmlEvent>("QScxmlEvent");
 
 #ifdef DEBUG_STATE_MACHINE
     stateMachine.connectToState("wrapper", [](bool active) {
@@ -33,6 +34,16 @@ GoToSkill::GoToSkill(std::string name, std::string location) :
         if(!active) {
             qDebug() << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
         }
+    });
+
+    stateMachine.connectToState("wrapperLock", [](bool active) {
+    if(active) {
+        qDebug() << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+    }
+    qDebug() << QTime::currentTime().toString() << (active ? "entered" : "exited") << "the wrapperLock state";
+    if(!active) {
+        qDebug() << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
+    }
     });
 
     stateMachine.connectToState("sendrequest", [](bool active) {
@@ -171,6 +182,21 @@ SkillAck GoToSkill::request_ack()
             }
             if (state == "getstatus") {
                 return SKILL_RUNNING;
+            }
+            if (state == "lockKey" || state == "lockKey_1" || state == "lockKey_2" || state == "lockKey_3" || state == "internal_lockKey" || state == "checkResource") {
+                return SKILL_RUNNING;
+            }
+            if (state == "readData" || state == "readData_1" || state == "readData_2" || state == "readData_3" || state == "internal_readData" || state == "internal_halted") {
+                return SKILL_RUNNING;
+            }
+            if (state == "writeData" || state == "writeData_1" || state == "writeData_2" || state == "writeData_3" || state == "internal_writeData" || state == "rollback_writeData") {
+                return SKILL_RUNNING;
+            }
+            if (state == "unlockKey" || state == "unlockKey_1" || state == "unlockKey_2" || state == "unlockKey_3" || state == "internal_unlockKey" || state == "unlockBusy") {
+                return SKILL_RUNNING;
+            }
+            if (state == "wrongKey") {
+                return SKILL_FAILURE;
             }
         }
     }
