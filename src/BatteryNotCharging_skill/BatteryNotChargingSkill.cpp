@@ -37,35 +37,37 @@ bool BatteryNotChargingSkill::start()
     return true;
 }
 
-ReturnStatus BatteryNotChargingSkill::request_status()
+SkillAck BatteryNotChargingSkill::request_ack()
 {
+  stateMachine.submitEvent("CMD_OK");
+
     while (true) {
         auto states = stateMachine.activeStateNames();
 
         for (const auto& state : states) {
             if (state == "idle") {
-                return BT_IDLE;
+                return SKILL_IDLE;
             }
             if (state == "get") {
-                return BT_IDLE;
+                return SKILL_IDLE;
             }
             if (state == "success") {
-                return BT_SUCCESS;
+                return SKILL_SUCCESS;
             }
             if (state == "failure") {
-                return BT_FAILURE;
+                return SKILL_FAILURE;
             }
         }
     }
 }
 
-ReturnStatus BatteryNotChargingSkill::request_tick()
+void BatteryNotChargingSkill::send_start()
 {
-    stateMachine.submitEvent("TICK");
-    return request_status();
+    stateMachine.submitEvent("CMD_START");
+    //return request_ack();
 }
 
-void BatteryNotChargingSkill::request_halt()
+void BatteryNotChargingSkill::send_stop()
 {
-    stateMachine.submitEvent("HALT");
+    stateMachine.submitEvent("CMD_STOP");
 }

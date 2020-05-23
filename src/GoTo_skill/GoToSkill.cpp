@@ -96,12 +96,12 @@ GoToSkill::GoToSkill(std::string name, std::string location) :
         }
     });
 
-    stateMachine.connectToEvent("TICK", [](const QScxmlEvent &){
-        qDebug() << QTime::currentTime().toString() << "----> TICK!";
+    stateMachine.connectToEvent("CMD_START", [](const QScxmlEvent &){
+        qDebug() << QTime::currentTime().toString() << "----> CMD_START!";
     });
 
-    stateMachine.connectToEvent("HALT", [](const QScxmlEvent &){
-        qDebug() << QTime::currentTime().toString() << "----> HALT!";
+    stateMachine.connectToEvent("CMD_STOP", [](const QScxmlEvent &){
+        qDebug() << QTime::currentTime().toString() << "----> CMD_STOP!";
     });
 
     stateMachine.connectToEvent("STATUS_READY", [](const QScxmlEvent &){
@@ -146,40 +146,42 @@ bool GoToSkill::start()
     stateMachine.start();
 
 //     auto timer = new QTimer(&stateMachine);
-//     QObject::connect(timer, &QTimer::timeout, &stateMachine, [&](){ qDebug() << QTime::currentTime().toString() << "Event TICK submitted"; stateMachine.submitEvent("TICK"); });
+//     QObject::connect(timer, &QTimer::timeout, &stateMachine, [&](){ qDebug() << QTime::currentTime().toString() << "Event CMD_START submitted"; stateMachine.submitEvent("CMD_START"); });
 //     timer->start(1000);
 //
 //
 //     auto timer2 = new QTimer(&stateMachine);
-//     QObject::connect(timer2, &QTimer::timeout, &stateMachine, [&](){ qDebug() << QTime::currentTime().toString() << "Event HALT submitted"; stateMachine.submitEvent("HALT"); });
+//     QObject::connect(timer2, &QTimer::timeout, &stateMachine, [&](){ qDebug() << QTime::currentTime().toString() << "Event CMD_STOP submitted"; stateMachine.submitEvent("CMD_STOP"); });
 //     timer2->start(17000);
 
     return true;
 }
 
-ReturnStatus GoToSkill::request_status()
+SkillAck GoToSkill::request_ack()
 {
+  stateMachine.submitEvent("CMD_OK");
+
     while (true) {
         auto states = stateMachine.activeStateNames();
 
         for (const auto& state : states) {
             if (state == "idle") {
-                return BT_IDLE;
+                return SKILL_IDLE;
             }
             if (state == "halted") {
-                return BT_RUNNING;
+                return SKILL_RUNNING;
             }
             if (state == "success") {
-                return BT_SUCCESS;
+                return SKILL_SUCCESS;
             }
             if (state == "failure") {
-                return BT_FAILURE;
+                return SKILL_FAILURE;
             }
             if (state == "sendrequest") {
-                return BT_RUNNING;
+                return SKILL_RUNNING;
             }
             if (state == "getstatus") {
-                return BT_RUNNING;
+                return SKILL_RUNNING;
             }
             if (state == "lockKey" || state == "lockKey_1" || state == "lockKey_2" || state == "lockKey_3" || state == "internal_lockKey" || state == "checkResource") {
                 return BT_RUNNING;
@@ -200,19 +202,19 @@ ReturnStatus GoToSkill::request_status()
     }
 }
 
-ReturnStatus GoToSkill::request_tick()
+void GoToSkill::send_start()
 {
 #ifdef DEBUG_STATE_MACHINE
-    qDebug() << QTime::currentTime().toString() << "Event TICK submitted";
+    qDebug() << QTime::currentTime().toString() << "Event CMD_START submitted";
 #endif
-    stateMachine.submitEvent("TICK");
-    return request_status();
+    stateMachine.submitEvent("CMD_START");
+  //  return request_ack();
 }
 
-void GoToSkill::request_halt()
+void GoToSkill::send_stop()
 {
 #ifdef DEBUG_STATE_MACHINE
-    qDebug() << QTime::currentTime().toString() << "Event HALT submitted";
+    qDebug() << QTime::currentTime().toString() << "Event CMD_STOP submitted";
 #endif
-    stateMachine.submitEvent("HALT",  QStateMachine::HighPriority);
+    stateMachine.submitEvent("CMD_STOP",  QStateMachine::HighPriority);
 }

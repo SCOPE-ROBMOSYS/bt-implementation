@@ -52,9 +52,9 @@ private:
 int main()
 {
     ReactiveSequence seq("ciao");
-//    YARPCondition yarp_condion("ConditionName", "/ConditionName_skill/BT_request/server");
+//    YARPCondition yarp_condion("ConditionName", "/ConditionName_skill/Skill_request/server");
     FlipFlopSuccessCondition ff_condition("FlipFlopCondition");
-    YARPAction yarp_action("ActionName", "/goto_skill/BT_request/server");
+    YARPAction yarp_action("ActionName", "/goto_skill/Skill_request/server");
 
     bool ok = yarp_action.init();
 

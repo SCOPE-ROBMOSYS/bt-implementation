@@ -12,7 +12,7 @@
 >
 
     <state id="idle">
-        <transition event="TICK" target="get" />
+        <transition event="CMD_START" target="get" />
     </state>
 
     <state id="get">
@@ -30,10 +30,10 @@
     </state>
 
     <state id="success">
-        <transition event="TICK" target="idle" />
+        <transition event="CMD_OK" target="idle" />
     </state>
 
     <state id="failure">
-        <transition event="TICK" target="idle" />
+        <transition event="CMD_OK" target="idle" />
     </state>
 </scxml>
