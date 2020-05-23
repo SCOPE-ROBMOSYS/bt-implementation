@@ -184,19 +184,19 @@ SkillAck GoToSkill::request_ack()
                 return SKILL_RUNNING;
             }
             if (state == "lockKey" || state == "lockKey_1" || state == "lockKey_2" || state == "lockKey_3" || state == "internal_lockKey" || state == "checkResource") {
-                return BT_RUNNING;
+                return SKILL_RUNNING;
             }
             if (state == "readData" || state == "readData_1" || state == "readData_2" || state == "readData_3" || state == "internal_readData" || state == "internal_halted") {
-                return BT_RUNNING;
+                return SKILL_RUNNING;
             }
             if (state == "writeData" || state == "writeData_1" || state == "writeData_2" || state == "writeData_3" || state == "internal_writeData" || state == "rollback_writeData") {
-                return BT_RUNNING;
+                return SKILL_RUNNING;
             }
             if (state == "unlockKey" || state == "unlockKey_1" || state == "unlockKey_2" || state == "unlockKey_3" || state == "internal_unlockKey" || state == "unlockBusy") {
-                return BT_RUNNING;
+                return SKILL_RUNNING;
             }
             if (state == "wrongKey") {
-                return BT_FAILURE;
+                return SKILL_FAILURE;
             }
         }
     }

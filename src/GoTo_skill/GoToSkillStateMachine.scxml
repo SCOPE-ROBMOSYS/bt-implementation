@@ -25,7 +25,7 @@
             <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
 
                     retDataBool = blackboard.unlock(skillID, resourceName);</script>
-            <log label="unlockKey_3" expr="&quot;Inside unlockKey_3 (to release resource) HALTED&quot;"/>
+            <log label="unlockKey_3" expr="&quot;Inside unlockKey_3 (to release resource) CMD_STOPED&quot;"/>
             <if cond="retDataBool.reqEval != VALID">
                 <send event="UNLOCK_FALSE"/>
                 <else/>
@@ -41,7 +41,7 @@
             <log expr="&quot;Transition UNLOCK_TRUE executed&quot;" label="unlockKey_3"/>
         </transition>
         <onexit>
-            <log label="unlockKey_3" expr="&quot;Leaving unlockKey_3 (to release resource) HALTED&quot;"/>
+            <log label="unlockKey_3" expr="&quot;Leaving unlockKey_3 (to release resource) CMD_STOPED&quot;"/>
         </onexit>
         <transition type="internal" event="TO_CHECK_RESOURCE" target="checkResource" cond="retDataBool.reqEval == VALID &amp;&amp; resourceCount &gt;0">
             <qt:editorinfo endTargetFactors="84.68;53.75" localGeometry="241.39;0;241.39;-917.16" movePoint="-53.25;440.42"/>
@@ -60,13 +60,13 @@
                    if(retDataBool.reqEval ==VALID){
 	resourceCount -=1;
                     }</script>
-            <log label="writeData_3" expr="&quot;Inside writeData_3 (to release resource) HALTED&quot;"/>
+            <log label="writeData_3" expr="&quot;Inside writeData_3 (to release resource) CMD_STOPED&quot;"/>
             <if cond="retDataBool.reqEval ==VALID">
                 <send event="WRITE_DATA_TRUE"/>
             </if>
         </onentry>
         <onexit>
-            <log label="writeData_3" expr="&quot;Leaving writeData_3 (to release resource) HALTED&quot;"/>
+            <log label="writeData_3" expr="&quot;Leaving writeData_3 (to release resource) CMD_STOPED&quot;"/>
         </onexit>
     </state>
     <state id="checkResource">
@@ -79,7 +79,7 @@
             <log expr="&quot;Transition TO_IDLE executed&quot;" label="checkResource"/>
         </transition>
         <onentry>
-            <log label="checkResource" expr="&quot;Inside checkResource (to release resource) HALTED&quot;"/>
+            <log label="checkResource" expr="&quot;Inside checkResource (to release resource) CMD_STOPED&quot;"/>
             <if cond="resourceCount==0">
                 <send event="TO_IDLE"/>
                 <else/>
@@ -87,7 +87,7 @@
             </if>
         </onentry>
         <onexit>
-            <log label="checkResource" expr="&quot;Leaving checkResource (to release resource) HALTED&quot;"/>
+            <log label="checkResource" expr="&quot;Leaving checkResource (to release resource) CMD_STOPED&quot;"/>
         </onexit>
     </state>
     <state id="lockKey_3">
@@ -103,7 +103,7 @@
             <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
 
                    retDataBool = blackboard.lock(skillID, resourceName);</script>
-            <log label="lockKey_3" expr="&quot;Inside lockKey_3 (to release resource) HALTED&quot;"/>
+            <log label="lockKey_3" expr="&quot;Inside lockKey_3 (to release resource) CMD_STOPED&quot;"/>
             <if cond="retDataBool.reqEval  != VALID">
                 <send event="LOCK_FALSE" delay="500ms"/>
                 <else/>
@@ -111,7 +111,7 @@
             </if>
         </onentry>
         <onexit>
-            <log label="lockKey_3" expr="&quot;Leaving lockKey_3 (to release resource) HALTED&quot;"/>
+            <log label="lockKey_3" expr="&quot;Leaving lockKey_3 (to release resource) CMD_STOPED&quot;"/>
         </onexit>
     </state>
     <state id="readData_3">
@@ -126,13 +126,13 @@
 	if(retDataInt32.reqEval ==VALID){
 	         currVal=retDataInt32.dataValue;
 	}</script>
-            <log label="readData_3" expr="&quot;Inside readData_3 (to release resource) HALTED&quot;"/>
+            <log label="readData_3" expr="&quot;Inside readData_3 (to release resource) CMD_STOPED&quot;"/>
             <if cond="retDataInt32.reqEval ==VALID">
                 <send event="DATA_READ"/>
             </if>
         </onentry>
         <onexit>
-            <log label="readData_3" expr="&quot;Leaving readData_3 (to release resource) HALTED&quot;"/>
+            <log label="readData_3" expr="&quot;Leaving readData_3 (to release resource) CMD_STOPED&quot;"/>
         </onexit>
     </state>
     <state id="failure">
@@ -143,10 +143,10 @@
         <onexit>
             <log label="failure" expr="&quot;Leaving failure&quot;"/>
         </onexit>
-        <transition type="external" event="TICK" target="idle">
+        <transition type="external" event="CMD_START" target="idle">
             <qt:editorinfo endTargetFactors="81.04;71.80" localGeometry="-0.79;-2743.41" movePoint="44.04;1384.20"/>
         </transition>
-        <transition type="external" event="HALT" target="halted">
+        <transition type="external" event="CMD_STOP" target="halted">
             <qt:editorinfo endTargetFactors="25.37;74.94" localGeometry="297.87;0"/>
         </transition>
     </state>
@@ -188,7 +188,7 @@
         <onexit>
             <log label="writeData_1" expr="&quot;Leaving writeData_1 (to release resource) FAILED&quot;"/>
         </onexit>
-        <transition type="external" event="HALT" target="internal_unlockKey">
+        <transition type="external" event="CMD_STOP" target="internal_unlockKey">
             <qt:editorinfo endTargetFactors="17.92;55.65" localGeometry="0;-816.43;-2538.19;-814.22;-2538.19;-2144.62"/>
         </transition>
     </state>
@@ -211,7 +211,7 @@
         <onexit>
             <log label="readData_1" expr="&quot;Leaving readData_1 (to release resource) FAILED&quot;"/>
         </onexit>
-        <transition type="external" event="HALT" target="internal_readData">
+        <transition type="external" event="CMD_STOP" target="internal_readData">
             <qt:editorinfo endTargetFactors="87.69;56.96" localGeometry="0;-459.89"/>
         </transition>
     </state>
@@ -235,7 +235,7 @@
         <onexit>
             <log label="lockKey_1" expr="&quot;Leaving lockKey_1 (to release resource) FAILED&quot;"/>
         </onexit>
-        <transition type="external" event="HALT" target="internal_lockKey">
+        <transition type="external" event="CMD_STOP" target="internal_lockKey">
             <qt:editorinfo endTargetFactors="80.06;61.23" localGeometry="-2.94;-247.58"/>
         </transition>
     </state>
@@ -248,13 +248,13 @@
         <onexit>
             <log label="idle" expr="&quot;Leaving idle&quot;"/>
         </onexit>
-        <transition type="external" event="TICK" target="lockKey">
+        <transition type="external" event="CMD_START" target="lockKey">
             <qt:editorinfo endTargetFactors="51.31;19.14" movePoint="-31;-56.83"/>
         </transition>
     </state>
     <state id="getstatus">
         <qt:editorinfo scenegeometry="1636.02;947.48;1453.55;897.48;222.47;100" geometry="1636.02;947.48;-182.47;-50;222.47;100"/>
-        <transition type="external" event="HALT" target="halted">
+        <transition type="external" event="CMD_STOP" target="halted">
             <qt:editorinfo endTargetFactors="36.67;83.25" startTargetFactors="51.47;88.26" localGeometry="2.25;123.53;2127.35;123.53"/>
         </transition>
         <onentry>
@@ -283,7 +283,7 @@
     </state>
     <state id="wrongKey">
         <qt:editorinfo scenegeometry="1841.57;-1702.68;1781.57;-1752.68;120;100" geometry="1841.57;-1702.68;-60;-50;120;100"/>
-        <transition type="external" event="TICK" target="idle">
+        <transition type="external" event="CMD_START" target="idle">
             <qt:editorinfo endTargetFactors="63.45;70.42" localGeometry="0;-69.05;-239.28;-69.05"/>
         </transition>
         <onentry>
@@ -292,7 +292,7 @@
         <onexit>
             <log label="wrongKey" expr="&quot;Leaving wrongKey (to get resource)&quot;"/>
         </onexit>
-        <transition type="external" event="HALT" target="internal_halted">
+        <transition type="external" event="CMD_STOP" target="internal_halted">
             <qt:editorinfo endTargetFactors="82.34;22.11" localGeometry="-1482.71;0" movePoint="713.39;7.34"/>
         </transition>
     </state>
@@ -355,7 +355,7 @@
         <onexit>
             <log label="readData" expr="&quot;Leaving readData (to get resource)&quot;"/>
         </onexit>
-        <transition type="external" event="HALT" target="internal_unlockKey">
+        <transition type="external" event="CMD_STOP" target="internal_unlockKey">
             <qt:editorinfo endTargetFactors="75.82;77.86" startTargetFactors="33.95;87.70" localGeometry="0.29;102.44" movePoint="-33.76;-19.08"/>
         </transition>
     </state>
@@ -381,7 +381,7 @@
         <onexit>
             <log label="writeData" expr="&quot;Leaving writeData (to get resource)&quot;"/>
         </onexit>
-        <transition type="external" event="HALT" target="rollback_writeData">
+        <transition type="external" event="CMD_STOP" target="rollback_writeData">
             <qt:editorinfo endTargetFactors="90.12;35.34"/>
         </transition>
     </state>
@@ -429,7 +429,7 @@
         <transition type="internal" event="REQUEST_SENT" target="getstatus">
             <qt:editorinfo movePoint="-100.55;-566.80"/>
         </transition>
-        <transition type="external" event="HALT" target="halted">
+        <transition type="external" event="CMD_STOP" target="halted">
             <qt:editorinfo endTargetFactors="18.59;70.02" localGeometry="214.44;2.49;214.44;353.95;2442.64;353.95" movePoint="-32.29;-198.16"/>
         </transition>
     </state>
@@ -443,13 +443,13 @@
 	if(retDataBool.reqEval ==VALID){
 	       resourceCount -=1;
                     }</script>
-            <log label="internalWriteData" expr="&quot;Inside internalWriteData (to release resource) HALT&quot;"/>
+            <log label="internalWriteData" expr="&quot;Inside internalWriteData (to release resource) CMD_STOP&quot;"/>
             <if cond="retDataBool.reqEval ==VALID">
                 <send event="WRITE_DATA_TRUE"/>
             </if>
         </onentry>
         <onexit>
-            <log label="internal_writeData" expr="&quot;Leaving internal_writeData (to release resource) HALT&quot;"/>
+            <log label="internal_writeData" expr="&quot;Leaving internal_writeData (to release resource) CMD_STOP&quot;"/>
         </onexit>
         <transition type="internal" event="WRITE_DATA_TRUE" target="internal_unlockKey" cond="retDataBool.reqEval ==VALID">
             <qt:editorinfo endTargetFactors="21.79;67.70" localGeometry="0;-875.92;-745.38;-875.92;-745.38;-1422.30" movePoint="461.78;797.78"/>
@@ -465,13 +465,13 @@
 	if(retDataInt32.reqEval ==VALID){
 	         currVal=retDataInt32.dataValue;
 	}</script>
-            <log label="internalReadData" expr="&quot;Inside internalReadData (to release resource) HALT&quot;"/>
+            <log label="internalReadData" expr="&quot;Inside internalReadData (to release resource) CMD_STOP&quot;"/>
             <if cond="retDataInt32.reqEval ==VALID">
                 <send event="DATA_READ"/>
             </if>
         </onentry>
         <onexit>
-            <log label="internal_readData" expr="&quot;Leaving internal_readData (to release resource) HALT&quot;"/>
+            <log label="internal_readData" expr="&quot;Leaving internal_readData (to release resource) CMD_STOP&quot;"/>
         </onexit>
         <transition type="internal" event="DATA_READ" target="internal_writeData" cond="retDataInt32.reqEval ==VALID">
             <qt:editorinfo movePoint="-27.69;1.85"/>
@@ -484,7 +484,7 @@
             <script>Connector connection(blackboard_port.getName(), &quot;/BlackboardComponent&quot;, &quot;tcp&quot;);
 
                     retDataBool = blackboard.lock(skillID, resourceName);</script>
-            <log label="internal_lockKey" expr="&quot;Inside internal_lockKey (to release resource) HALT&quot;"/>
+            <log label="internal_lockKey" expr="&quot;Inside internal_lockKey (to release resource) CMD_STOP&quot;"/>
             <if cond="retDataBool.reqEval != VALID">
                 <send event="LOCK_FALSE"/>
                 <else/>
@@ -492,7 +492,7 @@
             </if>
         </onentry>
         <onexit>
-            <log label="internal_lockKey" expr="&quot;Leaving internal_lockKey (to release resource) HALT&quot;"/>
+            <log label="internal_lockKey" expr="&quot;Leaving internal_lockKey (to release resource) CMD_STOP&quot;"/>
         </onexit>
         <transition type="internal" event="LOCK_TRUE" target="internal_readData" cond="retDataBool.reqEval == VALID"/>
     </state>
@@ -519,7 +519,7 @@
         <onexit>
             <log label="lockKey_2" expr="&quot;Leaving lockKey_2 (to release resource) SUCCESS&quot;"/>
         </onexit>
-        <transition type="external" event="HALT" target="internal_lockKey">
+        <transition type="external" event="CMD_STOP" target="internal_lockKey">
             <qt:editorinfo endTargetFactors="50.33;76.82"/>
         </transition>
     </state>
@@ -544,7 +544,7 @@
         <onexit>
             <log label="readData_2" expr="&quot;Leaving readData_2 (to release resource) SUCCESS&quot;"/>
         </onexit>
-        <transition type="external" event="HALT" target="internal_readData">
+        <transition type="external" event="CMD_STOP" target="internal_readData">
             <qt:editorinfo endTargetFactors="10.94;53.70" localGeometry="0;-463.15" movePoint="-12.92;192"/>
         </transition>
     </state>
@@ -569,7 +569,7 @@
         <onexit>
             <log label="writeData_2" expr="&quot;Leaving writeData_2 (to release resource) SUCCESS&quot;"/>
         </onexit>
-        <transition type="external" event="HALT" target="internal_unlockKey">
+        <transition type="external" event="CMD_STOP" target="internal_unlockKey">
             <qt:editorinfo endTargetFactors="6.81;37.05" localGeometry="0;-166.87;-263.98;-166.87;-263.98;-2166.19" movePoint="0;273.23"/>
         </transition>
     </state>
@@ -624,10 +624,10 @@
                         stateMachine()-&gt;submitEvent(&quot;UNLOCK_TRUE&quot;);
                     });
                      }</script>
-            <log label="internal_unlockKey" expr="&quot;Inside internal_unlockKey (to release resource) HALT&quot;"/>
+            <log label="internal_unlockKey" expr="&quot;Inside internal_unlockKey (to release resource) CMD_STOP&quot;"/>
         </onentry>
         <onexit>
-            <log label="internal_unlockKey" expr="&quot;Leaving internal_unlockKey (to release resource) HALT&quot;"/>
+            <log label="internal_unlockKey" expr="&quot;Leaving internal_unlockKey (to release resource) CMD_STOP&quot;"/>
         </onexit>
         <transition type="internal" event="UNLOCK_TRUE" target="internal_halted">
             <qt:editorinfo endTargetFactors="57.75;85.22" localGeometry="-0.14;-127.66;-514.26;-127.66" movePoint="215.18;43.59"/>
@@ -644,13 +644,13 @@
  	      currVal =  currVal +1;
 	      resourceCount = resourceCount-1;
                        }</script>
-            <log label="rollback_writeData" expr="&quot;Inside rollback_writeData (to release resource) HALT&quot;"/>
+            <log label="rollback_writeData" expr="&quot;Inside rollback_writeData (to release resource) CMD_STOP&quot;"/>
             <if cond="retDataBool.reqEval ==VALID">
                 <send event="WRITE_DATA_TRUE"/>
             </if>
         </onentry>
         <onexit>
-            <log label="rollback_writeData" expr="&quot;Leaving rollback_writeData (to release resource) HALT&quot;"/>
+            <log label="rollback_writeData" expr="&quot;Leaving rollback_writeData (to release resource) CMD_STOP&quot;"/>
         </onexit>
         <transition type="internal" event="WRITE_DATA_TRUE" target="internal_unlockKey" cond="retDataBool.reqEval ==VALID"/>
     </state>
@@ -681,7 +681,7 @@
     <state id="internal_halted">
         <qt:editorinfo scenegeometry="320.05;-1566.17;260.05;-1616.17;120;100" geometry="320.05;-1566.17;-60;-50;120;100"/>
         <onentry>
-            <log label="internal_halted" expr="&quot;Inside to internal_halted (to release resource) HALT&quot;"/>
+            <log label="internal_halted" expr="&quot;Inside to internal_halted (to release resource) CMD_STOP&quot;"/>
             <script>Connector connection(client_port.getName(), &quot;/GoToComponent&quot;, &quot;tcp&quot;);
                 goTo.halt(location);</script>
             <send event="RESET" delay="500ms"/>
@@ -690,7 +690,7 @@
             <qt:editorinfo endTargetFactors="21.38;63.30" localGeometry="0;-228.99"/>
         </transition>
         <onexit>
-            <log label="internal_halted" expr="&quot;Leaving to internal_halted (to release resource) HALT&quot;"/>
+            <log label="internal_halted" expr="&quot;Leaving to internal_halted (to release resource) CMD_STOP&quot;"/>
         </onexit>
     </state>
     <state id="success">
@@ -701,10 +701,10 @@
         <onexit>
             <log label="success" expr="&quot;Leaving success&quot;"/>
         </onexit>
-        <transition type="external" event="TICK" target="idle">
+        <transition type="external" event="CMD_START" target="idle">
             <qt:editorinfo endTargetFactors="10.39;40.78" startTargetFactors="50.31;21.73" localGeometry="-28.02;-2713.18"/>
         </transition>
-        <transition type="external" event="HALT" target="halted">
+        <transition type="external" event="CMD_STOP" target="halted">
             <qt:editorinfo endTargetFactors="70.04;85.06" localGeometry="0.52;212.77;4066.27;226.96"/>
         </transition>
     </state>
