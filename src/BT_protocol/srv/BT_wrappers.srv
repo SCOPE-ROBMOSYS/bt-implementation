@@ -1,0 +1,14 @@
+#int64 a non ho input!...only return value
+#int64 b
+---
+#response constants:  enum SkillAck {SKILL_IDLE, SKILL_RUNNING, SKILL_SUCCESS, SKILL_FAILURE, SKILL_STARTED, SKILL_STOPPED}
+uint32 SKILL_IDLE    = 1
+uint32 SKILL_RUNNING = 2
+uint32 SKILL_SUCCESS = 3
+uint32 SKILL_FAILURE = 4
+uint32 SKILL_STARTED = 5
+uint32 SKILL_STOPPED = 6
+#response fields
+uint32 SkillAck
+bool start_sent # added but not necessary, function return void
+bool stop_sent

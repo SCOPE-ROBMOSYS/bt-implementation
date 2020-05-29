@@ -1,5 +1,8 @@
 FROM scoperobmosys/qscxml:latest
 
+# USE BASH
+#SHELL ["/bin/bash", "-c"]
+
 ARG username
 USER root
 
@@ -21,5 +24,47 @@ RUN \
 
 RUN updatedb && \
     ldconfig
+
+
+###########################################################################
+##################### ROS services
+###########################################################################
+
+#RUN sudo rm /bin/sh && ln -s /bin/bash /bin/sh
+#SHELL ["/bin/bash", "-c"]
+
+
+# Download ROS image
+
+FROM ros:melodic
+
+RUN echo "source /opt/ros/melodic/setup.bash" >> /home/$username/.bashrc
+
+# Build catkin ws
+
+ENV catkin_ws_folder /usr/local/src/bt-implementation/src/catkin_ws
+#WORKDIR $catkin_ws_folder
+
+#RUN source /opt/ros/melodic/setup.bash \
+#    # && cd src \
+#    && catkin_init_workspace \
+#    && cd .. \
+#    && catkin_make -j8
+
+#RUN source /opt/ros/melodic/setup.bash
+RUN cd /usr/local/src/bt-implementation/src #/catkin_ws/src
+#RUN catkin_init_workspace
+#RUN cd ..
+#RUN catkin_make -j8
+
+#RUN echo "source $catkin_ws_folder/devel/setup.bash" >> /home/$username/.bashrc
+
+
+# Roslaunch
+
+# run ros package launch file
+
+#CMD [ "roslaunch", "ros-docker-app smart_PANDA_all.launch" ]
+
 
 USER $username
