@@ -1,0 +1,66 @@
+FROM scoperobmosys/qscxml:latest
+
+ARG username
+USER root
+
+ARG cmake_parallel=8
+ENV CMAKE_BUILD_PARALLEL_LEVEL=${cmake_parallel}
+
+# Build bt-implementation project
+COPY . /usr/local/src/bt-implementation/
+RUN \
+    cmake \
+        -H/usr/local/src/bt-implementation \
+        -B/usr/local/src/bt-implementation/build \
+        -DCMAKE_INSTALL_PREFIX=/usr/local \
+        -DCMAKE_BUILD_TYPE=Debug && \
+    cmake --build /usr/local/src/bt-implementation/build && \
+    chown -R $username /usr/local/src/bt-implementation && \
+    mkdir -p /home/$username/logs && \
+    chown -R $username: /home/$username/logs
+
+RUN echo "deb-src http://deb.debian.org/debian/ testing main non-free contrib" >> /etc/apt/sources.list
+RUN apt update
+
+###########################################################################
+##################### utils
+###########################################################################
+
+RUN export DISPLAY=:0.0
+
+#RUN apt-get install -y \
+        #qtcreator
+        #gedit \
+        #libboost-all-dev
+
+RUN apt update
+# RUN apt-get install -y libboost1.71-*
+
+
+###########################################################################
+##################### ROS services
+###########################################################################
+
+
+# ROS installation    - # apt search ros --> to check available ros version in debian
+
+RUN apt install -y lsb-release
+# RUN sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+RUN sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu wheezy main" > /etc/apt/sources.list.d/ros-latest.list'
+RUN sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+RUN apt update
+RUN apt install -y ros-desktop-full
+RUN rosdep update
+
+# Build catkin ws
+
+ENV catkin_ws_folder /usr/local/src/bt-implementation/src/catkin_ws
+WORKDIR $catkin_ws_folder
+#RUN catkin_make
+#RUN echo "source $catkin_ws_folder/devel/setup.bash" >> /home/$username/.bashrc
+
+
+RUN updatedb && \
+    ldconfig
+
+USER $username

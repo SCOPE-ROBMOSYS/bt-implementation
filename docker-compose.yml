@@ -29,6 +29,10 @@ x-navigation-base: &navigation-base
   <<: *base
   image: scoperobmosys/navigation:latest
 
+x-navigation-gazebo-base: &navigation-gazebo-base   # !add
+  <<: *base
+  image: scoperobmosys/navigation-gazebo:latest
+
 x-bt-implementation-base: &bt-implementation-base
   <<: *base
   image: bt-implementation:latest
@@ -57,6 +61,14 @@ services:
     depends_on:
       - yarp-mesa
 
+  navigation-gazebo:                         # !add
+    <<: *navigation-gazebo-base
+    build:
+      <<: *build-base
+      dockerfile: Dockerfile.navigation-gazebo
+    depends_on:
+      - navigation # not needed, just says that this container should be run after navigation container
+
   qscxml:
     <<: *qscxml-base
     build:
@@ -72,7 +84,7 @@ services:
       - qscxml
 
 
-# Containers
+# Containers (just a way to specify containers' name separately, but could be done also within the services declarations)
   yarp-server:
     <<: *yarp-mesa-base
     container_name: yarp-server
@@ -160,6 +172,27 @@ services:
       yarp wait /robot_2wheels/laser:o/rpc:i;
       yarp wait /mapServer/rpc;
       yarpdev --device navigation2DServer --subdevice robotPathPlannerDev --context robotPathPlannerExamples --from robotPathPlanner_robot_2wheels.ini"
+    depends_on:
+      - yarp-server
+      - baseControl
+      - localization2DServer
+      - Rangefinder2DWrapper
+      - map2DServer
+
+ #roscore: not found
+      #sudo xhost +;
+      #nvidia-docker run --rm -it --gpus all -e QT_X11_NO_MITSHM=1 -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -e NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics 35aa8288cbff;
+
+  navigationGazeboServer:
+    <<: *navigation-gazebo-base
+    container_name: navigationGazeboServer
+    command: sh -c "
+      roscore &
+      sleep 1;
+      yarp server --ros &
+      sleep 1;
+      gazebo --verbose /workspace/r1world.world &
+      sleep 3;"
     depends_on:
       - yarp-server
       - baseControl

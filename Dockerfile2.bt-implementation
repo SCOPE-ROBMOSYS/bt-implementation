@@ -1,0 +1,50 @@
+FROM ubuntu:focal
+
+ARG username
+USER root
+
+ARG cmake_parallel=8
+ENV CMAKE_BUILD_PARALLEL_LEVEL=${cmake_parallel}
+
+
+###########################################################################
+##################### utils
+###########################################################################
+
+#RUN apt-get install -y sudo
+
+ARG username
+RUN groupadd --system --gid 1000 scope; \
+    useradd --system --home-dir /home/$username --create-home --shell /bin/bash --uid 1000 --gid 1000 --groups root,sudo $username -p "$(openssl passwd -1 $username)"
+
+
+###########################################################################
+##################### ROS services
+###########################################################################
+
+
+# ROS installation    - # apt search ros --> to check available ros version in debian
+
+#RUN apt install -y lsb-release
+#RUN sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+#RUN sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu focal main" > /etc/apt/sources.list.d/ros-latest.list'
+#RUN sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+RUN apt update
+#RUN apt install -y ros-noetic-desktop-full
+#RUN rosdep update
+#RUN source /opt/ros/noetic/setup.bash
+#RUN echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+#RUN source ~/.bashrc
+
+# Build catkin ws
+
+#ENV catkin_ws_folder /usr/local/src/bt-implementation/src/catkin_ws
+#WORKDIR $catkin_ws_folder
+#RUN catkin_make
+#RUN echo "source $catkin_ws_folder/devel/setup.bash" >> /home/$username/.bashrc
+
+
+#RUN updatedb && \
+#    ldconfig
+
+USER $username
