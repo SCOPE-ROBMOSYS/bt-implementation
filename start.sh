@@ -35,4 +35,9 @@ yarp read /read
 MAP CREATE 3D
 
 yarp server
-/workspaces-iit/Navigation/master/navigation/build/bin$      ./map2Gazebo --from_file maps_SCOPE/map_test.map
+/workspaces-iit/Navigation/master/navigation/build/bin$      ./map2Gazebo --from_file maps_SCOPE/map_test.map --ceiling 2
+
+
+GAZEBO
+
+printenv GAZEBO_MODEL_PATH

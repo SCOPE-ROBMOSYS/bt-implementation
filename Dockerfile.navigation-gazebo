@@ -336,7 +336,7 @@ RUN sudo chown -R $robotology_install_user:$robotology_install_user /home/$robot
 
 
 #vim
-RUN apt-get install -y vim
+#RUN apt-get install -y vim
 
 
 # clone SCOPE repo to use the map generated from 2D sim
@@ -350,6 +350,7 @@ WORKDIR $robotology_install_folder
 
 WORKDIR /workspace
 COPY maps/ /workspace/maps
+ENV GAZEBO_MODEL_PATH=${GAZEBO_MODEL_PATH}:/workspace/maps/:/workspace/maps/Gazebo/
 
 WORKDIR /workspace
 
