@@ -238,6 +238,7 @@ services:
       - yarp-server
       - localization2DServer
 
+#yarp connect /robotGoto/control:o /gazebo/baseControl/control:i udp; # !add
   connect:
     <<: *yarp-mesa-base
     container_name: connect
@@ -252,7 +253,6 @@ services:
       yarp wait /mapClick:o
       yarp wait /navigationGui/yarpviewTarget:i;
       yarp connect /robotGoto/control:o /baseControl/control:i udp;
-      yarp connect /robotGoto/control:o /gazebo/baseControl/control:i udp; # !add
       yarp connect /navigationGui/map:o /navView:i udp;
       yarp connect /robotPathPlanner/commands:o /robotGoto/rpc tcp;
       yarp connect /mapClick:o /navigationGui/yarpviewTarget:i tcp;"

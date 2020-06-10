@@ -335,11 +335,23 @@ RUN sudo chown -R $robotology_install_user:$robotology_install_user /opt/ros
 RUN sudo chown -R $robotology_install_user:$robotology_install_user /home/$robotology_install_user/.ros
 
 
+#vim
+RUN apt-get install -y vim
+
 
 # clone SCOPE repo to use the map generated from 2D sim
 USER $robotology_install_user
-WORKDIR $robotology_install_folder # home/user1/
-RUN git clone https://github.com/SCOPE-ROBMOSYS/bt-implementation.git -b gazebo-sim
+WORKDIR $robotology_install_folder
+
+#RUN git clone https://github.com/SCOPE-ROBMOSYS/bt-implementation.git -b gazebo-sim
+
+#copy the local bt-implementation (you should be in branch gazebo-sim)
+#COPY . $robotology_install_folder
+
+WORKDIR /workspace
+COPY maps/ /workspace/maps
+
+WORKDIR /workspace
 
 
 CMD ["bash"]
