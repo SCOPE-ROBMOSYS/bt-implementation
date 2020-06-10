@@ -324,7 +324,7 @@ RUN sudo updatedb
 USER $robotology_install_user
 WORKDIR /workspace
 COPY --chown=$robotology_install_user:$robotology_install_user $folder_docker_navigation/startup_commands.sh /workspace
-COPY --chown=$robotology_install_user:$robotology_install_user $folder_docker_navigation/startup_commands2.sh /workspace
+#COPY --chown=$robotology_install_user:$robotology_install_user $folder_docker_navigation/startup_commands2.sh /workspace
 RUN chmod +x startup_commands.sh
 COPY --chown=$robotology_install_user:$robotology_install_user $folder_docker_navigation/stop_commands.sh /workspace
 RUN chmod +x stop_commands.sh
@@ -338,8 +338,8 @@ RUN sudo chown -R $robotology_install_user:$robotology_install_user /home/$robot
 
 # clone SCOPE repo to use the map generated from 2D sim
 USER $robotology_install_user
-WORKDIR $robotology_install_folder
-RUN git clone https://github.com/SCOPE-ROBMOSYS/bt-implementation.git -b thrift-as-ROS-services
+WORKDIR $robotology_install_folder # home/user1/
+RUN git clone https://github.com/SCOPE-ROBMOSYS/bt-implementation.git -b gazebo-sim
 
 
 CMD ["bash"]
