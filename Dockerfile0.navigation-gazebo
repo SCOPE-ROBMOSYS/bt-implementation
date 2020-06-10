@@ -334,12 +334,4 @@ COPY --chown=$robotology_install_user:$robotology_install_user $folder_docker_na
 RUN sudo chown -R $robotology_install_user:$robotology_install_user /opt/ros
 RUN sudo chown -R $robotology_install_user:$robotology_install_user /home/$robotology_install_user/.ros
 
-
-
-# clone SCOPE repo to use the map generated from 2D sim
-USER $robotology_install_user
-WORKDIR $robotology_install_folder
-RUN git clone https://github.com/SCOPE-ROBMOSYS/bt-implementation.git -b thrift-as-ROS-services
-
-
 CMD ["bash"]
