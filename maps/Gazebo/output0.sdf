@@ -6,7 +6,7 @@
              <collision name = "collision">
                  <geometry>
                      <heightmap>
-                         <uri>file://home/user1/maps/Gazebo/heightmap.png</uri>
+                         <uri>file://./heightmap.png</uri>
                          <size> 99.200000 99.200000 3.000000 </size>
                          <pos> 0.000000 0.000000 -0.588235 </pos>
                      </heightmap>
@@ -39,7 +39,7 @@
                             <min_height> 0.7 </min_height>
                             <fade_dist> 0 </fade_dist>
                          </blend>
-                         <uri>file://home/user1/maps/Gazebo/heightmap.png</uri>
+                         <uri>file://./heightmap.png</uri>
                          <size> 99.200000 99.200000 3.000000 </size>
                          <pos> 0.000000 0.000000 -0.588235 </pos>
                      </heightmap>

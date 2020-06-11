@@ -348,9 +348,9 @@ WORKDIR $robotology_install_folder
 #copy the local bt-implementation (you should be in branch gazebo-sim)
 #COPY . $robotology_install_folder
 
-WORKDIR /workspace
-COPY maps/ /workspace/maps
-ENV GAZEBO_MODEL_PATH=${GAZEBO_MODEL_PATH}:/workspace/maps/:/workspace/maps/Gazebo/
+WORKDIR $robotology_install_folder
+COPY maps/ $robotology_install_folder/maps
+ENV GAZEBO_MODEL_PATH=${GAZEBO_MODEL_PATH}:$robotology_install_folder/maps/:$robotology_install_folder/maps/Gazebo/
 
 WORKDIR /workspace
 
