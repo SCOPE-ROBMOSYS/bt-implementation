@@ -11,6 +11,9 @@
     datamodel="cplusplus:BatteryNotChargingSkillDataModel:BatteryNotChargingSkillDataModel.h"
     xmlns:scope="http://www.scope.org/scope"
     xmlns:scope_yarp="http://www.scope.org/scope_yarp"
+    binding="early"
+    xmlns:qt="http://www.qt.io/2015/02/scxml-ext"
+    qt:editorversion="4.11.0"
 >
 
 <datamodel>

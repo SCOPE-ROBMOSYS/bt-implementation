@@ -61,20 +61,12 @@
     <transition event="STATUS_FAILED" target="failure" />
     </state>
 
-<<<<<<< HEAD
     <state id="success" scope:bt_status="SKILL_SUCCESS">
         <transition event="REQUEST_ACK" target="idle" />
     </state>
 
     <state id="failure" scope:bt_status="SKILL_FAILURE">
         <transition event="REQUEST_ACK" target="idle" />
-=======
-    <state id="success">
-        <transition event="CMD_OK" target="idle" />
-    </state>
 
-    <state id="failure">
-        <transition event="CMD_OK" target="idle" />
->>>>>>> blackboard-devel
     </state>
 </scxml>
