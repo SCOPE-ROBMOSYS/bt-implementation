@@ -1465,13 +1465,13 @@ bool QScxmlCompilerPrivate::preReadElementState()
     // add DANIELE  !HERE
     if (attributes.hasAttribute(QStringLiteral("http://www.scope.org/scope"), QStringLiteral("bt_status"))) {
         const QString bt_status = attributes.value(QStringLiteral("http://www.scope.org/scope"), QStringLiteral("bt_status")).toString();
-        if (bt_status == QLatin1String("idle")) {
+        if (bt_status == QLatin1String("SKILL_IDLE")) {
             newState->bt_status = DocumentModel::State::Idle;
-        } else if (bt_status == QLatin1String("success")) {
+        } else if (bt_status == QLatin1String("SKILL_SUCCESS")) {
             newState->bt_status = DocumentModel::State::Success;
-        } else if (bt_status == QLatin1String("failure")) {
+        } else if (bt_status == QLatin1String("SKILL_FAILURE")) {
             newState->bt_status = DocumentModel::State::Failure;
-        } else if (bt_status == QLatin1String("running")) {
+        } else if (bt_status == QLatin1String("SKILL_RUNNING")) {
             newState->bt_status = DocumentModel::State::Running;
         // } else if (bt_status == QLatin1String("failure")) {
         //     newState->bt_status = DocumentModel::State::Failure;

@@ -44,7 +44,7 @@
             <log label="wrapper" expr='"Leaving wrapper"'/>
         </onexit>
 
-        <state id="idle" scope:bt_status="idle">
+        <state id="idle" scope:bt_status="SKILL_IDLE">
             <onentry>
                 <log label="wrapper.idle" expr='"Inside idle"'/>
                 <assign location="status" expr="idle"/>
@@ -52,10 +52,10 @@
             <onexit>
                 <log label="wrapper.idle" expr='"Leaving idle"'/>
             </onexit>
-            <transition event="TICK" target="sendrequest" />
+            <transition event="CMD_START" target="sendrequest" />
         </state>
 
-        <state id="sendrequest" scope:bt_status="running">
+        <state id="sendrequest" scope:bt_status="SKILL_RUNNING">
             <onentry>
                 <log label="wrapper.sendrequest" expr='"Inside sendrequest"'/>
                 <script>
@@ -72,7 +72,7 @@
             <transition event="REQUEST_SENT" target="getstatus" />
         </state>
 
-        <state id="getstatus" scope:bt_status="running">
+        <state id="getstatus" scope:bt_status="SKILL_RUNNING">
             <onentry>
                 <log label="wrapper.getstatus" expr='"Inside getstatus"'/>
                 <script>
@@ -126,7 +126,7 @@
             <transition event="STATUS_FAILED" target="failure" />
         </state>
 
-        <state id="success" scope:bt_status="success">
+        <state id="success" scope:bt_status="SKILL_SUCCESS">
             <onentry>
                 <log label="wrapper.success" expr='"Inside success"'/>
             </onentry>
@@ -136,7 +136,7 @@
             <transition event="REQUEST_ACK" target="idle" />
         </state>
 
-        <state id="failure" scope:bt_status="failure">
+        <state id="failure" scope:bt_status="SKILL_FAILURE">
             <onentry>
                 <log label="wrapper.failure" expr='"Inside failure"'/>
             </onentry>
@@ -146,10 +146,10 @@
             <transition event="REQUEST_ACK" target="idle" />
         </state>
 
-        <transition event="HALT" target="halted" />
+        <transition event="CMD_STOP" target="halted" />
     </state>
 
-    <state id="halted" scope:bt_status="running">
+    <state id="halted" scope:bt_status="SKILL_RUNNING">
         <onentry>
             <log label="halted" expr='"Inside halted"'/>
             <script>

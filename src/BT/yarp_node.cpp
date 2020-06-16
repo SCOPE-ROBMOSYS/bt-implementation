@@ -59,15 +59,18 @@ bool YARPNode::init()
 
 NodeStatus YARPNode::tick()
 {
-    yDebug() << "Node" << name << "ticked--------------------------------------------------------------------";
+
+    yDebug() << "Node" << name << "ticked";
 
     m_bt_request.send_start();
+    std::this_thread::sleep_for (std::chrono::milliseconds(100));
+
     SkillAck status = m_bt_request.request_ack();
     while(status==SKILL_IDLE)
     {
         status = m_bt_request.request_ack();
         std::this_thread::sleep_for (std::chrono::milliseconds(100));
-        yDebug() << "Node" << name << "WAITING--------------------------------------------------------------------";
+        yDebug() << "Node" << name  << " status " << int(status) << "WAITING";
 
     }
 
@@ -82,9 +85,10 @@ NodeStatus YARPNode::tick()
        yDebug() << "Node" << name << "returns failure";
         return NodeStatus::FAILURE;
     default:
-       yError() << "Invalid return status for received by node " << name;
+       yError() << "Invalid return status "<< status << "  received by node"   << name;
         break;
     }
+
     return NodeStatus::RUNNING;
 }
 

@@ -44,11 +44,11 @@
 </datamodel>
 
 
-    <state id="idle" scope:bt_status="idle">
-        <transition event="TICK" target="get" />
+    <state id="idle" scope:bt_status="SKILL_IDLE">
+        <transition event="CMD_START" target="get" />
     </state>
 
-    <state id="get" scope:bt_status="idle">
+    <state id="get" scope:bt_status="SKILL_IDLE">
         <onentry>
             <script>
             level = batteryReader.level();
@@ -61,11 +61,11 @@
     <transition event="STATUS_FAILED" target="failure" />
     </state>
 
-    <state id="success" scope:bt_status="success">
+    <state id="success" scope:bt_status="SKILL_SUCCESS">
         <transition event="REQUEST_ACK" target="idle" />
     </state>
 
-    <state id="failure" scope:bt_status="failure">
+    <state id="failure" scope:bt_status="SKILL_FAILURE">
         <transition event="REQUEST_ACK" target="idle" />
     </state>
 </scxml>

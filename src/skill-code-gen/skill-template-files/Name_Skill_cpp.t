@@ -42,24 +42,27 @@ bool @KEY_SKILL_NAME@Skill::start()
 
 SkillAck @KEY_SKILL_NAME@Skill::request_ack()
 {
-    while (true) {
+  //stateMachine.submitEvent("REQUEST_ACK");
+
+  //  while (true) {
         auto states = stateMachine.activeStateNames();
 
         for (const auto& state : states) {
 @KEY_SKILL_STATES@
         }
-    }
-    stateMachine.submitEvent("REQUEST_ACK");
+
+        qWarning("ERROR something wrong in request_ack");
+
+  //  }
 
 }
 
 void @KEY_SKILL_NAME@Skill::send_start()
 {
-    stateMachine.submitEvent("TICK");
-    //return request_ack();
+    stateMachine.submitEvent("CMD_START",  QStateMachine::HighPriority);
 }
 
 void @KEY_SKILL_NAME@Skill::send_stop()
 {
-    stateMachine.submitEvent("HALT",  QStateMachine::HighPriority);
+    stateMachine.submitEvent("CMD_STOP",  QStateMachine::HighPriority);
 }
