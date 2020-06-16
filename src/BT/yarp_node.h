@@ -37,4 +37,3 @@ protected:
     mutable Skill_request m_bt_request; // mutable because status() is const
 
 };
-

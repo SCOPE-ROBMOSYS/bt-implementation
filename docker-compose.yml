@@ -250,20 +250,24 @@ services:
     container_name: GoToDestination
     command: sh -c "
       yarp wait /GoToComponent;
+      yarp wait /BlackboardComponent;
       gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --skill-name GoToDestination --location kitchen"
     depends_on:
       - yarp-server
       - GoToComponent
+      - BlackboardComponent
 
   GoToChargingStation:
     <<: *bt-implementation-base
     container_name: GoToChargingStation
     command: sh -c "
       yarp wait /GoToComponent;
+      yarp wait /BlackboardComponent;
       gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --skill-name GoToChargingStation --location charging_station"
     depends_on:
       - yarp-server
       - GoToComponent
+      - BlackboardComponent
 
   IsAtDestination:
     <<: *bt-implementation-base

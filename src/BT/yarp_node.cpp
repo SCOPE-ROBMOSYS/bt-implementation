@@ -47,7 +47,7 @@ bool YARPNode::init()
     }
 
 
-    if (!m_bt_request.yarp().attachAsClient(m_rpc_client))
+    if (!m_skill_request.yarp().attachAsClient(m_rpc_client))
     {
         yError() << "Could not attach as client to " << m_server_port_name;
         return false;

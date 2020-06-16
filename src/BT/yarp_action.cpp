@@ -43,4 +43,3 @@ void YARPAction::halt()
     m_bt_request.send_stop();
     // send halt request to server
 }
-

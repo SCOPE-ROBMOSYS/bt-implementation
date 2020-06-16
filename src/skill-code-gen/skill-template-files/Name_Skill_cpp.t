@@ -57,6 +57,7 @@ SkillAck @KEY_SKILL_NAME@Skill::request_ack()
 
 }
 
+<<<<<<< HEAD:src/skill-code-gen/skill-template-files/Name_Skill_cpp.t
 void @KEY_SKILL_NAME@Skill::send_start()
 {
     stateMachine.submitEvent("CMD_START",  QStateMachine::HighPriority);
@@ -65,4 +66,15 @@ void @KEY_SKILL_NAME@Skill::send_start()
 void @KEY_SKILL_NAME@Skill::send_stop()
 {
     stateMachine.submitEvent("CMD_STOP",  QStateMachine::HighPriority);
+=======
+void BatteryLevelSkill::send_start()
+{
+    stateMachine.submitEvent("CMD_START");
+    //return request_ack();
+}
+
+void BatteryLevelSkill::send_stop()
+{
+    stateMachine.submitEvent("CMD_STOP");
+>>>>>>> blackboard-devel:src/BatteryLevel_skill/BatteryLevelSkill.cpp
 }

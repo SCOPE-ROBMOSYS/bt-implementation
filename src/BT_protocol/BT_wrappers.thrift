@@ -31,14 +31,12 @@ service Skill_request {
      *
      * return               void.
      */
-
-    void send_start()
-
+    void send_start();
 
     /**
-     * request_stop  Send a cmd_stop skill.
+     * send_stop  Send a CMD_STOP request to the skill.
      *
      * return              void.
      */
-      void send_stop()
+     void send_stop();
 }
