@@ -22,6 +22,8 @@ Simulation:
 The Gazebo simulation starts and the cer robot moves according to the signal received in yarp port:
  /baseControl/control:i
 
+This is possible since all the containers share the same yarp name list.
+
 Other comments:
 
 - In case the command

@@ -1,0 +1,48 @@
+< ? xml version = "1.0" ? >
+ <sdf version = "1.5">
+     <model name = "heightmap">
+         <static> true </static>
+         <link name = "link">
+             <collision name = "collision">
+                 <geometry>
+                     <heightmap>
+                         <uri>file://home/matteo/workspaces-iit/SCOPE/bt-implementation/maps/Gazebo/heightmap.png</uri>
+                         <pos> 0.000000 0.000000 -0.588235 </pos>
+                     </heightmap>
+                 </geometry>
+             </collision>
+             <visual name = "visual_abcedf">
+                 <geometry>
+                     <heightmap>
+                         <use_terrain_paging> false </use_terrain_paging>
+                         <texture>
+                            <diffuse>file://media/materials/textures/grass.jpg</diffuse>
+                            <normal>file://media/materials/textures/flat_normal.png</normal>
+                            <size> 1 </size>
+                         </texture>
+                         <texture>
+                            <diffuse>file://media/materials/textures/ceiling_tiled.jpg</diffuse>
+                            <normal>file://media/materials/textures/flat_normal.png</normal>
+                            <size> 1 </size>
+                         </texture>
+                         <texture>
+                            <diffuse>file://media/materials/textures/white.bmp</diffuse>
+                            <normal>file://media/materials/textures/flat_normal.png</normal>
+                            <size> 1 </size>
+                         </texture>
+                         <blend>
+                            <min_height> 0.1 </min_height>
+                            <fade_dist> 0 </fade_dist>
+                         </blend>
+                         <blend>
+                            <min_height> 0.7 </min_height>
+                            <fade_dist> 0 </fade_dist>
+                         </blend>
+                         <uri>file://home/matteo/workspaces-iit/SCOPE/bt-implementation/maps/Gazebo/heightmap.png</uri>
+                         <pos> 0.000000 0.000000 -0.588235 </pos>
+                     </heightmap>
+                 </geometry>
+             </visual>
+         </link>
+     </model>
+ </sdf>

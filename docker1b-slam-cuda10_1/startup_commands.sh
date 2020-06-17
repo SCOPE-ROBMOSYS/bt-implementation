@@ -4,7 +4,7 @@ yarp server --ros &
 sleep 1;
 #gazebo --verbose /workspace/r1world.world &
 #gazebo --verbose /home/user1/bt-implementation/maps/Gazebo/output.sdf &
-gazebo --verbose /home/user1/maps/Gazebo/output.world &
+gazebo --verbose /home/user1/maps/Gazebo/simple_office.world &
 sleep 3;
 baseControl --silent --from /home/user1/navigation/app/baseControl_SIM/conf/baseCtrl_cer_sim.ini --skip_robot_interface_check &
 sleep 1;

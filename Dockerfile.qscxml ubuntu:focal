@@ -1,4 +1,4 @@
-FROM debian:testing
+FROM ubuntu:focal
 
 LABEL maintainer="daniele.domenichelli@iit.it"
 
@@ -7,8 +7,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install libqt5scxml5-private-dev, qt5remoteobjects, KDStateMachineEditor, and
 # GammaRay from pre-built .deb
 COPY deb/*.deb /tmp/
-RUN echo "deb-src http://deb.debian.org/debian/ testing main non-free contrib" >> /etc/apt/sources.list && \
-    apt-get update -qq && \
+#RUN echo "deb-src http://deb.debian.org/debian/ testing main non-free contrib" >> /etc/apt/sources.list && \
+RUN apt-get update -qq && \
     apt-get dist-upgrade --autoremove --purge -qq -y && \
     apt-get install -y \
         libqt5scxml5-dev \
