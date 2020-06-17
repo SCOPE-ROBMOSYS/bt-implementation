@@ -7,7 +7,7 @@
 using namespace std;
 
 struct SkillConfig {
-    bool specify_port_name_attribute;
+    bool specify_port_name_client_attribute;
     vector<string> port_name_list;
 };
 

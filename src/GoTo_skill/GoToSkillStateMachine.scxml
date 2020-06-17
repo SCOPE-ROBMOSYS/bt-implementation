@@ -21,21 +21,22 @@
 
 <!--  Services:  -->
 
-<data id="goTo"
-      scope_yarp:service_type="GoTo"
-      scope_yarp:connect_type="tcp"
-      scope_yarp:thrift_protocol="GoTo"
-      scope_yarp:service_function="multiple"
-      scope_yarp:port_name_attribute="location"
-      />
-
+      <data id="goTo"
+            scope_yarp:service_type="GoTo"
+            scope_yarp:connect_type="tcp"
+            scope_yarp:thrift_protocol="GoTo"
+            scope_yarp:service_function="multiple"
+            scope_yarp:port_name_client_prefix="Goto"
+            scope_yarp:port_name_client_attribute="location"
+            scope_yarp:port_name_server="/GotoComponent"
+            />
 
       <data id="blackboard"
             scope_yarp:service_type="Blackboard"
             scope_yarp:connect_type="tcp"
             scope_yarp:thrift_protocol="Blackboard"
             scope_yarp:service_function="multiple"
-            scope_yarp:port_name_attribute="location"
+            scope_yarp:port_name_client_attribute="location"
             />
 
 <!--  Attributes:  -->

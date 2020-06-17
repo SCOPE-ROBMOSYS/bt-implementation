@@ -39,8 +39,8 @@ bool SkillConfigReader::ReadConfig(){
     {
         std::string line;
         while(getline(text, line)){//parse each single line
-            if (line.find("port_name_attribute")!=std::string::npos){ // only if specified
-                SC_.specify_port_name_attribute=true;
+            if (line.find("port_name_client_attribute")!=std::string::npos){ // only if specified
+                SC_.specify_port_name_client_attribute=true;
 
                 auto detectedPosition = line.find(":"); // detect only the delimiter because it returns the start position of the searched string
                 if (detectedPosition!=std::string::npos){
@@ -52,7 +52,7 @@ bool SkillConfigReader::ReadConfig(){
                 }
 
             }else{
-                SC_.specify_port_name_attribute=false;
+                SC_.specify_port_name_client_attribute=false;
 //                cout << "\n\nCONFIG READER DEBUG:\n SC_.port_name -> " << "NOT FOUND" << "\n\n";
             }
 

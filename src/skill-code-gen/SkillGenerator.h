@@ -99,7 +99,7 @@ struct SkillDescription {
     vector<Service> UsedServices;
     vector<Attribute> UsedAttributes;
     vector<ClientPort> UsedClientPorts;
-    bool specify_port_name_attribute;
+    bool specify_port_name_client_attribute;
     bool add_constructor; //for not default constructor
     vector<Attribute> ListAttributesParsedAsOption;
 };

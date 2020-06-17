@@ -436,9 +436,9 @@ void SkillGenerator::Generate_Skill_DataModel_cpp(){
     string all_clients ="";
     //string all_ports ="";
     string single_port = "";
-    if(SD_.ListAttributesParsedAsOption.size()==1){ // if(Skill_Config_.specify_port_name_attribute)
+    if(SD_.ListAttributesParsedAsOption.size()>0){ // if(Skill_Config_.specify_port_name_client_attribute)
         // additional name spec if needed
-        string port_name_specific = SD_.ListAttributesParsedAsOption[0].name_instance.toStdString(); //Skill_Config_.port_name_list[0];
+        string port_name_specific = SD_.ListAttributesParsedAsOption[0].name_instance.toStdString(); // assume that the specifier is always the first option
         single_port = "    if (!client_port.open(\"/" + SD_.skill_name.toStdString() + "Client/\" + " + port_name_specific + ")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
     }else{
         single_port = "    if (!client_port.open(\"/" + SD_.skill_name.toStdString() + "Client\")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;

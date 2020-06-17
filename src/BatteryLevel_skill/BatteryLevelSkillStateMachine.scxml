@@ -22,7 +22,7 @@
           scope_yarp:connect_type="tcp"
           scope_yarp:thrift_protocol="Battery"
           scope_yarp:service_function="level"
-          scope_yarp:port_name_attribute="default"
+          scope_yarp:port_name_client_attribute="default"
           />
 
 <!--    <data id="bb_instance_name"
@@ -30,7 +30,7 @@
           scope_yarp:connect_type="tcp"
           scope_yarp:thrift_protocol="Blackboard"
           scope_yarp:service_function="multiple"
-          scope_yarp:port_name_attribute="default"
+          scope_yarp:port_name_client_attribute="default"
           />-->
 
 <!--  Attributes:  -->
