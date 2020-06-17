@@ -149,6 +149,7 @@ private:
 
     string GenerateListConstructorParameters (vector<string> ListParamToAssign_data_type, vector<string> ListParamToAssign_name_instance);
     string GenerateListConstructorParametersAssign (vector<string> ListMemberAttributes, vector<string> ListParamToAssign);
+    string GenerateListConstructorParametersAssignParsedAsOption (vector<string> ListParamToAssign);
     string GenerateListConstructorParametersPassArgs (vector<string> ListParamToAssign_name_instance);
 
     int write();

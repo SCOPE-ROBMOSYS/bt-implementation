@@ -154,6 +154,21 @@ string SkillGenerator::GenerateListConstructorParametersAssign (vector<string> L
     return output;
 }
 
+string SkillGenerator::GenerateListConstructorParametersAssignParsedAsOption (vector<string> ListParamToAssign){
+    string output ="dataModel("; //name of the object instance of type GoToSkillDataModel (that takes in input all the list of params)
+    for(unsigned int i=0; i<ListParamToAssign.size(); i++){
+        output = output + "std::move(" +    ListParamToAssign[i] + ")"; // insert in the constructor of datamodel object all the parameters parsed as option from docker-compose.yml
+        if(i!= (ListParamToAssign.size()-1) ){
+            output = output + ", ";
+        }else{
+          output = output + ")";
+        }
+    }
+    return output;
+}
+
+
+
 void SkillGenerator::Generate_Main(){
 
     QFile template_file(":/skill-template-files/main_cpp.t");   //    QFile template_file (path_template_ + "main_cpp.t");
@@ -311,11 +326,7 @@ void SkillGenerator::Generate_Skill_cpp(){
         string space = ",\n        ";
         attrib_2 = attrib_2 + space;
         vector<string> ListParamToAssign = GenerateStringList_name_instance(SD_.ListAttributesParsedAsOption);
-        vector<string> ListMemberAttributes;
-        for(unsigned int i=0; i<ListParamToAssign.size(); i++){
-            ListMemberAttributes.push_back("dataModel"); // to check!
-        }
-        attrib_2 = attrib_2 + GenerateListConstructorParametersAssign (ListMemberAttributes, ListParamToAssign);
+        attrib_2 = attrib_2 + GenerateListConstructorParametersAssignParsedAsOption (ListParamToAssign);
     }
     QString value_CONSTRUCTOR_ATTRIBUTES_p2 = QString::fromStdString(attrib_2);
     dataText.replace(KEY_CONSTRUCTOR_ATTRIBUTES_p2, value_CONSTRUCTOR_ATTRIBUTES_p2);
@@ -564,6 +575,7 @@ int SkillGenerator::write()
                 attribute.value = data->expr;
                 attribute.init_source = data->init_source;
                 SD_.UsedAttributes.push_back(attribute);
+                // SD_.add_constructor = false; //default
                 if(attribute.init_source.toStdString() == "parse_as_option"){
                    SD_.add_constructor = true;
                    SD_.ListAttributesParsedAsOption.push_back(attribute);
