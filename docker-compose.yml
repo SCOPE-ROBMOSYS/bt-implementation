@@ -251,7 +251,7 @@ services:
     command: sh -c "
       yarp wait /GoToComponent;
       yarp wait /BlackboardComponent;
-      gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --skill-name GoToDestination --location kitchen"
+      gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --skill-name GoToDestination --location kitchen --skillID goToClient_kitchen"
     depends_on:
       - yarp-server
       - GoToComponent
@@ -263,7 +263,7 @@ services:
     command: sh -c "
       yarp wait /GoToComponent;
       yarp wait /BlackboardComponent;
-      gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --skill-name GoToChargingStation --location charging_station"
+      gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --skill-name GoToChargingStation --location charging_station --skillID goToClient_charging_station"
     depends_on:
       - yarp-server
       - GoToComponent

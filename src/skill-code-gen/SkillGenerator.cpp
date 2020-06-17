@@ -201,7 +201,7 @@ void SkillGenerator::Generate_Main(){
     QRegularExpression  KEY_ADDITIONAL_OPTION_PARSE("@KEY_ADDITIONAL_OPTION_PARSE@");
     string all_instances_options = "";
     for(unsigned int i=0; i<SD_.ListAttributesParsedAsOption.size(); i++){
-        string single_instance = "    parser.addOption({{\"l\", \"" + SD_.ListAttributesParsedAsOption[i].name_instance.toStdString() + "\"}, \"The <" + SD_.ListAttributesParsedAsOption[i].name_instance.toStdString() + "> attribute.\", \"" + SD_.ListAttributesParsedAsOption[i].name_instance.toStdString() + "\", \"" + SD_.skill_name.toStdString() + "\"});\n";
+        string single_instance = "    parser.addOption({\"" + SD_.ListAttributesParsedAsOption[i].name_instance.toStdString() + "\", \"The <" + SD_.ListAttributesParsedAsOption[i].name_instance.toStdString() + "> attribute.\", \"" + SD_.ListAttributesParsedAsOption[i].name_instance.toStdString() + "\", \"" + SD_.skill_name.toStdString() + "\"});\n";
         all_instances_options  =  all_instances_options + single_instance;
     }
     QString value_ADDITIONAL_OPTION_PARSE = QString::fromStdString(all_instances_options);
