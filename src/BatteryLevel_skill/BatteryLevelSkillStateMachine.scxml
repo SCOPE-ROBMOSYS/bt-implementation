@@ -22,16 +22,10 @@
           scope_yarp:connect_type="tcp"
           scope_yarp:thrift_protocol="Battery"
           scope_yarp:service_function="level"
+          scope_yarp:port_name_client_prefix="BatteryLevel"
           scope_yarp:port_name_client_attribute="default"
+          scope_yarp:port_name_server="/BatteryComponent"
           />
-
-<!--    <data id="bb_instance_name"
-          scope_yarp:service_type="Blackboard"
-          scope_yarp:connect_type="tcp"
-          scope_yarp:thrift_protocol="Blackboard"
-          scope_yarp:service_function="multiple"
-          scope_yarp:port_name_client_attribute="default"
-          />-->
 
 <!--  Attributes:  -->
 

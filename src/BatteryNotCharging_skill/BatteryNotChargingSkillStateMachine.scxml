@@ -25,7 +25,9 @@
           scope_yarp:connect_type="tcp"
           scope_yarp:thrift_protocol="Battery"
           scope_yarp:service_function="charging_status"
+          scope_yarp:port_name_client_prefix="BatteryNotCharging"
           scope_yarp:port_name_client_attribute="default"
+          scope_yarp:port_name_server="/BatteryComponent"
           />
 
 <!--  Attributes:  -->
