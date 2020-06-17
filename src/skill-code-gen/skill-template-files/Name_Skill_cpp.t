@@ -59,7 +59,7 @@ SkillAck @KEY_SKILL_NAME@Skill::request_ack()
 
 void @KEY_SKILL_NAME@Skill::send_start()
 {
-    stateMachine.submitEvent("CMD_START",  QStateMachine::HighPriority);
+    stateMachine.submitEvent("CMD_START");
 }
 
 void @KEY_SKILL_NAME@Skill::send_stop()

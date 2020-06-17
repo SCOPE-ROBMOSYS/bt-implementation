@@ -4,18 +4,44 @@
  * All Rights Reserved.                                                       *
  *                                                                            *
  ******************************************************************************/
+enum requestEvaluation{
+  UNKNOWN,
+  VALID,
+  INVALID_KEY,
+  UNAUTHORIZED_CLIENT
+}
 
-struct Data { }
-(
-  yarp.name = "yarp::os::Bottle"
-  yarp.includefile="yarp/os/Bottle.h"
-)
+struct DataInt32 {
+  1: i32 dataValue;
+  2: requestEvaluation reqEval = requestEvaluation.UNKNOWN; 
+}
+
+struct DataFloat64 {
+  1: double dataValue;
+  2: requestEvaluation reqEval = requestEvaluation.UNKNOWN; 
+}
+
+struct DataString {
+  1: string dataValue;
+  2: requestEvaluation reqEval = requestEvaluation.UNKNOWN; 
+}
+
+struct DataBool {
+  1: bool dataValue;
+  2: requestEvaluation reqEval = requestEvaluation.UNKNOWN; 
+}
 
 service Blackboard {
-    Data getData(1: string target)
-    bool setData(1: string target, 2: Data datum)
-    void clearData(1: string target)
-    void clearAll()
-    void resetData()
-    list<string> listAll()
+  DataBool lock(1: string skillID, 2: string target)
+  DataBool unlock(1: string skillID, 2: string target)
+  DataInt32 readDataInt32(1: string skillID, 2: string target)
+  DataString readDataString(1: string skillID, 2: string target)
+  DataFloat64 readDataFloat64(1: string skillID, 2: string target)
+  DataBool writeDataInt32(1: string skillID, 2: string target, 3: i32 datum)
+  DataBool writeDataString(1: string skillID, 2: string target, 3: string datum)
+  DataBool writeDataFloat64(1: string skillID, 2: string target, 3: double datum)
+  void clearData(1: string target)
+  void clearAll()
+  void resetData()
+  list<string> listAll()
 }

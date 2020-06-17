@@ -67,5 +67,6 @@
 
     <state id="failure" scope:bt_status="SKILL_FAILURE">
         <transition event="REQUEST_ACK" target="idle" />
+
     </state>
 </scxml>
