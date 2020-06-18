@@ -451,13 +451,13 @@ void SkillGenerator::Generate_Skill_DataModel_cpp(){
       if(SD_.UsedServices[i].port_name_client_attribute.toStdString()!="default"){ // if(Skill_Config_.specify_port_name_client_attribute)
           // additional name spec if needed
           string port_name_attribute = SD_.UsedServices[i].port_name_client_attribute.toStdString(); // assume that the specifier is always the first option
-          single_port = "    if (!client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".open(\"/" + SD_.UsedServices[i].service_type.toStdString() + "Client/\" + " + port_name_attribute + ")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
+          single_port = "    if (!client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".open(\"/" + SD_.UsedServices[i].service_type.toStdString() + "Client/\" + " + port_name_attribute + ")) {\n       qWarning(\"Error! Cannot open YARP port with command: client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".open(/" + SD_.UsedServices[i].service_type.toStdString() + "Client/" + port_name_attribute + ") \" );\n       return false;\n    }\n\n" ;
       }else{
-          single_port = "    if (!client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".open(\"/" + SD_.UsedServices[i].service_type.toStdString() + "Client\")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
+          single_port = "    if (!client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".open(\"/" + SD_.UsedServices[i].service_type.toStdString() + "Client\")) {\n       qWarning(\"Error! Cannot open YARP port with command: client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".open(/" + SD_.UsedServices[i].service_type.toStdString() + "Client) \" );\n       return false;\n    }\n\n" ;
       }
       all_ports = all_ports + single_port;
 
-      string single_client = "    if(!" + SD_.UsedServices[i].name_instance.toStdString() + ".yarp().attachAsClient(client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ")) {\n       qWarning(\"Error! Could not attach as client\");\n       return false;\n    }\n";
+      string single_client = "    if(!" + SD_.UsedServices[i].name_instance.toStdString() + ".yarp().attachAsClient(client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ")) {\n       qWarning(\"Error! Could not attach as client with command : " + SD_.UsedServices[i].name_instance.toStdString() + ".yarp().attachAsClient(client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ") \"  );\n       return false;\n    }\n";
       all_clients = all_clients + single_client;
     }
     string merge = "    // open ports\n\n" + all_ports + "    // attach services as clients\n\n" + all_clients;
@@ -469,7 +469,7 @@ void SkillGenerator::Generate_Skill_DataModel_cpp(){
     QRegularExpression KEY_OPEN_CONNECTIONS_TO_COMPONENTS("@OPEN_CONNECTIONS_TO_COMPONENTS@");
     string all_components ="";
     for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
-        all_components = all_components + "    if (!yarp::os::Network::connect(client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".getName(), \"" + SD_.UsedServices[i].port_name_server.toStdString()  + "\", \"" + SD_.UsedServices[i].connect_type.toStdString() + "\")) {\n        qWarning(\"Error! Could not connect to server\");\n        return false;\n    }\n" ; //port_name_server SD_.UsedServices[i].thrift_protocol.toStdString()  + "Component
+        all_components = all_components + "    if (!yarp::os::Network::connect(client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".getName(), \"" + SD_.UsedServices[i].port_name_server.toStdString()  + "\", \"" + SD_.UsedServices[i].connect_type.toStdString() + "\")) {\n        qWarning(\"Error! Could not connect to server : " + SD_.UsedServices[i].port_name_server.toStdString()  + " \" );\n        return false;\n    }\n" ; //port_name_server SD_.UsedServices[i].thrift_protocol.toStdString()  + "Component
     }
     all_components = "    // open connections to components\n\n" + all_components;
     QString value_OPEN_CONNECTIONS_TO_COMPONENTS = QString::fromStdString(all_components);
