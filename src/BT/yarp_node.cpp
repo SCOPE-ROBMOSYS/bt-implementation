@@ -61,12 +61,15 @@ NodeStatus YARPNode::tick()
 {
 
     yDebug() << "Node" << name << "ticked";
-
-    m_bt_request.send_start();
-    std::this_thread::sleep_for (std::chrono::milliseconds(100));
-
     SkillAck status = m_bt_request.request_ack();
-    while(status==SKILL_IDLE)
+
+    if(status == SKILL_IDLE)
+    {
+      m_bt_request.send_start();
+      std::this_thread::sleep_for (std::chrono::milliseconds(100));
+    }
+    status = m_bt_request.request_ack();
+    while(status == SKILL_IDLE)
     {
         status = m_bt_request.request_ack();
         std::this_thread::sleep_for (std::chrono::milliseconds(100));
