@@ -23,6 +23,7 @@
           scope_yarp:thrift_protocol="GoTo"
           scope_yarp:service_function="isAtLocation"
           scope_yarp:port_name_client_attribute="location"
+          scope_yarp:port_name_server="/GoToComponent"
           />
 
 <!--  Attributes:  -->
