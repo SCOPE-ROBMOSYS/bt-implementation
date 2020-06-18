@@ -451,9 +451,9 @@ void SkillGenerator::Generate_Skill_DataModel_cpp(){
       if(SD_.UsedServices[i].port_name_client_attribute.toStdString()!="default"){ // if(Skill_Config_.specify_port_name_client_attribute)
           // additional name spec if needed
           string port_name_attribute = SD_.UsedServices[i].port_name_client_attribute.toStdString(); // assume that the specifier is always the first option
-          single_port = "    if (!client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".open(\"/" + SD_.UsedServices[i].service_type.toStdString() + "Client/\" + " + port_name_attribute + ")) {\n       qWarning(\"Error! Cannot open YARP port with command: client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".open(/" + SD_.UsedServices[i].service_type.toStdString() + "Client/" + port_name_attribute + ") \" );\n       return false;\n    }\n\n" ;
+          single_port = "    if (!client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".open(\"/" + SD_.UsedServices[i].service_type.toStdString() +  SD_.skill_name.toStdString() + "Client/\" + " + port_name_attribute + ")) {\n       qWarning(\"Error! Cannot open YARP port with command: client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".open(/" + SD_.UsedServices[i].service_type.toStdString() + "Client/" + port_name_attribute + ") \" );\n       return false;\n    }\n\n" ;
       }else{
-          single_port = "    if (!client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".open(\"/" + SD_.UsedServices[i].service_type.toStdString() + "Client\")) {\n       qWarning(\"Error! Cannot open YARP port with command: client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".open(/" + SD_.UsedServices[i].service_type.toStdString() + "Client) \" );\n       return false;\n    }\n\n" ;
+          single_port = "    if (!client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".open(\"/" + SD_.UsedServices[i].service_type.toStdString()+ SD_.skill_name.toStdString() + "Client\")) {\n       qWarning(\"Error! Cannot open YARP port with command: client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".open(/" + SD_.UsedServices[i].service_type.toStdString() + "Client) \" );\n       return false;\n    }\n\n" ;
       }
       all_ports = all_ports + single_port;
 
