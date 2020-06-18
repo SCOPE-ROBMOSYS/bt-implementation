@@ -114,12 +114,18 @@ struct DataElement: public Node
     QString content;
 
     // scope_yarp data
+
+    //attributes fields
     QString cpp_type;
-    QString service_type;
-    QString thrift_protocol; //component_type;
-    QString client_port_name;
     QString init_source;
+
+    //services fields
+    QString service_type;
     QString connect_type;
+    QString thrift_protocol;
+    QString service_function;
+    QString port_name_client_attribute;
+    QString port_name_server;
 
     DataElement(const XmlLocation &xmlLocation): Node(xmlLocation) {}
     DataElement *asDataElement() override { return this; } // add !HERE --- override della function di Node

@@ -1720,13 +1720,18 @@ bool QScxmlCompilerPrivate::preReadElementData() // datamodel parser
     data->expr = attributes.value(QLatin1String("expr")).toString();
 
     // scope data
+
+    //attributes fields
     data->cpp_type         = attributes.value(QStringLiteral("http://www.scope.org/scope"), QLatin1String("cpp_type")).toString();
     data->init_source      = attributes.value(QStringLiteral("http://www.scope.org/scope"), QLatin1String("init_source")).toString();
-    // scope_yarp data
+
+    //services fields
     data->service_type     = attributes.value(QStringLiteral("http://www.scope.org/scope_yarp"), QLatin1String("service_type")).toString();
-    data->thrift_protocol  = attributes.value(QStringLiteral("http://www.scope.org/scope_yarp"), QLatin1String("thrift_protocol")).toString();
-    data->client_port_name = attributes.value(QStringLiteral("http://www.scope.org/scope_yarp"), QLatin1String("client_port_name")).toString();
     data->connect_type     = attributes.value(QStringLiteral("http://www.scope.org/scope_yarp"), QLatin1String("connect_type")).toString();
+    data->thrift_protocol  = attributes.value(QStringLiteral("http://www.scope.org/scope_yarp"), QLatin1String("thrift_protocol")).toString();
+    data->service_function = attributes.value(QStringLiteral("http://www.scope.org/scope_yarp"), QLatin1String("service_function")).toString();
+    data->port_name_client_attribute = attributes.value(QStringLiteral("http://www.scope.org/scope_yarp"), QLatin1String("port_name_client_attribute")).toString();
+    data->port_name_server = attributes.value(QStringLiteral("http://www.scope.org/scope_yarp"), QLatin1String("port_name_server")).toString();
 
     if (DocumentModel::Scxml *scxml = m_currentState->asScxml()) {
         scxml->dataElements.append(data);

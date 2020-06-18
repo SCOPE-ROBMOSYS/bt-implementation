@@ -55,8 +55,7 @@ public:
 
     yarp::os::Network yarp;
 
-    yarp::os::RpcClient client_port;
-    //@KEY_LIST_PORTS_SERVICES@
+    @KEY_LIST_PORTS_SERVICES@
 
     @KEY_LIST_PUBLIC_ATTRIBUTES@
 };

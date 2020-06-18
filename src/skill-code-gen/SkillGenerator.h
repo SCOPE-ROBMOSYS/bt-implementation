@@ -71,9 +71,11 @@ struct State{
 struct Service{
     QString name_instance;
     QString service_type;
-    QString thrift_protocol;
-    QString client_port_name;
     QString connect_type;
+    QString thrift_protocol;
+    QString service_function;
+    QString port_name_client_attribute;
+    QString port_name_server;
 };
 
 struct Attribute{

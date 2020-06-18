@@ -22,7 +22,6 @@
           scope_yarp:connect_type="tcp"
           scope_yarp:thrift_protocol="Battery"
           scope_yarp:service_function="level"
-          scope_yarp:port_name_client_prefix="BatteryLevel"
           scope_yarp:port_name_client_attribute="default"
           scope_yarp:port_name_server="/BatteryComponent"
           />

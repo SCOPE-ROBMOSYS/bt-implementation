@@ -364,7 +364,19 @@ void SkillGenerator::Generate_Skill_DataModel_h(){
     QString value_INCLUDE_THRIFT_SERVICE = QString::fromStdString(str_include);
     dataText.replace(KEY_INCLUDE_THRIFT_SERVICE, value_INCLUDE_THRIFT_SERVICE);
 
-    // 2.2: KEY_LIST_PUBLIC_ATTRIBUTES
+    // 2.2.1: @KEY_LIST_PORTS_SERVICES@
+    QRegularExpression KEY_LIST_PORTS_SERVICES("@KEY_LIST_PORTS_SERVICES@");
+    string all_instances_ports = "";
+    // list of services
+    for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
+        // e.g. yarp::os::RpcClient client_port_NAME;
+        string single_instance = "yarp::os::RpcClient client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ";\n    ";
+        all_instances_ports = all_instances_ports + single_instance;
+    }
+    QString value_LIST_PORTS_SERVICES = QString::fromStdString(all_instances_ports);
+    dataText.replace(KEY_LIST_PORTS_SERVICES, value_LIST_PORTS_SERVICES);
+
+    // 2.2.2: KEY_LIST_PUBLIC_ATTRIBUTES
     QRegularExpression KEY_LIST_PUBLIC_ATTRIBUTES("@KEY_LIST_PUBLIC_ATTRIBUTES@");
     string all_instances = "";
     // list of services
@@ -432,23 +444,23 @@ void SkillGenerator::Generate_Skill_DataModel_cpp(){
     // 2.2  @OPEN_PORTS_AND_ATTACH_CLIENTS@
     QRegularExpression KEY_OPEN_PORTS_AND_ATTACH_CLIENTS("@OPEN_PORTS_AND_ATTACH_CLIENTS@");
 
-    string merge ="";
+    string all_ports ="";
     string all_clients ="";
-    //string all_ports ="";
     string single_port = "";
-    if(SD_.ListAttributesParsedAsOption.size()>0){ // if(Skill_Config_.specify_port_name_client_attribute)
-        // additional name spec if needed
-        string port_name_specific = SD_.ListAttributesParsedAsOption[0].name_instance.toStdString(); // assume that the specifier is always the first option
-        single_port = "    if (!client_port.open(\"/" + SD_.skill_name.toStdString() + "Client/\" + " + port_name_specific + ")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
-    }else{
-        single_port = "    if (!client_port.open(\"/" + SD_.skill_name.toStdString() + "Client\")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
-    }
-    // all_ports = all_ports + single_port;
     for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
-        string single_client = "    if(!" + SD_.UsedServices[i].name_instance.toStdString() + ".yarp().attachAsClient(client_port)) {\n       qWarning(\"Error! Could not attach as client\");\n       return false;\n    }\n";
-        all_clients = all_clients + single_client;
+      if(SD_.ListAttributesParsedAsOption.size()>0){ // if(Skill_Config_.specify_port_name_client_attribute)
+          // additional name spec if needed
+          string port_name_attribute = SD_.ListAttributesParsedAsOption[0].name_instance.toStdString(); // assume that the specifier is always the first option
+          single_port = "    if (!client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".open(\"/" + SD_.skill_name.toStdString() + "Client/\" + " + port_name_attribute + ")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
+      }else{
+          single_port = "    if (!client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".open(\"/" + SD_.skill_name.toStdString() + "Client\")) {\n       qWarning(\"Error! Cannot open YARP port\");\n       return false;\n    }\n\n" ;
+      }
+      all_ports = all_ports + single_port;
+
+      string single_client = "    if(!" + SD_.UsedServices[i].name_instance.toStdString() + ".yarp().attachAsClient(client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ")) {\n       qWarning(\"Error! Could not attach as client\");\n       return false;\n    }\n";
+      all_clients = all_clients + single_client;
     }
-    merge = "    // open port\n\n" + single_port + "    // attach services as clients\n\n" + all_clients;
+    string merge = "    // open ports\n\n" + all_ports + "    // attach services as clients\n\n" + all_clients;
 
     QString value_OPEN_PORTS_AND_ATTACH_CLIENTS = QString::fromStdString(merge);
     dataText.replace(KEY_OPEN_PORTS_AND_ATTACH_CLIENTS, value_OPEN_PORTS_AND_ATTACH_CLIENTS);
@@ -457,7 +469,7 @@ void SkillGenerator::Generate_Skill_DataModel_cpp(){
     QRegularExpression KEY_OPEN_CONNECTIONS_TO_COMPONENTS("@OPEN_CONNECTIONS_TO_COMPONENTS@");
     string all_components ="";
     for(unsigned int i=0; i<SD_.UsedServices.size(); i++){
-        all_components = all_components + "    if (!yarp::os::Network::connect(client_port.getName(), \"/" + SD_.UsedServices[i].thrift_protocol.toStdString()  + "Component\", \"" + SD_.UsedServices[i].connect_type.toStdString() + "\")) {\n        qWarning(\"Error! Could not connect to server\");\n        return false;\n    }\n" ;
+        all_components = all_components + "    if (!yarp::os::Network::connect(client_port_" + SD_.UsedServices[i].name_instance.toStdString() + ".getName(), \"" + SD_.UsedServices[i].port_name_server.toStdString()  + "\", \"" + SD_.UsedServices[i].connect_type.toStdString() + "\")) {\n        qWarning(\"Error! Could not connect to server\");\n        return false;\n    }\n" ; //port_name_server SD_.UsedServices[i].thrift_protocol.toStdString()  + "Component
     }
     all_components = "    // open connections to components\n\n" + all_components;
     QString value_OPEN_CONNECTIONS_TO_COMPONENTS = QString::fromStdString(all_components);
@@ -556,7 +568,7 @@ int SkillGenerator::write()
             }
             #ifdef _DEBUG
                 cout << "\n\n ************ ACTUAL TEST************  \n\n ";
-                qDebug() << data->id << data->expr << data->cpp_type << data->thrift_protocol << data->service_type  << data->client_port_name << data->init_source << data->connect_type;
+                //qDebug() << data->id << data->expr << data->cpp_type << data->thrift_protocol << data->service_type  << data->client_port_name << data->init_source << data->connect_type;
                 cout << "\n\n ************ end ACTUAL TEST************  \n\n ";
             #endif
             // access to data element
@@ -564,9 +576,11 @@ int SkillGenerator::write()
                 Service service;
                 service.name_instance = data->id;
                 service.service_type = data->service_type;
-                service.thrift_protocol = data->thrift_protocol;
-                service.client_port_name = data->client_port_name;
                 service.connect_type = data->connect_type;
+                service.thrift_protocol = data->thrift_protocol;
+                service.service_function = data->service_function;
+                service.port_name_client_attribute = data->port_name_client_attribute;
+                service.port_name_server = data->port_name_server;
                 SD_.UsedServices.push_back(service);
             }else if(data->cpp_type != ""){ // means that the data represents an attribute!
                 Attribute attribute;
@@ -580,10 +594,6 @@ int SkillGenerator::write()
                    SD_.add_constructor = true;
                    SD_.ListAttributesParsedAsOption.push_back(attribute);
                 }
-            }else if(data->client_port_name != ""){ // not needed
-                ClientPort port;
-                port.client_port_name = data->client_port_name;
-                SD_.UsedClientPorts.push_back(port);
             }
         }
     }
