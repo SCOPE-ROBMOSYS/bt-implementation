@@ -35,3 +35,32 @@ This functionality is particularly useful to differentiate the execution of mult
 Server port:
 
 The port connected at the server side is named using the field "scope_yarp:port_name_server". By convention, it contains the name of the component involved.
+
+
+
+<datamodel>
+
+<!--  Attributes:  -->
+
+<data id="location"
+      scope:cpp_type="const std::string"
+      expr="none"
+      scope:init_source="parse_as_option"
+      />
+
+</datamodel>
+
+Each attribute contains the initialization directives for a variable needed by the state machine.
+The field "id" contains the name of the variable of the type specified in "scope:cpp_type".
+
+A variable might be initialized inside the header file of the skill (will be added automatically), if the source is filled with scope:init_source="initialize_inside_header".
+The initialization tackles the value of "expr" (it should be consistent with the cpp_type).
+
+Altenatively, scope:init_source="parse_as_option" imply that the "expr" field is not considered, while the attribute is parsed by the application start-up file,
+that contains the command line commands. In our implementation, this role is accomplished by the docker-compose.yml.
+
+As an example, the location variable is parsed (for each GoTo executable) by:
+
+gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --skill-name GoToDestination --location kitchen"
+
+In this case "kitchen" is the destination of the skill.
