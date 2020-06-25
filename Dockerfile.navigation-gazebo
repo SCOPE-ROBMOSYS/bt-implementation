@@ -123,7 +123,7 @@ ENV robotology_install_user user1
 
 #gazebo models
 RUN mkdir -p $user1_home/.gazebo
-RUN hg clone https://bitbucket.org/osrf/gazebo_models $user1_home/.gazebo/models
+RUN hg clone https://github.com/osrf/gazebo_models $user1_home/.gazebo/models
 RUN echo "export PATH=$PATH:$robotology_install_folder/navigation/build/bin" >> $user1_home/.bashrc
 RUN echo "source /opt/ros/melodic/setup.bash" >> $user1_home/.bashrc
 
