@@ -7,6 +7,10 @@ docker-compose build navigation-gazebo
 $ sudo xhost +
 $ nvidia-docker run --rm -it --gpus all -e QT_X11_NO_MITSHM=1 -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -e NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics --hostname dockerpc --net="host" scoperobmosys/navigation-gazebo
 
+In case your computer do not have a graphic card (GPU), run the following:
+
+nvidia-docker run --rm -it --gpus 0 -e QT_X11_NO_MITSHM=1 -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -e NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics --hostname dockerpc --net="host" scoperobmosys/navigation-gazebo
+
 You should be able to see the ports of the other docker containers, being the network set to the host machine.
 Run the Gazebo application:
 
