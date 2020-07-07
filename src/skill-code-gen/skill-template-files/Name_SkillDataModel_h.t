@@ -5,8 +5,7 @@
  *                                                                            *
  ******************************************************************************/
 
-#ifndef BATTERYNOTCHARGING_SKILL_BATTERYNOTCHARGINGDATAMODEL_H
-#define BATTERYNOTCHARGING_SKILL_BATTERYNOTCHARGINGDATAMODEL_H
+#pragma once
 
 #include <QScxmlCppDataModel>
 #include <QVariantMap>
@@ -15,9 +14,10 @@
 #include <QTimer>
 #include <QDebug>
 
-#include "BatteryReader.h"
 #include <yarp/os/Network.h>
 #include <yarp/os/RpcClient.h>
+
+@INCLUDE_THRIFT_SERVICE@
 
 struct Connector
 {
@@ -43,21 +43,21 @@ struct Connector
     std::string m_carrier;
 };
 
-class BatteryNotChargingSkillDataModel: public QScxmlCppDataModel
+class @KEY_SKILL_NAME@SkillDataModel: public QScxmlCppDataModel
 {
     Q_OBJECT
     Q_SCXML_DATAMODEL
 
 public:
-    BatteryNotChargingSkillDataModel();
+    @CONSTRUCTOR@
 
     bool setup(const QVariantMap& initialDataValues) override;
 
     yarp::os::Network yarp;
-    yarp::os::RpcClient client_port;
-    BatteryReader batteryReader;
+
+    @KEY_LIST_PORTS_SERVICES@
+
+    @KEY_LIST_PUBLIC_ATTRIBUTES@
 };
 
-Q_DECLARE_METATYPE(::BatteryNotChargingSkillDataModel*)
-
-#endif // BATTERYNOTCHARGING_SKILL_BATTERYNOTCHARGINGDATAMODEL_H
+Q_DECLARE_METATYPE(::@KEY_SKILL_NAME@SkillDataModel*)

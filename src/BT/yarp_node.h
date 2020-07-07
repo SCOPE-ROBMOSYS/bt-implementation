@@ -34,7 +34,6 @@ private:
     string m_carrier;
     yarp::os::RpcClient m_rpc_client;
 protected:
-    mutable Skill_request m_skill_request; // mutable because status() is const
+    mutable Skill_request m_bt_request; // mutable because status() is const
 
 };
-

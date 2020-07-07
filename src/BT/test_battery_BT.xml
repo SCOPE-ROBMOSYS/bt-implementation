@@ -13,11 +13,17 @@
                     <Condition ID="YARPCondition" name="BatteryNotCharging" port_name="BatteryNotChargingSkill"/>
                 </ReactiveSequence>
                 <ReactiveSequence>
-                    <Action ID="YARPAction" name="GoToChargingStation" port_name=""/>
+                  <ReactiveFallback>
+                      <Condition ID="YARPCondition" name="IsAtChargingStation" port_name=""/>
+                       <Action ID="YARPAction" name="GoToChargingStation"/>
+                  </ReactiveFallback>
                     <Action ID="AlwaysRunning" name="Wait"/>
                 </ReactiveSequence>
             </ReactiveFallback>
-            <Action ID="YARPAction" name="GoToDestination" port_name="goTo"/>
+            <ReactiveFallback>
+                <Condition ID="YARPCondition" name="IsAtDestination" port_name=""/>
+                 <Action ID="YARPAction" name="GoToDestination" port_name="goTo"/>
+            </ReactiveFallback>
         </ReactiveSequence>
     </BehaviorTree>
     <!-- ////////// -->
@@ -31,4 +37,3 @@
     </TreeNodesModel>
     <!-- ////////// -->
 </root>
-

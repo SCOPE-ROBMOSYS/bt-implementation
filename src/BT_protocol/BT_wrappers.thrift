@@ -5,7 +5,16 @@
  *                                                                            *
  ******************************************************************************/
 
-
+ /**
+ * Enumerates the states every node can be in after execution during a particular
+ * time step:
+ * - "SKILL_SUCCESS" indicates that the node has completed running during this time step;
+ * - "SKILL_FAILURE" indicates that the node has determined it will not be able to complete
+ *   its task;
+ * - "SKILL_RUNNING" indicates that the node has successfully moved forward during this
+ *   time step, but the task is not yet complete;
+ * - "SKILL_IDLE" indicates that the node hasn't run yet.
+ */
 enum SkillAck {SKILL_IDLE, SKILL_RUNNING, SKILL_SUCCESS, SKILL_FAILURE, SKILL_STARTED, SKILL_STOPPED}
 
 service Skill_request {
@@ -13,14 +22,14 @@ service Skill_request {
     /**
      * request_ack  Get the ack of the skill.
      *
-     * return              The enum indicating the ack.
+     * return              The enum indicating the ack of the skill..
      */
-    SkillAck request_ack();
+    SkillAck request_ack()
 
     /**
-     * send_start  Send a CMD_START sto the skill.
+     * request_stop  Send a cmd_start skill.
      *
-     * return               The enum indicating the status of the action on the server side.
+     * return               void.
      */
     void send_start();
 

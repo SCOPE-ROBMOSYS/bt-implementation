@@ -5,16 +5,14 @@
  *                                                                            *
  ******************************************************************************/
 
-#include "BatteryNotChargingSkillDataModel.h"
+#include "@KEY_SKILL_NAME@SkillDataModel.h"
 #include <QDebug>
+#include <QTimer>
 #include <QScxmlStateMachine>
 
-BatteryNotChargingSkillDataModel::BatteryNotChargingSkillDataModel()
-{
-    qDebug() << "BatteryNotChargingSkillDataModel::BatteryNotChargingSkillDataModel() called";
-}
+@ADD_CONSTRUCTOR@
 
-bool BatteryNotChargingSkillDataModel::setup(const QVariantMap &initialDataValues)
+bool @KEY_SKILL_NAME@SkillDataModel::setup(const QVariantMap &initialDataValues)
 {
     Q_UNUSED(initialDataValues)
 
@@ -23,15 +21,9 @@ bool BatteryNotChargingSkillDataModel::setup(const QVariantMap &initialDataValue
         return false;
     }
 
-    if (!client_port.open("/BatteryNotChargingClient")) {
-        qWarning("Error! Cannot open YARP port");
-        return false;
-    }
+@OPEN_PORTS_AND_ATTACH_CLIENTS@
 
-    if(!batteryReader.yarp().attachAsClient(client_port)) {
-        qWarning("Error! Could not attach as client");
-        return false;
-    }
+@OPEN_CONNECTIONS_TO_COMPONENTS@
 
     return true;
 }

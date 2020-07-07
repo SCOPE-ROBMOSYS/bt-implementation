@@ -59,15 +59,22 @@ bool YARPNode::init()
 
 NodeStatus YARPNode::tick()
 {
+
     yDebug() << "Node" << name << "ticked";
+    SkillAck status = m_bt_request.request_ack();
 
-    m_skill_request.send_start();
-
-    SkillAck status = m_skill_request.request_ack();
-    while(status==SKILL_IDLE)
+    if(status == SKILL_IDLE)
     {
-        status = m_skill_request.request_ack();
+      m_bt_request.send_start();
+      std::this_thread::sleep_for (std::chrono::milliseconds(100));
+    }
+    status = m_bt_request.request_ack();
+    while(status == SKILL_IDLE)
+    {
+        status = m_bt_request.request_ack();
         std::this_thread::sleep_for (std::chrono::milliseconds(100));
+        yDebug() << "Node" << name  << " status " << int(status) << "WAITING";
+
     }
 
     switch (status) {
@@ -81,9 +88,10 @@ NodeStatus YARPNode::tick()
        yDebug() << "Node" << name << "returns failure";
         return NodeStatus::FAILURE;
     default:
-       yError() << "Invalid return status for received by node " << name;
+       yError() << "Invalid return status "<< status << "  received by node"   << name;
         break;
     }
+
     return NodeStatus::RUNNING;
 }
 
@@ -91,7 +99,7 @@ NodeStatus YARPNode::tick()
 NodeStatus YARPNode::status() const
 {
     yDebug() << "Node" << name << "getting status";
-    SkillAck status = m_skill_request.request_ack();
+    SkillAck status = m_bt_request.request_ack();
     switch (status) {
     case SKILL_RUNNING:
        yDebug() << "Node" << name << "returns running";

@@ -5,22 +5,21 @@
  *                                                                            *
  ******************************************************************************/
 
-#ifndef BATTERYLEVEL_SKILL_BATTERYLEVELSKILL_H
-#define BATTERYLEVEL_SKILL_BATTERYLEVELSKILL_H
+# pragma once
 
 #include <Skill_request.h>
 
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/Network.h>
 
-#include "BatteryLevelSkillStateMachine.h"
-#include "BatteryLevelSkillDataModel.h"
+#include "@KEY_SKILL_NAME@SkillStateMachine.h"
+#include "@KEY_SKILL_NAME@SkillDataModel.h"
 
-class BatteryLevelSkill:
+class @KEY_SKILL_NAME@Skill:
         public Skill_request
 {
 public:
-    BatteryLevelSkill(std::string name);
+    @KEY_SKILL_NAME@Skill(std::string name @KEY_CONSTRUCTOR_ATTRIBUTES_p1@);
 
     bool start();
 
@@ -32,8 +31,6 @@ private:
     std::string name;
     yarp::os::Network yarpnet;
     yarp::os::RpcServer port;
-    BatteryLevelSkillDataModel dataModel;
-    BatteryLevelSkillStateMachine stateMachine;
+    @KEY_SKILL_NAME@SkillDataModel dataModel;
+    @KEY_SKILL_NAME@SkillStateMachine stateMachine;
 };
-
-#endif // BATTERYLEVEL_SKILL_BATTERYLEVELSKILL_H
