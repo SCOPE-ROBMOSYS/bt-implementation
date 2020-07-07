@@ -362,6 +362,16 @@ services:
       - yarp-server
       - BatteryComponent
 
+  FetchSkill:
+    <<: *bt-implementation-base
+    container_name: FetchSkill
+    command: sh -c "
+      yarp wait /ArmComponent;
+      gammaray /usr/local/src/bt-implementation/build/bin/FetchSkill"
+    depends_on:
+      - yarp-server
+      - ArmComponent
+
 
   BlackboardComponent:
     <<: *bt-implementation-base
@@ -369,6 +379,15 @@ services:
     command: sh -c "
       yarp wait /root;
       cd /usr/local/src/bt-implementation/build/bin && ./BlackboardComponent"
+    depends_on:
+      - yarp-server
+
+  ArmComponent:
+    <<: *bt-implementation-base
+    container_name: ArmComponent
+    command: sh -c "
+      yarp wait /root;
+      /usr/local/src/bt-implementation/build/bin/ArmComponent"
     depends_on:
       - yarp-server
 

@@ -24,6 +24,7 @@
                 <Condition ID="YARPCondition" name="IsAtDestination" port_name=""/>
                  <Action ID="YARPAction" name="GoToDestination" port_name="goTo"/>
             </ReactiveFallback>
+            <Action ID="YARPAction" name="Fetch"/>
         </ReactiveSequence>
     </BehaviorTree>
     <!-- ////////// -->
