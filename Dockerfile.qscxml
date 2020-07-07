@@ -234,9 +234,9 @@ COPY *.patch /tmp/
 RUN git clone --branch master https://github.com/BehaviorTree/Groot.git /usr/local/src/Groot && \
     git -C /usr/local/src/Groot config --local user.email "daniele.domenichelli@iit" && \
     git -C /usr/local/src/Groot config --local user.name "Daniele E. Domenichelli" && \
-    git -C /usr/local/src/Groot am /tmp/0001-Fix-build-with-BehaviorTree.CPP-library-installed-on.patch && \
-    git -C /usr/local/src/Groot am /tmp/0002-Always-build-behavior_tree_editor-as-STATIC.patch && \
-    git -C /usr/local/src/Groot am /tmp/0003-Fix-build-with-latest-BT.CPP.patch && \
+    #git -C /usr/local/src/Groot am /tmp/0001-Fix-build-with-BehaviorTree.CPP-library-installed-on.patch && \
+    #git -C /usr/local/src/Groot am /tmp/0002-Always-build-behavior_tree_editor-as-STATIC.patch && \
+    #git -C /usr/local/src/Groot am /tmp/0003-Fix-build-with-latest-BT.CPP.patch && \
     git -C /usr/local/src/Groot config --local --remove-section user && \
     cmake \
         -H/usr/local/src/Groot \
