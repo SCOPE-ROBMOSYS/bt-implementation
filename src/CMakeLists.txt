@@ -32,8 +32,11 @@ add_subdirectory(GoTo_skill)
 add_subdirectory(BatteryLevel_skill)
 
 add_subdirectory(BatteryNotCharging_skill)
+
 add_subdirectory(IsAt_skill)
 add_subdirectory(Fetch_skill)
+
+add_subdirectory(IsFetched_skill)
 
 #add_subdirectory(BatteryLevel_skill)
 #add_subdirectory(BatteryNotCharging_skill)

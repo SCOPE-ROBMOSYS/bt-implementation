@@ -28,11 +28,11 @@
 
           <!--  Attributes:  -->
 
-              <data id="is_ok"
-                    scope:cpp_type="bool"
-                    expr="false"
-                    scope:init_source="initialize_inside_header"
-                    />
+    <data id="is_ok"
+          scope:cpp_type="bool"
+          expr="false"
+          scope:init_source="initialize_inside_header"
+          />
 </datamodel>
 
 

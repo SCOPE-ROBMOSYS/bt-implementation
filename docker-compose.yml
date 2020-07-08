@@ -76,7 +76,7 @@ services:
   yarp-server:
     <<: *yarp-mesa-base
     container_name: yarp-server
-    command: yarp server --read
+    command: sh -c " yarp conf 192.168.100.10 10000; yarp namespace /cer02"
 
   IdComponent:
     <<: *bt-implementation-base
@@ -386,7 +386,6 @@ services:
     <<: *bt-implementation-base
     container_name: ArmComponent
     command: sh -c "
-      yarp wait /root;
       /usr/local/src/bt-implementation/build/bin/ArmComponent"
     depends_on:
       - yarp-server

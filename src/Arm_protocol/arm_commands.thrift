@@ -9,8 +9,10 @@
 
 service ArmService {
     bool preGrasp();
-    bool extractHand();    
-    bool retractHand();  
+    bool extractHand();
+    bool retractHand();
     bool closeHand();
+    bool openHand();
+    bool hasGrasped();
     bool home();
 }

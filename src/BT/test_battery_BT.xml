@@ -21,10 +21,19 @@
                 </ReactiveSequence>
             </ReactiveFallback>
             <ReactiveFallback>
+                <Condition ID="YARPCondition" name="IsFetched" port_name=""/>
+                <ReactiveSequence>
+                  <ReactiveFallback>
+                      <Condition ID="YARPCondition" name="IsAtUser" port_name=""/>
+                       <Action ID="YARPAction" name="GoToUser" port_name="goTo"/>
+                  </ReactiveFallback>
+                  <Action ID="YARPAction" name="Fetch"/>
+                </ReactiveSequence>
+            </ReactiveFallback>
+            <ReactiveFallback>
                 <Condition ID="YARPCondition" name="IsAtDestination" port_name=""/>
                  <Action ID="YARPAction" name="GoToDestination" port_name="goTo"/>
             </ReactiveFallback>
-            <Action ID="YARPAction" name="Fetch"/>
         </ReactiveSequence>
     </BehaviorTree>
     <!-- ////////// -->

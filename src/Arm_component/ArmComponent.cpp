@@ -17,7 +17,7 @@
 
 #include <thread>
 #include <chrono>
-
+#include <iostream>
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace std;
@@ -40,6 +40,9 @@ public:
         m_client_port_wrist.open(m_client_name_wrist);
         m_client_port_hand.open(m_client_name_hand);
 
+        yarp.connect(m_client_name_arm, m_server_name_arm);
+        yarp.connect(m_client_name_wrist, m_server_name_wrist);
+        yarp.connect(m_client_name_hand, m_server_name_hand);
 
         this->yarp().attachAsServer(server_port);
         if (!server_port.open("/ArmComponent"))
@@ -188,7 +191,7 @@ public:
         cmd.addString("set");
         cmd.addString("pos");
         cmd.addInt32(0);
-        cmd.addDouble(m_hand_target);
+        cmd.addDouble(m_hand_closed_target);
 
         m_client_port_hand.write(cmd,response);
 
@@ -198,7 +201,7 @@ public:
         cmd.addString("set");
         cmd.addString("pos");
         cmd.addInt32(1);
-        cmd.addDouble(m_hand_target);
+        cmd.addDouble(m_hand_closed_target);
 
         m_client_port_hand.write(cmd,response);
 
@@ -207,11 +210,78 @@ public:
         return true;
     }
 
+    bool openHand() override
+    {
+        yInfo("openHand");
+
+        Bottle cmd, response;
+        cmd.addString("set");
+        cmd.addString("pos");
+        cmd.addInt32(0);
+        cmd.addDouble(35);
+
+        m_client_port_hand.write(cmd,response);
+
+
+        cmd.clear();
+        response.clear();
+        cmd.addString("set");
+        cmd.addString("pos");
+        cmd.addInt32(1);
+        cmd.addDouble(20);
+
+        m_client_port_hand.write(cmd,response);
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+
+        return true;
+    }
+
+    bool hasGrasped() override
+    {
+        yInfo("hasGrasped");
+
+        Bottle cmd, response;
+        cmd.addString("get");
+        cmd.addString("enc");
+        cmd.addInt32(0);
+
+        m_client_port_hand.write(cmd,response);
+        double value_0 = response.get(2).asDouble();
+
+        response.clear();
+        cmd.addString("get");
+        cmd.addString("enc");
+        cmd.addInt32(1);
+
+        m_client_port_hand.write(cmd,response);
+
+        double value_1 = response.get(2).asDouble();
+
+        std::cout << value_0 <<  " "<< value_1<< std::endl;
+        bool has_grasped = (value_0 < 60  && value_0 > 40 && value_1 < 60 && value_1 > 40);
+
+        if (has_grasped)
+        {
+          yInfo("something in the hand");
+        }
+        else
+        {
+          yInfo("nothing in the hand");
+        }
+
+
+        return has_grasped;
+
+    }
+
     bool home() override
     {
         yInfo("home");
         return true;
     }
+
+
 
 private:
 
@@ -231,7 +301,8 @@ private:
 
     double m_arm_target = 40;
     double m_wrist_target = 0.1;
-    double m_hand_target = 90;
+    double m_hand_closed_target = 80;
+    double m_hand_open_target = 20;
 
 };
 
