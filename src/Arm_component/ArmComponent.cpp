@@ -259,7 +259,7 @@ public:
         double value_1 = response.get(2).asDouble();
 
         std::cout << value_0 <<  " "<< value_1<< std::endl;
-        bool has_grasped = (value_0 < 60  && value_0 > 40 && value_1 < 60 && value_1 > 40);
+        bool has_grasped = ( value_0 > 40 && value_1 > 40);
 
         if (has_grasped)
         {

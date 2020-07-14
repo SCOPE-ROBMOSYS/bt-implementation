@@ -25,9 +25,9 @@ public:
         yarp::os::Property pnavclient_cfg;
         pnavclient_cfg.put("device", "navigation2DClient");
         pnavclient_cfg.put("local", "/GoToComponent/navigation2DClient");
-        pnavclient_cfg.put("navigation_server", "/navigationServer");
+        pnavclient_cfg.put("navigation_server", "/navigationServer_amcl");
         pnavclient_cfg.put("map_locations_server", "/mapServer");
-        pnavclient_cfg.put("localization_server", "/localizationServer");
+        pnavclient_cfg.put("localization_server", "/localizationServer_amcl");
 
         if (!ddnavclient.open(pnavclient_cfg)) {
             yError("Could not open navigation2DClient");
@@ -60,7 +60,7 @@ public:
         yWarning("goTo called with destination %s", destination.c_str());
 
         std::lock_guard<std::mutex> lock(mtx);
-        if(!inav->checkInsideArea(destination)) {
+        if(!inav->checkNearToLocation(destination, 0.1)) {
             inav->gotoTargetByLocationName(destination);
         }
         running = true;
@@ -90,7 +90,7 @@ public:
         switch(status) {
         case yarp::dev::Nav2D::navigation_status_idle:
             if (running) {
-                if(inav->checkInsideArea(destination)) {
+                if(inav->checkNearToLocation(destination, 0.1)) {
                     return SUCCESS;
                 } else {
                     return RUNNING;
@@ -136,11 +136,11 @@ public:
 
     bool isAtLocation(const std::string& destination) override
     {
-        yWarning("checkInsideArea called with destination %s", destination.c_str());
+        yWarning("checkNearToLocation called with destination %s", destination.c_str());
 
         std::lock_guard<std::mutex> lock(mtx);
 
-        if (inav->checkInsideArea(destination)){
+        if (inav->checkNearToLocation(destination, 0.1)){
             return true;
         }else{
             return false;

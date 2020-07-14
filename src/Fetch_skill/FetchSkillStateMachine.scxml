@@ -62,11 +62,23 @@
             });
         </script>
     </onentry>
-    <transition event="STATUS_SUCCESS" target="close" />
+    <transition event="STATUS_SUCCESS" target="open" />
     <transition event="STATUS_FAILED" target="failure" />
     </state>
 
-
+    <state id="open" scope:bt_status="SKILL_RUNNING">
+        <onentry>
+            <script>
+            is_ok = armService.openHand();
+            QTimer::singleShot(0, stateMachine(), [=](){
+                stateMachine()->submitEvent((is_ok) ? "STATUS_SUCCESS" : "STATUS_FAILED");
+            });
+        </script>
+    </onentry>
+    <transition event="STATUS_SUCCESS" target="close" />
+    <transition event="STATUS_FAILED" target="failure" />
+    </state>
+    
     <state id="close" scope:bt_status="SKILL_RUNNING">
         <onentry>
             <script>
