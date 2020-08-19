@@ -38,7 +38,7 @@
 ****************************************************************************/
 
 #include "qscxmlcompiler_p.h"
-#include "qscxmlexecutablecontent_p.h"
+#include "private/qscxmlexecutablecontent_p.h"
 
 #include <qxmlstream.h>
 #include <qloggingcategory.h>
