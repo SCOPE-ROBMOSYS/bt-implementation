@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 //                       QCoreApplication::translate("main", "root path."));
 
 
-//    QCommandLineOption rootPath(QStringList() << "o" << "opt", QCoreApplication::translate("main", "Option is: rootPath") \
+//    QCommandLineOption rootPath(QStringList() << "o" << "opt", QCoreApplication::translate("main", "Option is: rootPath")
 //                                       ,QCoreApplication::translate("main", "opt"), "2");
 //    cmdParser.addOption(rootPath);
 //    QString opt2 = cmdParser.value(rootPath);

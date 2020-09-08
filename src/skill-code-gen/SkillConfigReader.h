@@ -1,28 +1,25 @@
 #ifndef SKILLCONFIGREADER_H
 #define SKILLCONFIGREADER_H
 
-#include <string>
-#include <vector>
+#include <QString>
+#include <QStringList>
 
-using namespace std;
-
-struct SkillConfig {
+struct SkillConfig
+{
     bool specify_port_name_client_attribute;
-    vector<string> port_name_list;
+    QStringList port_name_list;
 };
 
 class SkillConfigReader
 {
 public:
-    SkillConfigReader(string file);
+    SkillConfigReader(QString file);
 
-    SkillConfig ReturnConfig();
-    bool ReadConfig();
-    bool init();
+    SkillConfig getConfig();
+    bool readConfig();
 
-    string file_;
-    SkillConfig SC_; // result
-private:
+    QString m_file;
+    SkillConfig m_skillConfig;
 };
 
 #endif // SKILLCONFIGREADER_H

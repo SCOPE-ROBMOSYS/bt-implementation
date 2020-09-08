@@ -6,64 +6,47 @@
  ******************************************************************************/
 #include "SkillConfigReader.h"
 
-#include <iostream>
-#include <fstream> //file stream classes
-#include <algorithm>
-#include <string>
+#include <QDebug>
+#include <QFile>
 
-using namespace std;
-
-SkillConfigReader::SkillConfigReader(string file):
-    file_(file)
+SkillConfigReader::SkillConfigReader(QString file) :
+        m_file(std::move(file))
 {
 }
 
-SkillConfig SkillConfigReader::ReturnConfig(){ //used to return the value outside
-    if (!init()){
-        //
-    }
-    ReadConfig();
-    return SC_;
+//used to return the value outside
+SkillConfig SkillConfigReader::getConfig()
+{
+    readConfig();
+    return m_skillConfig;
 }
 
-bool SkillConfigReader::init(){
+bool SkillConfigReader::readConfig()
+{
+    QFile file(m_file);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Couldn't open config file for reading.";
+        return false;
+    }
+    while (!file.atEnd()) {
+        QByteArray line = file.readLine();
+        if (line.contains("port_name_client_attribute")) {
+            // only if specified
+            m_skillConfig.specify_port_name_client_attribute = true;
+
+            // detect only the delimiter because it returns the start
+            // position of the searched string
+            auto detectedPosition = line.indexOf(':');
+            if (detectedPosition != -1) {
+                auto key_port_name = line.left(detectedPosition);
+                auto value_port_name = line.mid(detectedPosition + 1);
+                m_skillConfig.port_name_list.push_back(value_port_name);
+            }
+        } else {
+            m_skillConfig.specify_port_name_client_attribute = false;
+        }
+    }
 
     return true;
 }
-
-bool SkillConfigReader::ReadConfig(){
-
-    std::ifstream text (file_);
-
-    if (text.is_open())
-    {
-        std::string line;
-        while(getline(text, line)){//parse each single line
-            if (line.find("port_name_client_attribute")!=std::string::npos){ // only if specified
-                SC_.specify_port_name_client_attribute=true;
-
-                auto detectedPosition = line.find(":"); // detect only the delimiter because it returns the start position of the searched string
-                if (detectedPosition!=std::string::npos){
-                    auto key_port_name = line.substr(0, detectedPosition);
-                    auto value_port_name = line.substr(detectedPosition + 1); // remaining part
-                    SC_.port_name_list.push_back(value_port_name);
-                    int i = SC_.port_name_list.size()-1;
-                    cout << "\n\nCONFIG READER DEBUG:\n SC_.port_name -> " << SC_.port_name_list[i] << "\n\n";
-                }
-
-            }else{
-                SC_.specify_port_name_client_attribute=false;
-//                cout << "\n\nCONFIG READER DEBUG:\n SC_.port_name -> " << "NOT FOUND" << "\n\n";
-            }
-
-        }
-        return true;
-    }
-    else {
-        std::cerr << "Couldn't open config file for reading.\n";
-        return false;
-    }
-}
-
-
-

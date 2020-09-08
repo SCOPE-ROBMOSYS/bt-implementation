@@ -10,7 +10,7 @@
 #include <QTimer>
 #include <QDebug>
 #include <QTime>
-#include <qstatemachine.h>
+#include <QStateMachine>
 
 @KEY_SKILL_NAME@Skill::@KEY_SKILL_NAME@Skill(std::string name @KEY_CONSTRUCTOR_ATTRIBUTES_p1@) :
         name(std::move(name))@KEY_CONSTRUCTOR_ATTRIBUTES_p2@
@@ -42,19 +42,11 @@ bool @KEY_SKILL_NAME@Skill::start()
 
 SkillAck @KEY_SKILL_NAME@Skill::request_ack()
 {
-  //stateMachine.submitEvent("REQUEST_ACK");
-
-  //  while (true) {
-        auto states = stateMachine.activeStateNames();
-
-        for (const auto& state : states) {
+    while (true) {
+        for (const auto& state : stateMachine.activeStateNames()) {
 @KEY_SKILL_STATES@
         }
-
-        qWarning("ERROR something wrong in request_ack");
-
-  //  }
-
+    }
 }
 
 void @KEY_SKILL_NAME@Skill::send_start()

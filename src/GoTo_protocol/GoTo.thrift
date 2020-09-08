@@ -5,7 +5,7 @@
  *                                                                            *
  ******************************************************************************/
 
- enum GoToStatus
+enum GoToStatus
 {
     NOT_STARTED,
     RUNNING,

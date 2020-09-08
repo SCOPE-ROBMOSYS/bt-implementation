@@ -15,77 +15,76 @@
     initial="idle"
 >
 
+    <datamodel>
 
+        <!--  Services:  -->
 
-<datamodel>
-
-<!--  Services:  -->
-
-      <data id="goTo"
-            scope_yarp:service_type="GoTo"
-            scope_yarp:connect_type="tcp"
-            scope_yarp:thrift_protocol="GoTo"
-            scope_yarp:service_function="multiple"
-            scope_yarp:port_name_client_attribute="location"
-            scope_yarp:port_name_server="/GoToComponent"
-            />
-
-      <data id="blackboard"
-            scope_yarp:service_type="Blackboard"
-            scope_yarp:connect_type="tcp"
-            scope_yarp:thrift_protocol="Blackboard"
-            scope_yarp:service_function="multiple"
-            scope_yarp:port_name_client_attribute="location"
-            scope_yarp:port_name_server="/BlackboardComponent"
-            />
-
-<!--  Attributes:  -->
-
-    <data id="location"
-          scope:cpp_type="const std::string"
-          expr="none"
-          scope:init_source="parse_as_option"
-          />
-
-    <data id="skillID"
-          scope:cpp_type="const std::string"
-          expr="none"
-          scope:init_source="parse_as_option"
-          />
-
-          <data id="currVal"
-                scope:cpp_type="std::int32_t"
-                expr="0"
-                scope:init_source="initialize_inside_header"
-                />
-                <data id="resourceCount"
-                      scope:cpp_type="std::int32_t"
-                      expr="0"
-                      scope:init_source="initialize_inside_header"
-                      />
-
-
-
-<data id="retDataBool"
-      scope:cpp_type="DataBool"
-      expr="false,UNKNOWN"
-      scope:init_source="initialize_inside_header"
-      />
-      <data id="retDataInt32"
-            scope:cpp_type="DataInt32"
-            expr="0,UNKNOWN"
-            scope:init_source="initialize_inside_header"
-            />
-            <data id="retGoToStatus"
-                  scope:cpp_type="GoToStatus"
-                  expr="NOT_STARTED"
-                  scope:init_source="initialize_inside_header"
+        <data id="goTo"
+              scope_yarp:service_type="GoTo"
+              scope_yarp:connect_type="tcp"
+              scope_yarp:thrift_protocol="GoTo"
+              scope_yarp:service_function="multiple"
+              scope_yarp:port_name_client_attribute="location"
+              scope_yarp:port_name_server="/GoToComponent"
               />
 
-</datamodel>
+        <data id="blackboard"
+              scope_yarp:service_type="Blackboard"
+              scope_yarp:connect_type="tcp"
+              scope_yarp:thrift_protocol="Blackboard"
+              scope_yarp:service_function="multiple"
+              scope_yarp:port_name_client_attribute="location"
+              scope_yarp:port_name_server="/BlackboardComponent"
+              />
+
+        <!--  Attributes:  -->
+
+        <data id="location"
+              expr="none"
+              scope:cpp_type="const std::string"
+              scope:init_source="parse_as_option"
+              />
+
+        <data id="skillID"
+              expr="none"
+              scope:cpp_type="const std::string"
+              scope:init_source="parse_as_option"
+              />
+
+        <data id="currVal"
+              expr="0"
+              scope:cpp_type="std::int32_t"
+              scope:init_source="initialize_inside_header"
+              />
+
+        <data id="resourceCount"
+              expr="0"
+              scope:cpp_type="std::int32_t"
+              scope:init_source="initialize_inside_header"
+              />
+
+        <data id="retDataBool"
+              expr="false,UNKNOWN"
+              scope:cpp_type="DataBool"
+              scope:init_source="initialize_inside_header"
+              />
+
+        <data id="retDataInt32"
+              expr="0,UNKNOWN"
+              scope:cpp_type="DataInt32"
+              scope:init_source="initialize_inside_header"
+              />
+
+        <data id="retGoToStatus"
+              expr="NOT_STARTED"
+              scope:cpp_type="GoToStatus"
+              scope:init_source="initialize_inside_header"
+              />
+
+    </datamodel>
 
 
-<state id="halted" scope:bt_status="SKILL_RUNNING">
+    <state id="halted" scope:bt_status="SKILL_RUNNING">
        <qt:editorinfo scenegeometry="4113.60;-199.15;4053.60;-249.15;120;100" geometry="4113.60;-199.15;-60;-50;120;100"/>
        <onentry>
            <log label="halted" expr="&quot;Inside halted&quot;"/>

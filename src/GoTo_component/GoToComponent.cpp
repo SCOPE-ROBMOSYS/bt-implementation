@@ -92,12 +92,10 @@ public:
             if (running) {
                 if(inav->checkInsideArea(destination)) {
                     return SUCCESS;
-                } else {
-                    return RUNNING;
                 }
-            } else {
-                return NOT_STARTED;
+                return RUNNING;
             }
+            return NOT_STARTED;
         case yarp::dev::Nav2D::navigation_status_preparing_before_move: [[fallthrough]];
         case yarp::dev::Nav2D::navigation_status_moving: [[fallthrough]];
         case yarp::dev::Nav2D::navigation_status_waiting_obstacle: [[fallthrough]];
@@ -142,9 +140,8 @@ public:
 
         if (inav->checkInsideArea(destination)){
             return true;
-        }else{
-            return false;
         }
+        return false;
     }
 
 private:
