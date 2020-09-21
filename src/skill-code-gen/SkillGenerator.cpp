@@ -170,8 +170,9 @@ void SkillGenerator::generate_Main()
 
     // 2: replace
 
-    // 2.1: name
+    // 2.1: skill name and version
     dataText.replace(m_keys.key_skill_name, m_skillDescription.skill_name);
+    dataText.replace(m_keys.key_skill_version, m_skillDescription.skill_version);
 
     // 2.2 @KEY_CONSTRUCTOR_ATTRIBUTES_p1_PASSED_ARGS@
     QRegularExpression KEY_CONSTRUCTOR_ATTRIBUTES_p1_PASSED_ARGS(" @KEY_CONSTRUCTOR_ATTRIBUTES_p1_PASSED_ARGS@");
@@ -558,6 +559,12 @@ void SkillGenerator::generate_Skill_DataModel_cpp()
 
 int SkillGenerator::write()
 {
+    // Read skill_version from the main scxml file
+    m_skillDescription.skill_version = m_translationUnit->mainDocument->root->skill_version;
+    if (m_skillDescription.skill_version.isEmpty()) {
+        m_skillDescription.skill_version = "0.0";
+    }
+
     auto docs = m_translationUnit->allDocuments;
 
     for (int i = 0, ei = docs.size(); i != ei; ++i) {

@@ -13,6 +13,7 @@
     xmlns:qt="http://www.qt.io/2015/02/scxml-ext"
     qt:editorversion="4.11.0"
     initial="idle"
+    scope:skill_version="0.1"
 >
 
     <datamodel>

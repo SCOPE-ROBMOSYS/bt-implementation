@@ -14,7 +14,7 @@ int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
     //QCoreApplication::setApplicationName("@KEY_SKILL_NAME@Skill");
-    QCoreApplication::setApplicationVersion("0.1");
+    QCoreApplication::setApplicationVersion("@KEY_SKILL_VERSION@");
 
     QCommandLineParser parser;
     parser.setApplicationDescription("@KEY_SKILL_NAME@ Skill Description");

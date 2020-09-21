@@ -392,6 +392,7 @@ struct Scxml: public StateContainer, public Node
 
     QStringList initial;
     QString name;
+    QString skill_version;
     DataModelType dataModel;
     QString cppDataModelClassName;
     QString cppDataModelHeaderName;

@@ -11,6 +11,7 @@
     datamodel="cplusplus:BatteryLevelSkillDataModel:BatteryLevelSkillDataModel.h"
     xmlns:scope="http://www.scope.org/scope"
     xmlns:scope_yarp="http://www.scope.org/scope_yarp"
+    scope:skill_version="0.1"
 >
 
 <datamodel>

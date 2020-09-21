@@ -84,6 +84,7 @@ struct ClientPort
 struct SkillDescription
 {
     QString skill_name;
+    QString skill_version;
     QString path_skill_folder;
     QList<State> ListStates;
     QStringList UsedComponents;
@@ -98,6 +99,7 @@ struct SkillDescription
 struct Keys
 {
     QString key_skill_name {"@KEY_SKILL_NAME@"};
+    QString key_skill_version {"@KEY_SKILL_VERSION@"};
     QString KEY_CONSTRUCTOR_ATTRIBUTES_p1 {"@KEY_CONSTRUCTOR_ATTRIBUTES_p1@"};
 };
 

@@ -1445,6 +1445,12 @@ bool QScxmlCompilerPrivate::preReadElementScxml()
     if (!name.isEmpty()) {
         scxml->name = name.toString();
     }
+
+    if (attributes.hasAttribute(QStringLiteral("http://www.scope.org/scope"), QLatin1String("skill_version"))) {
+        const QStringRef skill_version = attributes.value(QStringLiteral("http://www.scope.org/scope"), QLatin1String("skill_version"));
+        scxml->skill_version = skill_version.toString();
+    }
+
     m_currentState = m_doc->root;
     current().instructionContainer = &m_doc->root->initialSetup;
     return true;
