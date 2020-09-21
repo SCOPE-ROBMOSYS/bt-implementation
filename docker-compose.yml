@@ -251,7 +251,7 @@ services:
     command: sh -c "
       yarp wait /GoToComponent;
       yarp wait /BlackboardComponent;
-      gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --skill-name GoToDestination --location kitchen --skillID goToClient_kitchen"
+      cd /usr/local/src/bt-implementation/conf && gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --from GoToDestination.ini"
     depends_on:
       - yarp-server
       - GoToComponent
@@ -263,7 +263,7 @@ services:
     command: sh -c "
       yarp wait /GoToComponent;
       yarp wait /BlackboardComponent;
-      gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --skill-name GoToChargingStation --location charging_station --skillID goToClient_charging_station"
+      cd /usr/local/src/bt-implementation/conf && gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --from GoToChargingStation.ini"
     depends_on:
       - yarp-server
       - GoToComponent
@@ -274,7 +274,7 @@ services:
     container_name: IsAtDestination
     command: sh -c "
       yarp wait /GoToComponent;
-      gammaray /usr/local/src/bt-implementation/build/bin/IsAtSkill --skill-name IsAtDestination --location kitchen"
+      cd /usr/local/src/bt-implementation/conf && gammaray /usr/local/src/bt-implementation/build/bin/IsAtSkill --from IsAtDestination.ini"
     depends_on:
       - yarp-server
       - GoToComponent
@@ -284,7 +284,7 @@ services:
     container_name: IsAtChargingStation
     command: sh -c "
       yarp wait /GoToComponent;
-      gammaray /usr/local/src/bt-implementation/build/bin/IsAtSkill --skill-name IsAtChargingStation --location charging_station"
+      cd /usr/local/src/bt-implementation/conf && gammaray /usr/local/src/bt-implementation/build/bin/IsAtSkill --from IsAtChargingStation.ini"
     depends_on:
       - yarp-server
       - GoToComponent
@@ -347,7 +347,7 @@ services:
     command: sh -c "
       yarp wait /root;
       yarp wait /BatteryComponent;
-      gammaray /usr/local/src/bt-implementation/build/bin/BatteryLevelSkill"
+      cd /usr/local/src/bt-implementation/conf && gammaray /usr/local/src/bt-implementation/build/bin/BatteryLevelSkill --from BatteryLevel.ini"
     depends_on:
       - yarp-server
       - BatteryComponent
@@ -357,7 +357,7 @@ services:
     container_name: BatteryNotChargingSkill
     command: sh -c "
       yarp wait /BatteryComponent;
-      gammaray /usr/local/src/bt-implementation/build/bin/BatteryNotChargingSkill"
+      cd /usr/local/src/bt-implementation/conf && gammaray /usr/local/src/bt-implementation/build/bin/BatteryNotChargingSkill --from BatteryNotCharging.ini"
     depends_on:
       - yarp-server
       - BatteryComponent
