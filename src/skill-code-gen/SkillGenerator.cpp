@@ -574,11 +574,11 @@ int SkillGenerator::write()
             qDebug() << state->id << state->xmlLocation.line << state->xmlLocation.column << state->dataElements.size() << state->bt_status;
 #endif
             // need to control the gerarchy of the states, s.t. the external "wrapper" is not tackled into the list
-            State stato;
-            stato.id = state->id;
-            stato.SkillAckEnum = state->bt_status;
-            stato.SkillAck = decoderEnum(state->bt_status);
-            m_skillDescription.ListStates.push_back(stato);
+            State new_state;
+            new_state.id = state->id;
+            new_state.SkillAckEnum = state->bt_status;
+            new_state.SkillAck = decoderEnum(state->bt_status);
+            m_skillDescription.ListStates.push_back(new_state);
         }
 
         // <datamodel> interpreter
