@@ -25,41 +25,46 @@ Follow the instructions at https://docs.docker.com/install/
    Open a terminal window and run:
 
    
+   ```bash
+   sudo curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+   sudo chmod +x /usr/local/bin/docker-compose
+   sudo usermod -aG docker $USER
+   ```
 
-   `sudo curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
+   If you want docker-compose bash completion run:
 
-   
-
-   `sudo chmod +x /usr/local/bin/docker-compose`
-
-   
-
-   `sudo usermod -aG docker $USER`
+   ```bash
+   sudo curl -L https://raw.githubusercontent.com/docker/compose/1.26.2/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
+   ```
 
 3. **Reboot your system**
 
 4. **Download the software to run the experiment**
 
    Open a terminal window and run:
-   `git clone https://github.com/SCOPE-ROBMOSYS/bt-implementation.git`
 
-   `cd bt-implementation`
-
-   `docker-compose pull yarp-mesa navigation qscxml`
-
-   `docker-compose build bt-implementation`
+   ```bash
+   git clone https://github.com/SCOPE-ROBMOSYS/bt-implementation.git
+   cd bt-implementation
+   sed -i "s/1000/$(id -u)/g" docker-compose.yml # This ensures that the image is built with your current user id
+   docker-compose pull scope
+   docker-compose build bt-implementation
+   ```
 
    If YARP  is not installed in the system then run:
 
-   `mkdir -p ${HOME}/.config/yarp/ ${HOME}/.local/share/yarp/`
-
-   `docker-compose run -T --rm yarp-mesa yarp conf <ip address> 10000`
+   ```bash
+   mkdir -p ${HOME}/.config/yarp/ ${HOME}/.local/share/yarp/
+   docker-compose run -T --rm bt-implementation yarp conf <ip address> 10000
+   ```
 
 ### Execution
 
 Open a terminal  window and the run
 
-`docker-compose up`
+```bash
+docker-compose up
+```
 
 Several windows will open as in the figure below. 
 
@@ -71,19 +76,16 @@ The experiment starts as soon as all the components are up an running.
 
 To change  the battery level, open a terminal window in the folder `bt-implementation`  and run
 
-`docker-compose run --rm yarp-mesa yarp rpc /fakeBattery/control/rpc:i`
+```bash
+docker-compose run --rm bt-implementation yarp rpc /fakeBattery/control/rpc:i
+```
 
 then write
 
-`setBatteryCharge X`
+```
+setBatteryCharge X
+```
 
 with `X` the new value of the battery level (between 0 an 100), as below:
 
 ![ezgif-7-b0a8d90c3f74](https://user-images.githubusercontent.com/8132627/77671740-50cbf280-6f88-11ea-9efb-769de0913f9d.gif)
-
-
-
-
-
-
-

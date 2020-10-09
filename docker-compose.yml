@@ -1,85 +1,62 @@
 version: "3.7"
 
 x-base: &base
+  image: scoperobmosys/bt-implementation:latest
   environment:
     - DISPLAY=${DISPLAY}
+    - XDG_RUNTIME_DIR=/run/user/1000
     - XAUTHORITY=/home/scope/.Xauthority
+    - YARP_COLORED_OUTPUT=1
     - YARP_FORWARD_LOG_ENABLE=1
+    - YARP_FORWARD_CODEINFO_ENABLE=1
     - QT_X11_NO_MITSHM=1
+    - DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
   volumes:
     - "/tmp/.X11-unix:/tmp/.X11-unix:rw"
     - "${XAUTHORITY}:/home/scope/.Xauthority:rw"
     - "${HOME}/.config/yarp:/home/scope/.config/yarp:rw"
     - "${HOME}/.local/share/yarp:/home/scope/.local/share/yarp:rw"
+    - "${XDG_RUNTIME_DIR}/yarp:/run/user/1000/yarp"
+    - "/run/user/1000/bus:/run/user/1000/bus"
     - logs-volume:/home/scope/logs
   network_mode: host
   ipc: host
+  pid: host
   security_opt:
     - apparmor:unconfined
-
-x-yarp-mesa-base: &yarp-mesa-base
-  <<: *base
-  image: scoperobmosys/yarp-mesa:latest
-
-x-qscxml-base: &qscxml-base
-  <<: *base
-  image: scoperobmosys/qscxml:latest
-
-x-navigation-base: &navigation-base
-  <<: *base
-  image: scoperobmosys/navigation:latest
-
-x-bt-implementation-base: &bt-implementation-base
-  <<: *base
-  image: bt-implementation:latest
-
-x-build-base: &build-base
-  context: .
-  args:
-    username: scope
-    cmake_parallel: 8
-
 
 services:
 
 # Images
-  yarp-mesa:
-    <<: *yarp-mesa-base
+  scope:
+    image: scoperobmosys/scope:latest
     build:
-      <<: *build-base
-      dockerfile: Dockerfile.yarp-mesa
-
-  navigation:
-    <<: *navigation-base
-    build:
-      <<: *build-base
-      dockerfile: Dockerfile.navigation
-    depends_on:
-      - yarp-mesa
-
-  qscxml:
-    <<: *qscxml-base
-    build:
-      <<: *build-base
-      dockerfile: Dockerfile.qscxml
+      dockerfile: Dockerfile.scope
+      context: .
+      args:
+        cmake_parallel: 8
 
   bt-implementation:
-    <<: *bt-implementation-base
+    image: scoperobmosys/bt-implementation:latest
     build:
-      <<: *build-base
       dockerfile: Dockerfile.bt-implementation
+      context: .
+      args:
+        cmake_parallel: 8
+        username: scope
+        uid: 1000
+        gid: 1000
     depends_on:
-      - qscxml
-
+      - scope
 
 # Containers
   yarp-server:
-    <<: *yarp-mesa-base
+    <<: *base
     container_name: yarp-server
     command: yarp server --read
 
   IdComponent:
-    <<: *bt-implementation-base
+    <<: *base
     container_name: IdComponent
     command: sh -c "
       yarp wait /root;
@@ -88,7 +65,7 @@ services:
       - yarp-server
 
   transformServer:
-    <<: *yarp-mesa-base
+    <<: *base
     container_name: transformServer
     command: sh -c "
       yarp wait /root;
@@ -97,7 +74,7 @@ services:
       - yarp-server
 
   fakeMotionControl:
-    <<: *yarp-mesa-base
+    <<: *base
     container_name: fakeMotionControl
     command: sh -c "
       yarp wait /root;
@@ -106,7 +83,7 @@ services:
       - yarp-server
 
   baseControl:
-    <<: *navigation-base
+    <<: *base
     container_name: baseControl
     command: sh -c "
       yarp wait /root;
@@ -119,7 +96,7 @@ services:
       - fakeMotionControl
 
   map2DServer:
-    <<: *navigation-base
+    <<: *base
     container_name: map2DServer
     command: sh -c "
       yarp wait /root;
@@ -128,7 +105,7 @@ services:
       - yarp-server
 
   localization2DServer:
-    <<: *navigation-base
+    <<: *base
     container_name: localization2DServer
     command: sh -c "
       yarp wait /root;
@@ -139,18 +116,18 @@ services:
       - baseControl
 
   Rangefinder2DWrapper:
-    <<: *navigation-base
+    <<: *base
     container_name: Rangefinder2DWrapper
     command: sh -c "
       yarp wait /root;
       yarp wait /localizationServer/rpc;
-      yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /robot_2wheels/laser:o --test use_mapfile --map_file /usr/local/share/navigation/contexts/mapsExample/map_test.map --localization_client"
+      yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /robot_2wheels/laser:o --test use_mapfile --map_file /usr/share/navigation/contexts/mapsExample/map_test.map --localization_client"
     depends_on:
       - yarp-server
       - localization2DServer
 
   navigation2DServer:
-    <<: *navigation-base
+    <<: *base
     container_name: navigation2DServer
     command: sh -c "
       yarp wait /root;
@@ -168,7 +145,7 @@ services:
       - map2DServer
 
   navigationGUI:
-    <<: *navigation-base
+    <<: *base
     container_name: navigationGUI
     command: sh -c "
       yarp wait /root;
@@ -183,30 +160,19 @@ services:
       - localization2DServer
 
   yarpview:
-    <<: *yarp-mesa-base
+    <<: *base
     container_name: yarpview
     command: sh -c "
       yarp wait /root;
-      yarp view /navigationGui/map:o;
-      yarp view /navigationGui/yarpviewTarget:i;
+      yarp wait /navigationGui/map:o;
+      yarp wait /navigationGui/yarpviewTarget:i;
       yarpview --autosize --name /navView:i --out /mapClick:o"
     depends_on:
       - yarp-server
       - navigationGUI
 
-  robotPathPlannerExample:
-    <<: *navigation-base
-    container_name: robotPathPlannerExample
-    command: sh -c "
-      yarp wait /root;
-      yarp wait /localizationServer/rpc;
-      robotPathPlannerExample --navServer_name /navigationServer"
-    depends_on:
-      - yarp-server
-      - localization2DServer
-
   connect:
-    <<: *yarp-mesa-base
+    <<: *base
     container_name: connect
     command: sh -c "
       yarp wait /root;
@@ -216,11 +182,10 @@ services:
       yarp wait /navView:i;
       yarp wait /robotPathPlanner/commands:o;
       yarp wait /robotGoto/rpc;
-      yarp wait /mapClick:o
+      yarp wait /mapClick:o;
       yarp wait /navigationGui/yarpviewTarget:i;
       yarp connect /robotGoto/control:o /baseControl/control:i udp;
       yarp connect /navigationGui/map:o /navView:i udp;
-      yarp connect /robotPathPlanner/commands:o /robotGoto/rpc tcp;
       yarp connect /mapClick:o /navigationGui/yarpviewTarget:i tcp;"
     depends_on:
       - yarp-server
@@ -228,10 +193,9 @@ services:
       - baseControl
       - navigationGUI
       - yarpview
-      - robotPathPlannerExample
 
   GoToComponent:
-    <<: *bt-implementation-base
+    <<: *base
     container_name: GoToComponent
     command: sh -c "
       yarp wait /root;
@@ -246,7 +210,7 @@ services:
       - localization2DServer
 
   GoToDestination:
-    <<: *bt-implementation-base
+    <<: *base
     container_name: GoToDestination
     command: sh -c "
       yarp wait /GoToComponent;
@@ -258,7 +222,7 @@ services:
       - BlackboardComponent
 
   GoToChargingStation:
-    <<: *bt-implementation-base
+    <<: *base
     container_name: GoToChargingStation
     command: sh -c "
       yarp wait /GoToComponent;
@@ -270,7 +234,7 @@ services:
       - BlackboardComponent
 
   IsAtDestination:
-    <<: *bt-implementation-base
+    <<: *base
     container_name: IsAtDestination
     command: sh -c "
       yarp wait /GoToComponent;
@@ -280,7 +244,7 @@ services:
       - GoToComponent
 
   IsAtChargingStation:
-    <<: *bt-implementation-base
+    <<: *base
     container_name: IsAtChargingStation
     command: sh -c "
       yarp wait /GoToComponent;
@@ -290,7 +254,7 @@ services:
       - GoToComponent
 
   fakeBattery:
-    <<: *yarp-mesa-base
+    <<: *base
     container_name: fakeBattery
     command: sh -c "
       yarp wait /root;
@@ -299,7 +263,7 @@ services:
       - yarp-server
 
   fakeBatteryChargingStation:
-    <<: *bt-implementation-base
+    <<: *base
     container_name: fakeBatteryChargingStation
     command: sh -c "
       yarp wait /root;
@@ -318,7 +282,7 @@ services:
       - fakeBattery
 
   yarpbatterygui:
-    <<: *yarp-mesa-base
+    <<: *base
     container_name: yarpbatterygui
     command: sh -c "
       yarp wait /root;
@@ -330,7 +294,7 @@ services:
       - fakeBattery
 
   BatteryComponent:
-    <<: *bt-implementation-base
+    <<: *base
     container_name: BatteryComponent
     command: sh -c "
       yarp wait /root;
@@ -342,7 +306,7 @@ services:
       - fakeBattery
 
   BatteryLevelSkill:
-    <<: *bt-implementation-base
+    <<: *base
     container_name: BatteryLevelSkill
     command: sh -c "
       yarp wait /root;
@@ -353,7 +317,7 @@ services:
       - BatteryComponent
 
   BatteryNotChargingSkill:
-    <<: *bt-implementation-base
+    <<: *base
     container_name: BatteryNotChargingSkill
     command: sh -c "
       yarp wait /BatteryComponent;
@@ -364,7 +328,7 @@ services:
 
 
   BlackboardComponent:
-    <<: *bt-implementation-base
+    <<: *base
     container_name: BlackboardComponent
     command: sh -c "
       yarp wait /root;
@@ -374,7 +338,7 @@ services:
 
 
   BehaviorTree:
-    <<: *bt-implementation-base
+    <<: *base
     container_name: BehaviorTree
     command: sh -c "
       yarp wait /GoToDestination/BT_rpc/server;
@@ -390,7 +354,7 @@ services:
       - BatteryNotChargingSkill
 
   groot:
-    <<: *qscxml-base
+    <<: *base
     container_name: groot
     command: Groot --mode monitor
     depends_on:
