@@ -9,7 +9,9 @@
         <ReactiveSequence>
             <ReactiveFallback>
                 <ReactiveSequence>
-                    <Condition ID="YARPCondition" name="BatteryLevel" port_name="BatteryLevelSkill"/>
+<!--                     <Condition ID="YARPCondition" name="BatteryLevel" port_name="BatteryLevelSkill" carrier="tcp" /> -->
+                    <Condition ID="YARPCondition" name="BatteryLevel" port_name="BatteryLevelSkill" carrier="tcp+send.portmonitor2+file.Skill_request+type.dll" />
+<!--                    <Condition ID="YARPCondition" name="BatteryLevel" port_name="BatteryLevelSkill" carrier="tcp+send.portmonitor2+recv.portmonitor2+file.Skill_request+type.dll" />-->
                     <Condition ID="YARPCondition" name="BatteryNotCharging" port_name="BatteryNotChargingSkill"/>
                 </ReactiveSequence>
                 <ReactiveSequence>

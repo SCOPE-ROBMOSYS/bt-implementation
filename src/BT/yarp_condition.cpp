@@ -12,9 +12,15 @@
 
 #include <yarp_condition.h>
 #include <yarp/os/LogStream.h>
-YARPCondition::YARPCondition(string name, const NodeConfiguration& config) :  ConditionNode(name, config), YARPNode(name,name)
-
+YARPCondition::YARPCondition(string name, const NodeConfiguration& config) :
+        ConditionNode(name, config),
+        YARPNode(name, name)
 {
+    Optional<std::string> msg = getInput<std::string>("carrier");
+    if (msg.has_value()) {
+        set_carrier(msg.value());
+    }
+
     bool ok = init();
     if(!ok)
     {
@@ -30,7 +36,8 @@ NodeStatus YARPCondition::tick()
 
 PortsList YARPCondition::providedPorts()
 {
-    // This action has a single input port called "message"
+    // This action has a 2 input ports ("port_name" and "carrier")
     // Any port must have a name. The type is optional.
-    return { InputPort<std::string>("port_name") };
+    return { InputPort<std::string>("port_name"),
+             InputPort<std::string>("carrier") };
 }

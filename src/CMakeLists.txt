@@ -46,3 +46,5 @@ add_subdirectory(Blackboard_component)
 
 # will be in YARP
 add_subdirectory(fakeBatteryChargingStation)
+
+add_subdirectory(portmonitor_carrier)

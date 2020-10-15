@@ -13,8 +13,14 @@
 #include <yarp_action.h>
 #include <yarp/os/LogStream.h>
 
-YARPAction::YARPAction(string name, const NodeConfiguration& config) :  ActionNodeBase(name, config), YARPNode(name,name)
+YARPAction::YARPAction(string name, const NodeConfiguration& config) :
+        ActionNodeBase(name, config),
+        YARPNode(name, name)
 {
+    Optional<std::string> msg = getInput<std::string>("carrier");
+    if (msg.has_value()) {
+        set_carrier(msg.value());
+    }
 
     bool ok = init();
 
@@ -32,9 +38,10 @@ NodeStatus YARPAction::tick()
 
 PortsList YARPAction::providedPorts()
 {
-    // This action has a single input port called "message"
+    // This action has a 2 input ports ("port_name" and "carrier")
     // Any port must have a name. The type is optional.
-    return { InputPort<std::string>("port_name") };
+    return { InputPort<std::string>("port_name"),
+             InputPort<std::string>("carrier") };
 }
 
 void YARPAction::halt()

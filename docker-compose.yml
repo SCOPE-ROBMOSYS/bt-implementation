@@ -55,6 +55,15 @@ services:
     container_name: yarp-server
     command: yarp server --read
 
+  Monitor:
+    <<: *base
+    container_name: Monitor
+    command: sh -c "
+      yarp wait /root;
+      yarp read /monitor"
+    depends_on:
+      - yarp-server
+
   IdComponent:
     <<: *base
     container_name: IdComponent
@@ -310,10 +319,12 @@ services:
     container_name: BatteryLevelSkill
     command: sh -c "
       yarp wait /root;
+      yarp wait /monitor;
       yarp wait /BatteryComponent;
       cd /usr/local/src/bt-implementation/conf && gammaray /usr/local/src/bt-implementation/build/bin/BatteryLevelSkill --from BatteryLevel.ini"
     depends_on:
       - yarp-server
+      - Monitor
       - BatteryComponent
 
   BatteryNotChargingSkill:
@@ -341,6 +352,8 @@ services:
     <<: *base
     container_name: BehaviorTree
     command: sh -c "
+      yarp wait /root;
+      yarp wait /monitor;
       yarp wait /GoToDestination/BT_rpc/server;
       yarp wait /GoToChargingStation/BT_rpc/server;
       yarp wait /BatteryLevel/BT_rpc/server;
@@ -348,6 +361,7 @@ services:
       cd /usr/local/src/bt-implementation/build/bin && ./from_xml_example"
     depends_on:
       - yarp-server
+      - Monitor
       - GoToDestination
       - GoToChargingStation
       - BatteryLevelSkill

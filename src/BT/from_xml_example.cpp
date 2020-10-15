@@ -101,8 +101,8 @@ int main()
 
     // Create some logger
     StdCoutLogger logger_cout(tree);
-    MinitraceLogger logger_minitrace(tree, "/home/scope/logs/bt_trace.json");
-    FileLogger logger_file(tree, "/home/scope/logs/bt_trace.fbl");
+    MinitraceLogger logger_minitrace(tree, "/tmp/bt_trace.json");
+    FileLogger logger_file(tree, "/tmp/bt_trace.fbl");
 
 #ifdef ZMQ_FOUND
     PublisherZMQ publisher_zmq(tree);

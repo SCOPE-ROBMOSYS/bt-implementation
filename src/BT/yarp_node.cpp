@@ -23,12 +23,18 @@
 using namespace std;
 using namespace BT;
 
-YARPNode::YARPNode(string name, string server_port_name) :
+YARPNode::YARPNode(string name, string server_port_name, string carrier) :
         name(name),
         m_client_port_name("/"+name+"/BT_rpc/client"),
         m_server_port_name("/"+name+"/BT_rpc/server"),
-        m_carrier("tcp")
-{}
+        m_carrier(std::move(carrier))
+{
+}
+
+void YARPNode::set_carrier(std::string carrier)
+{
+    m_carrier = std::move(carrier);
+}
 
 bool YARPNode::init()
 {
@@ -40,7 +46,7 @@ bool YARPNode::init()
         return false;
     }
 
-    if (!yarp.connect(m_client_port_name, m_server_port_name, m_carrier))
+    if (!yarp::os::Network::connect(m_client_port_name, m_server_port_name, m_carrier))
     {
         yError() << "Could not connect to port " << m_server_port_name;
         return false;

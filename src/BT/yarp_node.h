@@ -23,11 +23,14 @@ using namespace BT;
 class YARPNode //: public LeafNode
 {
 public:
-    YARPNode(string name, string server_port_name);
+    YARPNode(string name, string server_port_name, string carrier = "tcp"s);
     NodeStatus tick();
     NodeStatus status() const;
     bool init();
     string name;
+
+    void set_carrier(std::string carrier);
+
 private:
     string m_client_port_name;
     string m_server_port_name;

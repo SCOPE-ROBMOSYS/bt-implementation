@@ -3,17 +3,6 @@ FROM scoperobmosys/scope:latest
 ARG cmake_parallel=8
 ENV CMAKE_BUILD_PARALLEL_LEVEL=${cmake_parallel}
 
-# Build bt-implementation project
-COPY . /usr/local/src/bt-implementation/
-RUN \
-    cmake \
-        -H/usr/local/src/bt-implementation \
-        -B/usr/local/src/bt-implementation/build \
-        -DCMAKE_INSTALL_PREFIX=/usr/local \
-        -DCMAKE_BUILD_TYPE=Debug \
-        -DCMAKE_VERBOSE_MAKEFILE=ON && \
-    cmake --build /usr/local/src/bt-implementation/build
-
 ARG username
 ARG uid
 ARG gid
@@ -28,6 +17,23 @@ RUN groupadd --system --gid $gid $username; \
 
 RUN apt-get update -qq && \
     updatedb
+
+# FIXME move in Dockerfile.scope
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y libyarp-os3-private-dev
+
+# Build bt-implementation project
+COPY . /usr/local/src/bt-implementation/
+RUN \
+    cmake \
+        -H/usr/local/src/bt-implementation \
+        -B/usr/local/src/bt-implementation/build \
+        -DCMAKE_INSTALL_PREFIX=/usr/local \
+        -DCMAKE_BUILD_TYPE=Debug \
+        -DCMAKE_VERBOSE_MAKEFILE=ON && \
+    cmake --build /usr/local/src/bt-implementation/build; \
+    chown -R $username: /usr/local/src/bt-implementation; \
+    echo '[search bt_implementation]' > /usr/share/yarp/config/path.d/bt_implementation.ini; \
+    echo 'path "/usr/local/src/bt-implementation/build/share/yarp"' >> /usr/share/yarp/config/path.d/bt_implementation.ini
 
 USER $username
 WORKDIR /home/$username

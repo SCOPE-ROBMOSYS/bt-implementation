@@ -6,7 +6,7 @@
 ################################################################################
 
 cmake_minimum_required(VERSION 3.12)
-project(SCOPE_GoTo_Skill
+project(bt_implementation
         VERSION 1.0.0
         LANGUAGES CXX)
 
@@ -37,7 +37,7 @@ list(APPEND CMAKE_MODULE_PATH "${BT_IMPLEM_MODULE_DIR}")
 message(STATUS "Using:")
 message(STATUS "CMake modules directory: ${CMAKE_MODULE_PATH}")
 
-
+set(YARP_FORCE_DYNAMIC_PLUGINS TRUE CACHE INTERNAL "bt_implementation is always built with dynamic plugins")
 set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Build libraries as shared as opposed to static")
 
 include(AddInstallRPATHSupport)
@@ -73,6 +73,8 @@ feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES)
 
 set(CMAKE_C_FLAGS "${YARP_C_FLAGS} ${CMAKE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${YARP_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
+
+yarp_configure_plugins_installation(bt_implementation)
 
 # Make some custom header files containing compile settings.
 add_subdirectory(cmake)

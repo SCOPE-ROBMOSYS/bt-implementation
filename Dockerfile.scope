@@ -72,6 +72,7 @@ RUN apt-get update -qq && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         yarpserver \
         yarp-carrier-unixstream \
+        yarp-carrier-portmonitor \
         yarp-device-transformserver \
         yarp-device-fake \
         yarp-device-map2dserver \
