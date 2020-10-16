@@ -54,12 +54,13 @@ yarp::os::Things& BatteryReaderMonitorObject::update(yarp::os::Things& thing)
 {
     yCTrace(BATTERYREADERMONITOR) << "update()";
 
-    yarp::os::Bottle b;
-    b.addDouble(yarp::os::SystemClock::nowSystem());
-    b.addString(source);
-    b.addString(destination);
-    b.addString("command");
-    //b.addBool(sender);
+    yarp::os::Bottle msg;
+    msg.addDouble(yarp::os::SystemClock::nowSystem());
+    msg.addString(source);
+    msg.addString(destination);
+    msg.addString("command");
+    //msg.addBool(sender);
+    auto& bcmd = msg.addList();
 
 #if 0
     if (!sender) {
@@ -75,18 +76,19 @@ yarp::os::Things& BatteryReaderMonitorObject::update(yarp::os::Things& thing)
 //     yarp::os::Portable::copyPortable(*(thing.getPortWriter()), data);
 //     yCInfo(BATTERYREADERMONITOR) << "Sending command:" << data.toString();
 
-    if (const auto* reply = thing.cast_as<BatteryReader_level_helper>()) {
+    if (/*const auto* reply = */thing.cast_as<BatteryReader_level_helper>()) {
         yCDebug(BATTERYREADERMONITOR) << "Sending command 'level'";
-        b.addString("level");
-    } else if (const auto* reply = thing.cast_as<BatteryReader_charging_status_helper>()) {
+        bcmd.addString("level");
+    } else if (/*const auto* reply = */thing.cast_as<BatteryReader_charging_status_helper>()) {
         yCDebug(BATTERYREADERMONITOR) << "Sending command 'charging_status'";
-        b.addString("charging_status");
+        bcmd.addString("charging_status");
     } else {
         yCWarning(BATTERYREADERMONITOR) << "Sending unknown command";
-        b.addString("[unknown]");
+        bcmd.addString("[unknown]");
     }
 
-    port.write(b);
+    yCDebug(BATTERYREADERMONITOR, "Writing: %s", msg.toString().c_str());
+    port.write(msg);
 
     return thing;
 }
@@ -97,12 +99,13 @@ yarp::os::Things& BatteryReaderMonitorObject::updateReply(yarp::os::Things& thin
 {
     yCTrace(BATTERYREADERMONITOR) << "updateReply()";
 
-    yarp::os::Bottle b;
-    b.addDouble(yarp::os::SystemClock::nowSystem());
-    b.addString(source);
-    b.addString(destination);
-    b.addString("reply");
+    yarp::os::Bottle msg;
+    msg.addDouble(yarp::os::SystemClock::nowSystem());
+    msg.addString(source);
+    msg.addString(destination);
+    msg.addString("reply");
     //b.addBool(sender);
+    auto& breply = msg.addList();
 
 #if 0
     if (!sender) {
@@ -118,18 +121,20 @@ yarp::os::Things& BatteryReaderMonitorObject::updateReply(yarp::os::Things& thin
 
     if (const auto* reply = thing.cast_as<BatteryReader_level_helper>()) {
         yCDebug(BATTERYREADERMONITOR) << "Received reply to 'level':" << reply->m_return_helper;
-        b.addString("level");
-        b.addFloat64(reply->m_return_helper);
+        breply.addString("level");
+        breply.addFloat64(reply->m_return_helper);
     } else if (const auto* reply = thing.cast_as<BatteryReader_charging_status_helper>()) {
         // FIXME ChargingStatusVocab::toString should be static.
         yCDebug(BATTERYREADERMONITOR) << "Received reply to 'charging_status'" << ChargingStatusVocab().toString(reply->m_return_helper);
-        b.addString("send_stop");
-        b.addInt32(reply->m_return_helper);
+        breply.addString("send_stop");
+        breply.addInt32(reply->m_return_helper);
     } else {
         yCWarning(BATTERYREADERMONITOR) << "Received unknown reply";
-        b.addString("[unknown]");
+        breply.addString("[unknown]");
     }
-    port.write(b);
+
+    yCDebug(BATTERYREADERMONITOR, "Writing: %s", msg.toString().c_str());
+    port.write(msg);
 
     return thing;
 }

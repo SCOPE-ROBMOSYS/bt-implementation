@@ -1,0 +1,40 @@
+<!--
+ Copyright (C) 2020 Fondazione Istituto Italiano di Tecnologia (IIT)
+ All Rights Reserved.
+-->
+
+<scxml
+    xmlns="http://www.w3.org/2005/07/scxml"
+    version="1.0"
+    name="BatteryLevelSkillStateMachine"
+    initial="idle"
+    datamodel="ecmascript"
+>
+
+  <datamodel>
+    <data id="batteryLevel" expr="0.0"/>
+  </datamodel>
+
+  <state id="idle">
+    <onentry>
+      <log expr="'[idle] batteryLevel = ' + batteryLevel"/>
+    </onentry>
+    <transition event="batteryLevelChanged" target="getLevel" >
+      <assign location="batteryLevel" expr="_event.data"/>
+    </transition>
+  </state>
+
+  <state id="getLevel">
+    <onentry>
+      <log expr="'[getLevel] batteryLevel = ' + batteryLevel"/>
+    </onentry>
+    <transition cond="batteryLevel &gt;= 20" target="idle" />
+    <transition cond="batteryLevel &lt; 20" target="failure" />
+  </state>
+
+  <state id="failure">
+    <onentry>
+      <log expr="'[failure] batteryLevel = ' + batteryLevel"/>
+    </onentry>
+  </state>
+</scxml>

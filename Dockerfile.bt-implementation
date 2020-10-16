@@ -20,6 +20,7 @@ RUN apt-get update -qq && \
 
 # FIXME move in Dockerfile.scope
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y libyarp-os3-private-dev
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y yarplogger
 
 # Build bt-implementation project
 COPY . /usr/local/src/bt-implementation/

@@ -30,7 +30,7 @@ int main(int argc, char **argv)
         auto* bot = config.get(i).asList();
 
         Q_ASSERT(bot->size() <= 2);
-        for (int j = 0; j < bot->size(); ++j) {
+        for (size_t j = 0; j < bot->size(); ++j) {
             std::string x = (j == 0 ? "--" + bot->get(j).toString() : bot->get(j).toString());
             yargv[yargc++] = strdup(x.c_str());
         }

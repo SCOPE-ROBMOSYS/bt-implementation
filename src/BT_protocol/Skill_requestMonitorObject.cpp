@@ -54,12 +54,14 @@ yarp::os::Things& Skill_requestMonitorObject::update(yarp::os::Things& thing)
 {
     yCTrace(SKILLREQUESTMONITOR) << "update()";
 
-    yarp::os::Bottle b;
-    b.addDouble(yarp::os::SystemClock::nowSystem());
-    b.addString(source);
-    b.addString(destination);
-    b.addString("command");
-    //b.addBool(sender);
+    yarp::os::Bottle msg;
+    msg.addDouble(yarp::os::SystemClock::nowSystem());
+    msg.addString(source);
+    msg.addString(destination);
+    msg.addString("command");
+    //msg.addBool(sender);
+    auto& bcmd = msg.addList();
+
 
 #if 0
     if (!sender) {
@@ -77,19 +79,20 @@ yarp::os::Things& Skill_requestMonitorObject::update(yarp::os::Things& thing)
 
     if (/*const auto* cmd = */thing.cast_as<Skill_request_request_ack_helper>()) {
         yCDebug(SKILLREQUESTMONITOR) << "Sending command 'request_ack'";
-        b.addString("request_ack");
+        bcmd.addString("request_ack");
     } else if (/*const auto* cmd = */thing.cast_as<Skill_request_send_start_helper>()) {
         yCDebug(SKILLREQUESTMONITOR) << "Sending command 'send_start'";
-        b.addString("send_start");
+        bcmd.addString("send_start");
     } else if (/*const auto* cmd = */thing.cast_as<Skill_request_send_stop_helper>()) {
         yCDebug(SKILLREQUESTMONITOR) << "Sending command 'send_stop'";
-        b.addString("send_stop");
+        bcmd.addString("send_stop");
     } else {
         yCWarning(SKILLREQUESTMONITOR) << "Sending unknown command";
-        b.addString("[unknown]");
+        bcmd.addString("[unknown]");
     }
 
-    port.write(b);
+    yCDebug(SKILLREQUESTMONITOR, "Writing: %s", msg.toString().c_str());
+    port.write(msg);
 
     return thing;
 }
@@ -100,12 +103,13 @@ yarp::os::Things& Skill_requestMonitorObject::updateReply(yarp::os::Things& thin
 {
     yCTrace(SKILLREQUESTMONITOR) << "updateReply()";
 
-    yarp::os::Bottle b;
-    b.addDouble(yarp::os::SystemClock::nowSystem());
-    b.addString(source);
-    b.addString(destination);
-    b.addString("reply");
-    //b.addBool(sender);
+    yarp::os::Bottle msg;
+    msg.addDouble(yarp::os::SystemClock::nowSystem());
+    msg.addString(source);
+    msg.addString(destination);
+    msg.addString("reply");
+    //msg.addBool(sender);
+    auto& breply = msg.addList();
 
 #if 0
     if (!sender) {
@@ -122,20 +126,21 @@ yarp::os::Things& Skill_requestMonitorObject::updateReply(yarp::os::Things& thin
     // FIXME SkillAckVocab::toString should be static.
     if (const auto* reply = thing.cast_as<Skill_request_request_ack_helper>()) {
         yCDebug(SKILLREQUESTMONITOR) << "Received reply to 'request_ack':" << SkillAckVocab().toString(reply->m_return_helper);
-        b.addString("request_ack");
-        b.addInt32(static_cast<int32_t>(reply->m_return_helper));
+        breply.addString("request_ack");
+        breply.addInt32(static_cast<int32_t>(reply->m_return_helper));
     } else if (/*const auto* reply = */thing.cast_as<Skill_request_send_start_helper>()) {
         yCDebug(SKILLREQUESTMONITOR) << "Received reply to 'send_start'";
-        b.addString("send_stop");
+        breply.addString("send_start");
     } else if (/*const auto* reply = */thing.cast_as<Skill_request_send_stop_helper>()) {
         yCDebug(SKILLREQUESTMONITOR) << "Received reply to 'send_stop'";
-        b.addString("send_stop");
+        breply.addString("send_stop");
     } else {
         yCWarning(SKILLREQUESTMONITOR) << "Received unknown reply";
-        b.addString("[unknown]");
+        breply.addString("[unknown]");
     }
 
-    port.write(b);
+    yCDebug(SKILLREQUESTMONITOR, "Writing: %s", msg.toString().c_str());
+    port.write(msg);
 
     return thing;
 }

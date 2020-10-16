@@ -5,7 +5,7 @@
 #                                                                              #
 ################################################################################
 
-#BT parsing and execution
+# BT parsing and execution
 add_subdirectory(BT)
 
 # Protocol used between BT and Skill
@@ -20,31 +20,23 @@ add_subdirectory(Blackboard_protocol)
 # Code Generator
 add_subdirectory(skill-code-gen)
 
-
-
-#include(SkillAutogen)
-
-
-#Skills
+# Skills
 add_subdirectory(GoTo_skill)
-
 add_subdirectory(BatteryLevel_skill)
-
 add_subdirectory(BatteryNotCharging_skill)
 add_subdirectory(IsAt_skill)
 
-#add_subdirectory(BatteryLevel_skill)
-#add_subdirectory(BatteryNotCharging_skill)
-
-
-
-#components
+# Components
 add_subdirectory(Id_component)
 add_subdirectory(Battery_component)
 add_subdirectory(GoTo_component)
 add_subdirectory(Blackboard_component)
 
-# will be in YARP
+# Monitor
+add_subdirectory(Monitor)
+
+# Will be in YARP
 add_subdirectory(fakeBatteryChargingStation)
 
+# Already in YARP, but some modifications are required
 add_subdirectory(portmonitor_carrier)
