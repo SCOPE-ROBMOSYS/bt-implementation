@@ -2,5 +2,6 @@
 <qresource>
     <file>monitor.qml</file>
     <file>BatteryLevelMonitor.scxml</file>
+    <file>DestinationMonitor.scxml</file>
 </qresource>
 </RCC>

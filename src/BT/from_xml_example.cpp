@@ -28,6 +28,9 @@
 #include <behaviortree_cpp_v3/loggers/bt_minitrace_logger.h>
 #include <behaviortree_cpp_v3/loggers/bt_file_logger.h>
 
+#include <yarp/os/Network.h>
+#include <yarp/os/Port.h>
+
 using namespace std;
 using namespace BT;
 
@@ -134,8 +137,30 @@ int main()
 //        }
 //    }
 
+    yarp::os::Network yarp;
+    yarp::os::Port port;
+
+    if (!port.openFake("/tick/monitor")) {
+        return EXIT_FAILURE;
+    }
+
+    if (!port.addOutput("/monitor")) {
+        return EXIT_FAILURE;
+    }
+
+
     while(true)
     {
+        yarp::os::Bottle msg;
+        msg.addDouble(yarp::os::SystemClock::nowSystem());
+        msg.addString("/tick");
+        msg.addString("*");
+        msg.addString("tick");
+        //msg.addBool(sender);
+        auto& bcmd = msg.addList();
+        YARP_UNUSED(bcmd);
+        port.write(msg);
+
         tree.root_node->executeTick();
         std::this_thread::sleep_for (std::chrono::milliseconds(1000));
     }

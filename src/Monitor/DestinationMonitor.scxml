@@ -1,0 +1,83 @@
+<!--
+ Copyright (C) 2020 Fondazione Istituto Italiano di Tecnologia (IIT)
+ All Rights Reserved.
+-->
+
+<scxml
+    xmlns="http://www.w3.org/2005/07/scxml"
+    version="1.0"
+    name="DestinationMonitorStateMachine"
+    initial="idle"
+    datamodel="ecmascript"
+>
+
+  <datamodel>
+    <data id="batteryLevel" expr="0.0"/>
+    <data id="destination" expr=""/>
+    <data id="tickCounter" expr="0"/>
+  </datamodel>
+
+  <state id="idle">
+    <onentry>
+      <log expr="'[DestinationMonitor][idle] batteryLevel = ' + batteryLevel"/>
+      <log expr="'[DestinationMonitor][idle] destination = ' + destination"/>
+      <log expr="'[DestinationMonitor][idle] tickCounter = ' + tickCounter"/>
+      <assign location="tickCounter" expr="0"/>
+    </onentry>
+    <transition event="destinationChangeRequested" target="idle2" >
+      <assign location="destination" expr="_event.data"/>
+    </transition>
+  </state>
+
+  <state id="idle2">
+    <onentry>
+      <log expr="'[DestinationMonitor][idle2] batteryLevel = ' + batteryLevel"/>
+      <log expr="'[DestinationMonitor][idle2] destination = ' + destination"/>
+      <log expr="'[DestinationMonitor][idle2] tickCounter = ' + tickCounter"/>
+    </onentry>
+    <transition event="batteryLevelChanged" target="getLevel" >
+      <assign location="batteryLevel" expr="_event.data"/>
+    </transition>
+  </state>
+
+  <state id="getLevel">
+    <onentry>
+      <log expr="'[DestinationMonitor][getLevel] batteryLevel = ' + batteryLevel"/>
+      <log expr="'[DestinationMonitor][getLevel] destination = ' + destination"/>
+      <log expr="'[DestinationMonitor][getLevel] tickCounter = ' + tickCounter"/>
+    </onentry>
+    <transition cond="batteryLevel &gt;= 30" target="idle2" />
+    <transition cond="batteryLevel &lt; 30" target="shouldGoToChargingStation" />
+  </state>
+
+  <state id="warning">
+    <state id="shouldGoToChargingStation">
+        <onentry>
+        <log expr="'[DestinationMonitor][shouldGoToChargingStation] batteryLevel = ' + batteryLevel"/>
+        <log expr="'[DestinationMonitor][shouldGoToChargingStation] destination = ' + destination"/>
+        <log expr="'[DestinationMonitor][shouldGoToChargingStation] tickCounter = ' + tickCounter"/>
+        </onentry>
+        <transition event="tick" target="checkTickCounter" >
+        <assign location="tickCounter" expr="tickCounter + 1"/>
+        </transition>
+    </state>
+
+    <state id="checkTickCounter">
+        <onentry>
+        <log expr="'[DestinationMonitor][checkTickCounter] batteryLevel = ' + batteryLevel"/>
+        <log expr="'[DestinationMonitor][checkTickCounter] destination = ' + destination"/>
+        <log expr="'[DestinationMonitor][checkTickCounter] tickCounter = ' + tickCounter"/>
+        </onentry>
+        <transition cond="tickCounter &lt;= 10" target="shouldGoToChargingStation" />
+        <transition cond="tickCounter &gt; 10" target="failure" />
+    </state>
+  </state>
+  <state id="failure">
+    <onentry>
+      <log expr="'[DestinationMonitor][failure] batteryLevel = ' + batteryLevel"/>
+      <log expr="'[DestinationMonitor][failure] destination = ' + destination"/>
+      <log expr="'[DestinationMonitor][failure] tickCounter = ' + tickCounter"/>
+    </onentry>
+  </state>
+
+</scxml>

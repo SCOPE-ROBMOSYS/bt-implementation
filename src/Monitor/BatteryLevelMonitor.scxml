@@ -6,7 +6,7 @@
 <scxml
     xmlns="http://www.w3.org/2005/07/scxml"
     version="1.0"
-    name="BatteryLevelSkillStateMachine"
+    name="BatteryLevelMonitorStateMachine"
     initial="idle"
     datamodel="ecmascript"
 >
@@ -17,7 +17,7 @@
 
   <state id="idle">
     <onentry>
-      <log expr="'[idle] batteryLevel = ' + batteryLevel"/>
+      <log expr="'[BatteryLevelMonitor][idle] batteryLevel = ' + batteryLevel"/>
     </onentry>
     <transition event="batteryLevelChanged" target="getLevel" >
       <assign location="batteryLevel" expr="_event.data"/>
@@ -26,7 +26,7 @@
 
   <state id="getLevel">
     <onentry>
-      <log expr="'[getLevel] batteryLevel = ' + batteryLevel"/>
+      <log expr="'[BatteryLevelMonitor][getLevel] batteryLevel = ' + batteryLevel"/>
     </onentry>
     <transition cond="batteryLevel &gt;= 20" target="idle" />
     <transition cond="batteryLevel &lt; 20" target="failure" />
@@ -34,7 +34,7 @@
 
   <state id="failure">
     <onentry>
-      <log expr="'[failure] batteryLevel = ' + batteryLevel"/>
+      <log expr="'[BatteryLevelMonitor][failure] batteryLevel = ' + batteryLevel"/>
     </onentry>
   </state>
 </scxml>

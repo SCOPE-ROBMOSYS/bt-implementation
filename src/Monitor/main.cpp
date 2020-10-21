@@ -16,8 +16,44 @@
 #include <QQmlApplicationEngine>
 #include <QScxmlStateMachine>
 #include <QTextStream>
+#include <QIcon>
 
+enum class EventType
+{
+    Unknown,
+    Tick,
+    Command,
+    Reply
+};
 
+std::string eventTypeToString(EventType t)
+{
+    switch (t) {
+    case EventType::Tick:
+        return "tick";
+    case EventType::Command:
+        return "command";
+    case EventType::Reply:
+        return "reply";
+    case EventType::Unknown:
+    default:
+        return "[unknown]";
+    }
+}
+
+EventType stringToEventType(const std::string& s)
+{
+    if (s == "tick") {
+        return EventType::Tick;
+    }
+    if (s == "command") {
+        return EventType::Command;
+    }
+    if (s == "reply") {
+        return EventType::Reply;
+    }
+    return EventType::Unknown;
+}
 
 // FIXME Maybe use thrift...
 struct MonitorEvent
@@ -25,7 +61,7 @@ struct MonitorEvent
     double timestamp {0.0};
     std::string source;
     std::string destination;
-    bool isReply;
+    EventType type;
     std::string command;
     std::string arguments;
 };
@@ -37,6 +73,7 @@ class MonitorReader :
     Q_OBJECT
     Q_DISABLE_COPY(MonitorReader)
     Q_PROPERTY(double batteryLevel READ batteryLevel NOTIFY batteryLevelChanged)
+    Q_PROPERTY(QString destination READ destination NOTIFY destinationChanged)
 //     QML_ELEMENT
 
     MonitorReader() {}
@@ -56,14 +93,20 @@ public:
     bool read(yarp::os::ConnectionReader &reader) override;
 
     double batteryLevel() const { return m_batteryLevel; }
+    QString destination() const { return m_destination;  }
 
 Q_SIGNALS:
+    void tick();
+
+    void destinationChangeRequested(const QString& destination);
+    void destinationChanged(const QString& destination);
     void batteryLevelChanged(double level);
 
 private:
     static QObject* m_instance;
 
     double m_batteryLevel {100.0};
+    QString m_destination {""};
 };
 
 QObject* MonitorReader::m_instance = nullptr;
@@ -78,26 +121,54 @@ bool MonitorReader::read(yarp::os::ConnectionReader &reader)
         /*.timestamp =*/ get(0).asDouble(),
         /*.source =*/ get(1).asString(),
         /*.destination =*/ get(2).asString(),
-        /*.isReply =*/ (get(3).asString() == "reply"),
-        /*.command =*/ get(4).asList()->get(0).asString(),
+        /*.type =*/ stringToEventType(get(3).asString()),
+        /*.command =*/ (get(4).asList()->size() > 0 ? get(4).asList()->get(0).asString() : ""),
         /*.arguments =*/ (get(4).asList()->size() > 1 ? get(4).asList()->toString().substr(get(4).asList()->get(0).asString().size() + 1) : "")
     };
 
     yDebugExternalTime(event.timestamp, "Message received:\n  From     : %s\n  To       : %s\n  %s: %s\n  Arguments: %s",
-        event.isReply ? event.destination.c_str() : event.source.c_str(),
-        event.isReply ? event.source.c_str() : event.destination.c_str(),
-        event.isReply ? "Reply    " : "Command  ",
+        event.type == EventType::Reply ? event.destination.c_str() : event.source.c_str(),
+        event.type == EventType::Reply ? event.source.c_str() : event.destination.c_str(),
+        (event.type == EventType::Reply ? "Reply    " : (
+         event.type == EventType::Command ? "Command  " : (
+         event.type == EventType::Tick ? "Tick     " : "Unknown  "))),
         event.command.c_str(),
         event.arguments.c_str()
     );
 
-    if (event.isReply
+    if (event.type == EventType::Tick) {
+        yInfo("tick");
+        Q_EMIT tick();
+    }
+
+    if (event.type == EventType::Reply
           && event.source == "/BatteryReaderBatteryLevelClient"
           && event.destination == "/BatteryComponent"
           && event.command == "level") {
-        yInfo("level = %s", event.arguments.c_str());
         m_batteryLevel = get(4).asList()->get(1).asDouble();
+        yInfo("level = %f", m_batteryLevel);
         Q_EMIT batteryLevelChanged(m_batteryLevel);
+    }
+
+    if (event.type == EventType::Command
+          && (
+            (event.source == "/GoToDestination/BT_rpc/client" &&
+             event.destination == "/GoToDestination/BT_rpc/server") ||
+            (event.source == "/GoToChargingStation/BT_rpc/client" &&
+             event.destination == "/GoToChargingStation/BT_rpc/server")
+          )
+          && event.command == "send_start") {
+        QString destination = get(4).asList()->get(1).asString().c_str();
+        yInfo("destination change requested = %s", destination.toStdString().c_str());
+        Q_EMIT destinationChangeRequested(destination.toStdString().c_str());
+    }
+
+    if (event.type == EventType::Reply
+          && event.destination == "/GoToComponent"
+          && event.command == "goTo") {
+        m_destination = get(4).asList()->get(1).asString().c_str();
+        yInfo("destination changed = %s", m_destination.toStdString().c_str());
+        Q_EMIT destinationChanged(m_destination.toStdString().c_str());
     }
 
     return ret;
@@ -115,6 +186,7 @@ int main (int argc, char *argv[])
     yarp::os::Network yarp;
 
     QGuiApplication app(argc, argv);
+    app.setWindowIcon(QIcon::fromTheme("gnome-power-manager"));
 
     QQmlApplicationEngine engine;
 
@@ -128,14 +200,17 @@ int main (int argc, char *argv[])
         return -1;
     }
 
-    std::mutex mutex;
     yarp::os::Port port;
     auto* monitorReader = dynamic_cast<MonitorReader*>(MonitorReader::qmlInstance(&engine, nullptr));
     port.setReader(*monitorReader);
     port.setCallbackLock();
     port.open("/monitor");
 
-    QObject::connect(monitorReader, &MonitorReader::batteryLevelChanged, [](double level){ yWarning("SIGNAL RECEIVED: level = %f", level); });
+    // Just for testing that signals work
+    QObject::connect(monitorReader, &MonitorReader::tick, [](){ yWarning("SIGNAL RECEIVED: tick"); });
+    QObject::connect(monitorReader, &MonitorReader::batteryLevelChanged, [](double level){ yWarning("SIGNAL RECEIVED: batteryLevelChanged(level = %f)", level); });
+    QObject::connect(monitorReader, &MonitorReader::destinationChangeRequested, [](const QString& destination){ yWarning("SIGNAL RECEIVED: destinationChangeRequested(destination = %s)", destination.toStdString().c_str()); });
+    QObject::connect(monitorReader, &MonitorReader::destinationChanged, [](const QString& destination){ yWarning("SIGNAL RECEIVED: destinationChanged(destination = %s)", destination.toStdString().c_str()); });
 
     return app.exec();
 }
