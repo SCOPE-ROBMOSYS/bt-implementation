@@ -28,7 +28,9 @@ RUN apt-get update -qq && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         software-properties-common \
         && \
-    add-apt-repository -s -y -u ppa:robotology/test && \
+    add-apt-repository -s -y ppa:robotology/test && \
+    sed -i 's|focal main|focal main main/debug|g' /etc/apt/sources.list.d/robotology-ubuntu-test-focal.list && \
+    apt-get update -qq && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         build-essential \
         git \
@@ -54,6 +56,7 @@ RUN apt-get update -qq && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         ycm-cmake-modules \
         yarp-dev \
+        libyarp-os3-private-dev \
         libqt5scxml5-dev \
         libqt5scxml5-bin \
         libqt5scxml5-private-dev \
@@ -84,6 +87,45 @@ RUN apt-get update -qq && \
         yarp-tools \
         yarpbatterygui \
         yarpview \
+        yarplogger \
+        && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+        libyarp-dev3-dbgsym \
+        libyarp-gsl3-dbgsym \
+        libyarp-math3-dbgsym \
+        libyarp-os3-dbgsym \
+        libyarp-robotinterface3-dbgsym \
+        libyarp-robottestingframework3-dbgsym \
+        libyarp-sig3-dbgsym \
+        yarp-carrier-portmonitor-dbgsym \
+        yarp-carrier-unixstream-dbgsym \
+        yarp-device-analogserver-dbgsym \
+        yarp-device-audioplayerwrapper-dbgsym \
+        yarp-device-audiorecorderwrapper-dbgsym \
+        yarp-device-batteryclient-dbgsym \
+        yarp-device-batterywrapper-dbgsym \
+        yarp-device-controlboardwrapper2-dbgsym \
+        yarp-device-fake-dbgsym \
+        yarp-device-grabberdual-dbgsym \
+        yarp-device-inertial-dbgsym \
+        yarp-device-localization2dclient-dbgsym \
+        yarp-device-localization2dserver-dbgsym \
+        yarp-device-map2dclient-dbgsym \
+        yarp-device-map2dserver-dbgsym \
+        yarp-device-navigation2dclient-dbgsym \
+        yarp-device-navigation2dserver-dbgsym \
+        yarp-device-rangefinder2dclient-dbgsym \
+        yarp-device-rangefinder2dwrapper-dbgsym \
+        yarp-device-remotecontrolboard-dbgsym \
+        yarp-device-rgbdsensorwrapper-dbgsym \
+        yarp-device-transformserver-dbgsym \
+        yarp-idl-tools-dbgsym \
+        yarp-tools-dbgsym \
+        yarpbatterygui-dbgsym \
+        yarplogger-dbgsym \
+        yarprun-dbgsym \
+        yarpserver-dbgsym \
+        yarpview-dbgsym \
         && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         bash-completion \
@@ -98,6 +140,7 @@ RUN apt-get update -qq && \
         x11-apps \
         vim \
         nano \
+        debian-goodies \
         && \
     update-alternatives --set editor /usr/bin/vim.basic && \
     apt-get clean && \
