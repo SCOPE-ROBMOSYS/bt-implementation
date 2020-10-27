@@ -39,7 +39,7 @@ bool BatteryReaderMonitorObject::create(const yarp::os::Property& options)
     source = options.find("source").asString();
     destination = options.find("destination").asString();
 
-    if (!port.openFake(source + "/monitor")) {
+    if (!port.open/*Fake*/(source + "/monitor")) {
         return false;
     }
 
@@ -52,6 +52,8 @@ bool BatteryReaderMonitorObject::create(const yarp::os::Property& options)
 
 yarp::os::Things& BatteryReaderMonitorObject::update(yarp::os::Things& thing)
 {
+    std::lock_guard<std::mutex> lock(mutex);
+
     yCTrace(BATTERYREADERMONITOR) << "update()";
 
     yarp::os::Bottle msg;
@@ -90,6 +92,9 @@ yarp::os::Things& BatteryReaderMonitorObject::update(yarp::os::Things& thing)
     yCDebug(BATTERYREADERMONITOR, "Writing: %s", msg.toString().c_str());
     port.write(msg);
 
+
+    yCTrace(BATTERYREADERMONITOR) << "update() returning";
+
     return thing;
 }
 
@@ -97,8 +102,9 @@ yarp::os::Things& BatteryReaderMonitorObject::update(yarp::os::Things& thing)
 
 yarp::os::Things& BatteryReaderMonitorObject::updateReply(yarp::os::Things& thing)
 {
-    yCTrace(BATTERYREADERMONITOR) << "updateReply()";
+    std::lock_guard<std::mutex> lock(mutex);
 
+    yCTrace(BATTERYREADERMONITOR) << "updateReply()";
     yarp::os::Bottle msg;
     msg.addDouble(yarp::os::SystemClock::nowSystem());
     msg.addString(source);
@@ -135,6 +141,8 @@ yarp::os::Things& BatteryReaderMonitorObject::updateReply(yarp::os::Things& thin
 
     yCDebug(BATTERYREADERMONITOR, "Writing: %s", msg.toString().c_str());
     port.write(msg);
+
+    yCTrace(BATTERYREADERMONITOR) << "updateReply() returning";
 
     return thing;
 }

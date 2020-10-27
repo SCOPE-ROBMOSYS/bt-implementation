@@ -7,7 +7,7 @@ x-base: &base
     - XDG_RUNTIME_DIR=/run/user/1000
     - XAUTHORITY=/home/scope/.Xauthority
     - YARP_COLORED_OUTPUT=1
-    - YARP_FORWARD_LOG_ENABLE=1
+    #- YARP_FORWARD_LOG_ENABLE=1
     - YARP_FORWARD_CODEINFO_ENABLE=1
     - QT_X11_NO_MITSHM=1
     - DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
@@ -55,72 +55,55 @@ services:
     container_name: yarp-server
     command: yarp server --read
 
-  yarplogger:
-    <<: *base
-    container_name: yarplogger
-    command: sh -c "
-      yarp wait /root;
-      yarplogger --start"
-    depends_on:
-      - yarp-server
-
+    #gammaray --inject-only --listen tcp://0.0.0.0:40001
   Monitor:
     <<: *base
     container_name: Monitor
     command: sh -c "
       yarp wait /root;
-      yarp wait /yarplogger;
-      gammaray /usr/local/src/bt-implementation/build/bin/monitor"
+      gammaray
+        /usr/local/src/bt-implementation/build/bin/monitor"
     depends_on:
       - yarp-server
-      - yarplogger
 
   IdComponent:
     <<: *base
     container_name: IdComponent
     command: sh -c "
       yarp wait /root;
-      yarp wait /yarplogger;
       /usr/local/src/bt-implementation/build/bin/IdComponent"
     depends_on:
       - yarp-server
-      - yarplogger
 
   transformServer:
     <<: *base
     container_name: transformServer
     command: sh -c "
       yarp wait /root;
-      yarp wait /yarplogger;
       yarpdev --device transformServer --ROS \"(enable_ros_publisher 0)\" \"(enable_ros_subscriber 0)\""
     depends_on:
       - yarp-server
-      - yarplogger
 
   fakeMotionControl:
     <<: *base
     container_name: fakeMotionControl
     command: sh -c "
       yarp wait /root;
-      yarp wait /yarplogger;
       yarpdev --device fakeMotionControl --name /robot_2wheels/mobile_base --GENERAL::Joints 2"
     depends_on:
       - yarp-server
-      - yarplogger
 
   baseControl:
     <<: *base
     container_name: baseControl
     command: sh -c "
       yarp wait /root;
-      yarp wait /yarplogger;
       yarp wait /robot_2wheels/mobile_base/command:i;
       yarp wait /robot_2wheels/mobile_base/rpc:i;
       yarp wait /robot_2wheels/mobile_base/stateExt:o;
       baseControl --context baseControl_SIM --from robot_2wheels.ini --skip_robot_interface_check"
     depends_on:
       - yarp-server
-      - yarplogger
       - fakeMotionControl
 
   map2DServer:
@@ -128,23 +111,19 @@ services:
     container_name: map2DServer
     command: sh -c "
       yarp wait /root;
-      yarp wait /yarplogger;
       yarpdev --device map2DServer --mapCollectionContext mapsExample"
     depends_on:
       - yarp-server
-      - yarplogger
 
   localization2DServer:
     <<: *base
     container_name: localization2DServer
     command: sh -c "
       yarp wait /root;
-      yarp wait /yarplogger;
       yarp wait /baseControl/odometry:o;
       yarpdev --device localization2DServer --subdevice odomLocalizer --context robotPathPlannerExamples --from odomLocalizer.ini"
     depends_on:
       - yarp-server
-      - yarplogger
       - baseControl
 
   Rangefinder2DWrapper:
@@ -152,12 +131,10 @@ services:
     container_name: Rangefinder2DWrapper
     command: sh -c "
       yarp wait /root;
-      yarp wait /yarplogger;
       yarp wait /localizationServer/rpc;
       yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /robot_2wheels/laser:o --test use_mapfile --map_file /usr/share/navigation/contexts/mapsExample/map_test.map --localization_client"
     depends_on:
       - yarp-server
-      - yarplogger
       - localization2DServer
 
   navigation2DServer:
@@ -165,7 +142,6 @@ services:
     container_name: navigation2DServer
     command: sh -c "
       yarp wait /root;
-      yarp wait /yarplogger;
       yarp wait /baseControl/control:i;
       yarp wait /localizationServer/rpc;
       yarp wait /robot_2wheels/laser:o;
@@ -174,7 +150,6 @@ services:
       yarpdev --device navigation2DServer --subdevice robotPathPlannerDev --context robotPathPlannerExamples --from robotPathPlanner_robot_2wheels.ini"
     depends_on:
       - yarp-server
-      - yarplogger
       - baseControl
       - localization2DServer
       - Rangefinder2DWrapper
@@ -185,7 +160,6 @@ services:
     container_name: navigationGUI
     command: sh -c "
       yarp wait /root;
-      yarp wait /yarplogger;
       yarp wait /localizationServer/rpc;
       yarp wait /navigationServer/rpc;
       yarp wait /robot_2wheels/laser:o/rpc:i;
@@ -194,7 +168,6 @@ services:
       navigationGUI --context navigationGUI --from navigationGUI_robot_2wheels.ini"
     depends_on:
       - yarp-server
-      - yarplogger
       - localization2DServer
 
   yarpview:
@@ -202,13 +175,11 @@ services:
     container_name: yarpview
     command: sh -c "
       yarp wait /root;
-      yarp wait /yarplogger;
       yarp wait /navigationGui/map:o;
       yarp wait /navigationGui/yarpviewTarget:i;
       yarpview --autosize --name /navView:i --out /mapClick:o"
     depends_on:
       - yarp-server
-      - yarplogger
       - navigationGUI
 
   connect:
@@ -216,7 +187,6 @@ services:
     container_name: connect
     command: sh -c "
       yarp wait /root;
-      yarp wait /yarplogger;
       yarp wait /robotGoto/control:o;
       yarp wait /baseControl/control:i;
       yarp wait /navigationGui/map:o;
@@ -230,7 +200,6 @@ services:
       yarp connect /mapClick:o /navigationGui/yarpviewTarget:i tcp;"
     depends_on:
       - yarp-server
-      - yarplogger
       - navigation2DServer
       - baseControl
       - navigationGUI
@@ -241,73 +210,74 @@ services:
     container_name: GoToComponent
     command: sh -c "
       yarp wait /root;
-      yarp wait /yarplogger;
       yarp wait /navigationServer/rpc;
       yarp wait /mapServer/rpc;
       yarp wait /localizationServer/rpc;
       /usr/local/src/bt-implementation/build/bin/GoToComponent"
     depends_on:
       - yarp-server
-      - yarplogger
       - navigation2DServer
       - map2DServer
       - localization2DServer
 
+      #gammaray --inject-only --listen tcp://0.0.0.0:40002
   GoToDestination:
     <<: *base
     container_name: GoToDestination
     command: sh -c "
+      cd /usr/local/src/bt-implementation/conf;
       yarp wait /root;
-      yarp wait /yarplogger;
       yarp wait /GoToComponent;
-      yarp wait /yarplogger;
       yarp wait /BlackboardComponent;
-      cd /usr/local/src/bt-implementation/conf && gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --from GoToDestination.ini"
+      gammaray
+        /usr/local/src/bt-implementation/build/bin/GoToSkill --from GoToDestination.ini"
     depends_on:
       - yarp-server
-      - yarplogger
       - GoToComponent
       - BlackboardComponent
 
+      #gammaray --inject-only --listen tcp://0.0.0.0:40003
   GoToChargingStation:
     <<: *base
     container_name: GoToChargingStation
     command: sh -c "
+      cd /usr/local/src/bt-implementation/conf;
       yarp wait /root;
-      yarp wait /yarplogger;
       yarp wait /GoToComponent;
       yarp wait /BlackboardComponent;
-      cd /usr/local/src/bt-implementation/conf && gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --from GoToChargingStation.ini"
+      gammaray
+        /usr/local/src/bt-implementation/build/bin/GoToSkill --from GoToChargingStation.ini"
     depends_on:
       - yarp-server
-      - yarplogger
       - GoToComponent
       - BlackboardComponent
 
+      #gammaray --inject-only --listen tcp://0.0.0.0:40004
+      # WARNING connection randomly fails when injected with gammaray
   IsAtDestination:
     <<: *base
     container_name: IsAtDestination
     command: sh -c "
+      cd /usr/local/src/bt-implementation/conf;
       yarp wait /root;
-      yarp wait /yarplogger;
       yarp wait /GoToComponent;
-      cd /usr/local/src/bt-implementation/conf && gammaray /usr/local/src/bt-implementation/build/bin/IsAtSkill --from IsAtDestination.ini"
+        /usr/local/src/bt-implementation/build/bin/IsAtSkill --from IsAtDestination.ini"
     depends_on:
       - yarp-server
-      - yarplogger
       - GoToComponent
 
+      #gammaray --inject-only --listen tcp://0.0.0.0:40005
+      # WARNING connection randomly fails when injected with gammaray
   IsAtChargingStation:
     <<: *base
     container_name: IsAtChargingStation
     command: sh -c "
+      cd /usr/local/src/bt-implementation/conf;
       yarp wait /root;
-      yarp wait /yarplogger;
       yarp wait /GoToComponent;
-      cd /usr/local/src/bt-implementation/conf && gammaray /usr/local/src/bt-implementation/build/bin/IsAtSkill --from IsAtChargingStation.ini"
+        /usr/local/src/bt-implementation/build/bin/IsAtSkill --from IsAtChargingStation.ini"
     depends_on:
       - yarp-server
-      - yarplogger
       - GoToComponent
 
   fakeBattery:
@@ -315,18 +285,15 @@ services:
     container_name: fakeBattery
     command: sh -c "
       yarp wait /root;
-      yarp wait /yarplogger;
       yarpdev --device fakeBattery --name /fakeBattery"
     depends_on:
       - yarp-server
-      - yarplogger
 
   fakeBatteryChargingStation:
     <<: *base
     container_name: fakeBatteryChargingStation
     command: sh -c "
       yarp wait /root;
-      yarp wait /yarplogger;
       yarp wait /navigationServer/rpc;
       yarp wait /mapServer/rpc;
       yarp wait /localizationServer/rpc;
@@ -336,66 +303,63 @@ services:
       /usr/local/src/bt-implementation/build/bin/fakeBatteryChargingStation"
     depends_on:
       - yarp-server
-      - yarplogger
       - navigation2DServer
       - map2DServer
       - localization2DServer
       - fakeBattery
 
-  yarpbatterygui:
-    <<: *base
-    container_name: yarpbatterygui
-    command: sh -c "
-      yarp wait /root;
-      yarp wait /yarplogger;
-      yarp wait /fakeBattery/rpc:i;
-      yarp wait /fakeBattery/data:o;
-      yarpbatterygui --remote /fakeBattery --refresh_period 1.0"
-    depends_on:
-      - yarp-server
-      - yarplogger
-      - fakeBattery
+  #yarpbatterygui:
+    #<<: *base
+    #container_name: yarpbatterygui
+    #command: sh -c "
+      #yarp wait /root;
+      #yarp wait /fakeBattery/rpc:i;
+      #yarp wait /fakeBattery/data:o;
+      #yarpbatterygui --remote /fakeBattery --refresh_period 1.0"
+    #depends_on:
+      #- yarp-server
+      #- fakeBattery
 
   BatteryComponent:
     <<: *base
     container_name: BatteryComponent
     command: sh -c "
       yarp wait /root;
-      yarp wait /yarplogger;
       yarp wait /fakeBattery/rpc:i;
       yarp wait /fakeBattery/data:o;
       /usr/local/src/bt-implementation/build/bin/BatteryComponent"
     depends_on:
       - yarp-server
-      - yarplogger
       - fakeBattery
 
+      #gammaray --inject-only --listen tcp://0.0.0.0:40006
   BatteryLevelSkill:
     <<: *base
     container_name: BatteryLevelSkill
     command: sh -c "
+      cd /usr/local/src/bt-implementation/conf;
       yarp wait /root;
-      yarp wait /yarplogger;
       yarp wait /monitor;
       yarp wait /BatteryComponent;
-      cd /usr/local/src/bt-implementation/conf && gammaray /usr/local/src/bt-implementation/build/bin/BatteryLevelSkill --from BatteryLevel.ini"
+      gammaray
+        /usr/local/src/bt-implementation/build/bin/BatteryLevelSkill --from BatteryLevel.ini"
     depends_on:
       - yarp-server
-      - yarplogger
       - Monitor
       - BatteryComponent
 
+      #gammaray --inject-only --listen tcp://0.0.0.0:40007
   BatteryNotChargingSkill:
     <<: *base
     container_name: BatteryNotChargingSkill
     command: sh -c "
+      cd /usr/local/src/bt-implementation/conf;
       yarp wait /root;
-      yarp wait /yarplogger;
       yarp wait /BatteryComponent;
-      cd /usr/local/src/bt-implementation/conf && gammaray /usr/local/src/bt-implementation/build/bin/BatteryNotChargingSkill --from BatteryNotCharging.ini"
+      gammaray
+        /usr/local/src/bt-implementation/build/bin/BatteryNotChargingSkill --from BatteryNotCharging.ini"
     depends_on:
       - yarp-server
-      - yarplogger
       - BatteryComponent
 
 
@@ -403,34 +367,36 @@ services:
     <<: *base
     container_name: BlackboardComponent
     command: sh -c "
+      cd /usr/local/src/bt-implementation/build/bin;
       yarp wait /root;
-      yarp wait /yarplogger;
-      cd /usr/local/src/bt-implementation/build/bin && ./BlackboardComponent"
+      ./BlackboardComponent"
     depends_on:
       - yarp-server
-      - yarplogger
 
 
   BehaviorTree:
     <<: *base
     container_name: BehaviorTree
     command: sh -c "
+      cd /usr/local/src/bt-implementation/build/bin;
       yarp wait /root;
-      yarp wait /yarplogger;
       yarp wait /monitor;
       yarp wait /GoToDestination/BT_rpc/server;
       yarp wait /GoToChargingStation/BT_rpc/server;
       yarp wait /BatteryLevel/BT_rpc/server;
       yarp wait /BatteryNotCharging/BT_rpc/server;
-      cd /usr/local/src/bt-implementation/build/bin && ./from_xml_example"
+      yarp wait /IsAtDestination/BT_rpc/server;
+      yarp wait /IsAtChargingStation/BT_rpc/server;
+      ./from_xml_example"
     depends_on:
       - yarp-server
-      - yarplogger
       - Monitor
       - GoToDestination
       - GoToChargingStation
       - BatteryLevelSkill
       - BatteryNotChargingSkill
+      - IsAtDestination
+      - IsAtChargingStation
 
   groot:
     <<: *base

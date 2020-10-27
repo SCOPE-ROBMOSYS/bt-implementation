@@ -14,6 +14,9 @@
 #include <yarp/os/Things.h>
 #include <yarp/os/Port.h>
 
+#include <mutex>
+#include <string>
+
 class BatteryReaderMonitorObject :
         public yarp::os::MonitorObject
 {
@@ -26,6 +29,7 @@ private:
     bool sender;
     std::string source;
     std::string destination;
+    std::mutex mutex;
     yarp::os::Bottle data;
     yarp::os::Things th;
     yarp::os::Port port;

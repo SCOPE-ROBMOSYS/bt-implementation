@@ -15,30 +15,6 @@ Window {
 
     title: "SCOPE Monitor"
 
-    Connections {
-        target: MonitorReader
-        onTick: {
-            console.log("tick");
-            loader_01.stateMachine.submitEvent("tick");
-            loader_02.stateMachine.submitEvent("tick");
-        }
-        onBatteryLevelChanged: {
-            console.log("battery level changed: " + level);
-            loader_01.stateMachine.submitEvent("batteryLevelChanged", level);
-            loader_02.stateMachine.submitEvent("batteryLevelChanged", level);
-        }
-        onDestinationChangeRequested: {
-            console.log("destination change requested: " + destination);
-            loader_01.stateMachine.submitEvent("destinationChangeRequested", destination);
-            loader_02.stateMachine.submitEvent("destinationChangeRequested", destination);
-        }
-        onDestinationChanged: {
-            console.log("destination changed: " + destination);
-            loader_01.stateMachine.submitEvent("destinationChanged", destination);
-            loader_02.stateMachine.submitEvent("destinationChanged", destination);
-        }
-    }
-
     ColumnLayout {
         spacing: 2
 
@@ -51,6 +27,26 @@ Window {
             StateMachineLoader {
                 id: loader_01
                 source: "qrc:///BatteryLevelMonitor.scxml"
+            }
+
+            Connections {
+                target: MonitorReader
+                onTick: loader_01.stateMachine.submitEvent("tick")
+            }
+
+            Connections {
+                target: MonitorReader
+                onBatteryLevelChanged: loader_01.stateMachine.submitEvent("batteryLevelChanged", { "level": level })
+            }
+
+            Connections {
+                target: MonitorReader
+                onDestinationChangeRequested: loader_01.stateMachine.submitEvent("destinationChangeRequested", { "destination": destination })
+            }
+
+            Connections {
+                target: MonitorReader
+                onDestinationChanged: loader_01.stateMachine.submitEvent("destinationChanged", { "destination": destination })
             }
 
             RowLayout {
@@ -97,15 +93,15 @@ Window {
                                 color: "green"
                             }
                         },
-                        State {
-                            name: "Warning"
-                            when: loader_01.stateMachine.warning
-
-                            PropertyChanges {
-                                target: light_01
-                                color: "yellow"
-                            }
-                        },
+//                         State {
+//                             name: "Warning"
+//                             when: loader_01.stateMachine.warning
+//
+//                             PropertyChanges {
+//                                 target: light_01
+//                                 color: "yellow"
+//                             }
+//                         },
                         State {
                             name: "Error"
                             when: loader_01.stateMachine.failure
@@ -119,7 +115,6 @@ Window {
 
                 }
             } // RowLayout
-
         } // Rectangle
 
         Rectangle {
@@ -132,6 +127,27 @@ Window {
                 id: loader_02
                 source: "qrc:///DestinationMonitor.scxml"
             }
+
+            Connections {
+                target: MonitorReader
+                onTick: loader_02.stateMachine.submitEvent("tick")
+            }
+
+            Connections {
+                target: MonitorReader
+                onBatteryLevelChanged: loader_02.stateMachine.submitEvent("batteryLevelChanged", { "level": level })
+            }
+
+            Connections {
+                target: MonitorReader
+                onDestinationChangeRequested: loader_02.stateMachine.submitEvent("destinationChangeRequested", { "destination": destination })
+            }
+
+            Connections {
+                target: MonitorReader
+                onDestinationChanged: loader_02.stateMachine.submitEvent("destinationChanged", { "destination": destination })
+            }
+
 
             RowLayout {
                 id: layout_02
@@ -171,7 +187,7 @@ Window {
                     states: [
                         State {
                             name: "Ok"
-                            when: loader_02.stateMachine.idle
+                            when: loader_02.stateMachine.idleState
 
                             PropertyChanges {
                                 target: light_02
@@ -201,7 +217,7 @@ Window {
                 }
 
             } // RowLayout
-
         } // Rectangle
+
     } // ColumnLayout
 }

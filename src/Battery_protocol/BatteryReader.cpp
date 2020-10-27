@@ -17,6 +17,8 @@
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
+#include <cstdarg>
+
 namespace {
 YARP_LOG_COMPONENT(BATTERYREADER,
                    "scope.Battery_protocol.BatteryReader",
@@ -26,6 +28,50 @@ YARP_LOG_COMPONENT(BATTERYREADER,
                    nullptr)
 }
 
+namespace yarp {
+namespace os {
+
+struct LogTracer
+{
+    LogTracer(const char* file,
+              const unsigned int line,
+              const char* func,
+              const double externaltime,
+              const yarp::os::LogComponent& comp,
+              const char* msg,
+              ...) YARP_ATTRIBUTE_FORMAT(printf, 7, 8) :
+        m_file(file),
+        m_line(line),
+        m_func(func),
+        m_externaltime(externaltime),
+        m_comp(comp)
+    {
+        m_msg = msg;
+        va_start(m_args, msg);
+        yarp::os::Log(m_file, m_line, m_func, m_externaltime, nullptr, m_comp).trace(m_msg, m_args);
+    }
+
+    ~LogTracer()
+    {
+        yarp::os::Log(m_file, m_line, m_func, m_externaltime, nullptr, m_comp).trace(m_msg, m_args);
+        va_end(m_args);
+    }
+
+
+    const char* m_file;
+    const unsigned int m_line;
+    const char* m_func;
+    const double m_externaltime;
+    const yarp::os::LogComponent& m_comp;
+    const char* m_msg;
+    va_list m_args;
+};
+
+} // namespace os
+} // namespace yarp
+
+// #  define yTracer(...)               yarp::os::LogTracer(__FILE__, __LINE__, __YFUNCTION__, 0.0, ) trace(__VA_ARGS__)
+#  define yCTracer(component, ...)   yarp::os::LogTracer trace(__FILE__, __LINE__, __YFUNCTION__, 0.0, component(), __VA_ARGS__)
 
 class BatteryReader_level_helper :
         public yarp::os::Portable
@@ -40,11 +86,13 @@ public:
 
 BatteryReader_level_helper::BatteryReader_level_helper()
 {
-    yCInfo(BATTERYREADER) << this << "BatteryReader_level_helper::BatteryReader_level_helper()";
+    yCTracer(BATTERYREADER, "[%p]", this);
 }
 
 bool BatteryReader_level_helper::write(yarp::os::ConnectionWriter& connection) const
 {
+    yCTracer(BATTERYREADER, "[%p]", this);
+
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(1)) {
         return false;
@@ -57,18 +105,19 @@ bool BatteryReader_level_helper::write(yarp::os::ConnectionWriter& connection) c
 
 bool BatteryReader_level_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yCInfo(BATTERYREADER) << this << "BatteryReader_level_helper::read()";
+    yCTracer(BATTERYREADER, "[%p]", this);
+
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
-        yCInfo(BATTERYREADER) << this << "BatteryReader_level_helper::read() - fail (1)";
+        yCTrace(BATTERYREADER) << this << "BatteryReader_level_helper::read() - fail (1)";
         return false;
     }
     if (!reader.readFloat64(m_return_helper)) {
-        yCInfo(BATTERYREADER) << this << "BatteryReader_level_helper::read() - fail (2)";
+        yCTrace(BATTERYREADER) << this << "BatteryReader_level_helper::read() - fail (2)";
         reader.fail();
         return false;
     }
-    yCInfo(BATTERYREADER) << this << "BatteryReader_level_helper::read() -" << m_return_helper;
+    yCTrace(BATTERYREADER) << this << "BatteryReader_level_helper::read() -" << m_return_helper;
     return true;
 }
 
@@ -85,11 +134,13 @@ public:
 
 BatteryReader_charging_status_helper::BatteryReader_charging_status_helper()
 {
-    yCInfo(BATTERYREADER) << this << "BatteryReader_charging_status_helper::BatteryReader_charging_status_helper()";
+    yCTracer(BATTERYREADER, "[%p]", this);
 }
 
 bool BatteryReader_charging_status_helper::write(yarp::os::ConnectionWriter& connection) const
 {
+    yCTracer(BATTERYREADER, "[%p]", this);
+
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
         return false;
@@ -102,22 +153,23 @@ bool BatteryReader_charging_status_helper::write(yarp::os::ConnectionWriter& con
 
 bool BatteryReader_charging_status_helper::read(yarp::os::ConnectionReader& connection)
 {
-    yCInfo(BATTERYREADER) << this << "BatteryReader_charging_status_helper::read()";
+    yCTracer(BATTERYREADER, "[%p]", this);
+
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
-        yCInfo(BATTERYREADER) << this << "BatteryReader_charging_status_helper::read() - fail (1)";
+        yCTrace(BATTERYREADER) << this << "BatteryReader_charging_status_helper::read() - fail (1)";
         return false;
     }
     int32_t ecast0;
     ChargingStatusVocab cvrt1;
     if (!reader.readEnum(ecast0, cvrt1)) {
-        yCInfo(BATTERYREADER) << this << "BatteryReader_charging_status_helper::read() - fail (2)";
+        yCTrace(BATTERYREADER) << this << "BatteryReader_charging_status_helper::read() - fail (2)";
         reader.fail();
         return false;
     } else {
         m_return_helper = static_cast<ChargingStatus>(ecast0);
     }
-    yCInfo(BATTERYREADER) << this << "BatteryReader_charging_status_helper::read" << ChargingStatusVocab().toString(ecast0);;
+    yCTrace(BATTERYREADER) << this << "BatteryReader_charging_status_helper::read" << ChargingStatusVocab().toString(ecast0);;
 
     return true;
 }
@@ -125,11 +177,13 @@ bool BatteryReader_charging_status_helper::read(yarp::os::ConnectionReader& conn
 // Constructor
 BatteryReader::BatteryReader()
 {
+    yCTracer(BATTERYREADER, "[%p]", this);
     yarp().setOwner(*this);
 }
 
 double BatteryReader::level()
 {
+    yCTracer(BATTERYREADER, "[%p]", this);
     BatteryReader_level_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "double BatteryReader::level()");
@@ -140,6 +194,7 @@ double BatteryReader::level()
 
 ChargingStatus BatteryReader::charging_status()
 {
+    yCTracer(BATTERYREADER, "[%p]", this);
     BatteryReader_charging_status_helper helper{};
     if (!yarp().canWrite()) {
         yError("Missing server method '%s'?", "ChargingStatus BatteryReader::charging_status()");
@@ -151,6 +206,7 @@ ChargingStatus BatteryReader::charging_status()
 // help method
 std::vector<std::string> BatteryReader::help(const std::string& functionName)
 {
+    yCTracer(BATTERYREADER, "[%p]", this);
     bool showAll = (functionName == "--all");
     std::vector<std::string> helpString;
     if (showAll) {
@@ -181,6 +237,7 @@ std::vector<std::string> BatteryReader::help(const std::string& functionName)
 // read from ConnectionReader
 bool BatteryReader::read(yarp::os::ConnectionReader& connection)
 {
+    yCTracer(BATTERYREADER, "[%p]", this);
     yDebug("BatteryReader::read() - %d", __LINE__);
     yarp::os::idl::WireReader reader(connection);
     reader.expectAccept();
@@ -209,10 +266,13 @@ bool BatteryReader::read(yarp::os::ConnectionReader& connection)
                     return false;
                 }
                 if (!writer.writeFloat64(helper.m_return_helper)) {
+                    yDebug("BatteryReader::read() - %d", __LINE__);
                     return false;
                 }
             }
+            yDebug("BatteryReader::read() - %d", __LINE__);
             reader.accept();
+            yInfo("BatteryReader::read() - %d: [level] %f", __LINE__, helper.m_return_helper);
             return true;
         }
         if (tag == "charging_status") {
@@ -227,10 +287,13 @@ bool BatteryReader::read(yarp::os::ConnectionReader& connection)
                     return false;
                 }
                 if (!writer.writeI32(static_cast<int32_t>(helper.m_return_helper))) {
+                    yDebug("BatteryReader::read() - %d", __LINE__);
                     return false;
                 }
             }
+            yDebug("BatteryReader::read() - %d", __LINE__);
             reader.accept();
+            yInfo("BatteryReader::read() - %d: [charging_status] %s", __LINE__, ChargingStatusVocab().toString(helper.m_return_helper).c_str());
             return true;
         }
         if (tag == "help") {

@@ -39,7 +39,7 @@ bool Skill_requestMonitorObject::create(const yarp::os::Property& options)
     source = options.find("source").asString();
     destination = options.find("destination").asString();
 
-    if (!port.openFake(source + "/monitor")) {
+    if (!port.open/*Fake*/(source + "/monitor")) {
         return false;
     }
 
@@ -52,6 +52,8 @@ bool Skill_requestMonitorObject::create(const yarp::os::Property& options)
 
 yarp::os::Things& Skill_requestMonitorObject::update(yarp::os::Things& thing)
 {
+    std::lock_guard<std::mutex> lock(mutex);
+
     yCTrace(SKILLREQUESTMONITOR) << "update()";
 
     yarp::os::Bottle msg;
@@ -101,6 +103,8 @@ yarp::os::Things& Skill_requestMonitorObject::update(yarp::os::Things& thing)
 
 yarp::os::Things& Skill_requestMonitorObject::updateReply(yarp::os::Things& thing)
 {
+    std::lock_guard<std::mutex> lock(mutex);
+
     yCTrace(SKILLREQUESTMONITOR) << "updateReply()";
 
     yarp::os::Bottle msg;

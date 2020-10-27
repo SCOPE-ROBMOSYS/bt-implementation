@@ -7,77 +7,130 @@
     xmlns="http://www.w3.org/2005/07/scxml"
     version="1.0"
     name="DestinationMonitorStateMachine"
-    initial="idle"
+    initial="run"
     datamodel="ecmascript"
 >
 
   <datamodel>
     <data id="batteryLevel" expr="0.0"/>
     <data id="destination" expr=""/>
-    <data id="tickCounter" expr="0"/>
+    <data id="tickCounterTheta" expr="10"/>
+    <data id="tickCounter" expr="tickCounterTheta"/>
   </datamodel>
 
-  <state id="idle">
-    <onentry>
-      <log expr="'[DestinationMonitor][idle] batteryLevel = ' + batteryLevel"/>
-      <log expr="'[DestinationMonitor][idle] destination = ' + destination"/>
-      <log expr="'[DestinationMonitor][idle] tickCounter = ' + tickCounter"/>
-      <assign location="tickCounter" expr="0"/>
-    </onentry>
-    <transition event="destinationChangeRequested" target="idle2" >
-      <assign location="destination" expr="_event.data"/>
-    </transition>
-  </state>
+  <parallel id="run">
 
-  <state id="idle2">
-    <onentry>
-      <log expr="'[DestinationMonitor][idle2] batteryLevel = ' + batteryLevel"/>
-      <log expr="'[DestinationMonitor][idle2] destination = ' + destination"/>
-      <log expr="'[DestinationMonitor][idle2] tickCounter = ' + tickCounter"/>
-    </onentry>
-    <transition event="batteryLevelChanged" target="getLevel" >
-      <assign location="batteryLevel" expr="_event.data"/>
-    </transition>
-  </state>
 
-  <state id="getLevel">
-    <onentry>
-      <log expr="'[DestinationMonitor][getLevel] batteryLevel = ' + batteryLevel"/>
-      <log expr="'[DestinationMonitor][getLevel] destination = ' + destination"/>
-      <log expr="'[DestinationMonitor][getLevel] tickCounter = ' + tickCounter"/>
-    </onentry>
-    <transition cond="batteryLevel &gt;= 30" target="idle2" />
-    <transition cond="batteryLevel &lt; 30" target="shouldGoToChargingStation" />
-  </state>
+    <state id="monitor">
 
-  <state id="warning">
-    <state id="shouldGoToChargingStation">
+      <!-- I (A) -->
+      <state id="idleState">
         <onentry>
-        <log expr="'[DestinationMonitor][shouldGoToChargingStation] batteryLevel = ' + batteryLevel"/>
-        <log expr="'[DestinationMonitor][shouldGoToChargingStation] destination = ' + destination"/>
-        <log expr="'[DestinationMonitor][shouldGoToChargingStation] tickCounter = ' + tickCounter"/>
+          <assign location="tickCounter" expr="tickCounterTheta"/>
         </onentry>
-        <transition event="tick" target="checkTickCounter" >
-        <assign location="tickCounter" expr="tickCounter + 1"/>
+        <transition event="destinationChanged" target="idleState-b" >
+          <assign location="destination" expr="_event.data.destination"/>
+          <log label="DestinationMonitor/destinationChanged" expr="'destination updated: ' + destination"/>
         </transition>
+      </state>
+
+      <!-- I (B) -->
+      <state id="idleState-b">
+          <onentry>
+            <log label="DestinationMonitor/idleState-b" expr="'destination = ' + destination"/>
+          </onentry>
+          <transition cond="destination == 'charging_station'" target="idleState" />
+          <transition target="waitForBatteryLevelState" />
+      </state>
+
+      <!-- I2 -->
+      <state id="waitForBatteryLevelState">
+        <transition event="batteryLevelChanged" target="checkBatteryLevelState" />
+      </state>
+
+      <!-- C1 -->
+      <state id="checkBatteryLevelState">
+        <onentry>
+          <log label="BatteryLevelMonitor/checkBatteryLevelState" expr="'batteryLevel = ' + batteryLevel"/>
+        </onentry>
+        <transition cond="batteryLevel &gt;= 30" target="waitForBatteryLevelState" />
+        <transition cond="batteryLevel &lt; 30" target="checkDestinationState" />
+      </state>
+
+      <!-- BEGIN LOW BATTERY -->
+      <state id="warning">
+
+        <!-- C2 (A) -->
+        <state id="checkDestinationState">
+          <transition cond="destination == 'charging_station'" target="idleState" />
+          <transition target="waitForTickState" />
+        </state>
+
+        <!-- C2 (B) -->
+        <state id="waitForTickState">
+          <transition event="tick" target="checkTickCounterState" />
+        </state>
+
+        <!-- T + D -->
+        <state id="checkTickCounterState">
+          <transition cond="tickCounter &gt; 0" target="checkDestinationState">
+            <assign location="tickCounter" expr="tickCounter - 1"/>
+          </transition>
+          <transition target="failure" />
+        </state>
+
+        <!-- D -->
+<!--        <state id="decrTickCounterState">
+          <onentry>
+            <assign location="tickCounter" expr="tickCounter - 1"/>
+          </onentry>
+          <transition target="checkDestinationState" />
+        </state>-->
+
+<!--        <transition event="destinationChangeRequested" cond="_event.data.destination == 'charging_station'" target="idleState" />-->
+      </state> <!-- warning -->
+      <!-- END LOW BATTERY -->
+
+      <!-- Err -->
+      <state id="failure" />
+    </state> <!-- monitor -->
+
+    <state id="updateBatteryLevelState">
+      <state id="updateBatteryLevelState-A">
+        <onentry>
+          <log label="DestinationMonitor/updateBatteryLevelState-A" expr="'batteryLevel: ' + batteryLevel"/>
+        </onentry>
+        <transition event="batteryLevelChanged" target="updateBatteryLevelState-B" >
+          <assign location="batteryLevel" expr="_event.data.level"/>
+        </transition>
+      </state>
+
+      <state id="updateBatteryLevelState-B">
+        <onentry>
+          <log label="BatteryLevelMonitor/getLevel" expr="'batteryLevel = ' + batteryLevel"/>
+        </onentry>
+        <transition target="updateBatteryLevelState-A" />
+      </state>
     </state>
 
-    <state id="checkTickCounter">
+    <state id="updateDestinationState">
+      <state id="updateDestinationState-A">
         <onentry>
-        <log expr="'[DestinationMonitor][checkTickCounter] batteryLevel = ' + batteryLevel"/>
-        <log expr="'[DestinationMonitor][checkTickCounter] destination = ' + destination"/>
-        <log expr="'[DestinationMonitor][checkTickCounter] tickCounter = ' + tickCounter"/>
+          <log label="DestinationMonitor/updateDestinationState-A" expr="'destination: ' + destination"/>
         </onentry>
-        <transition cond="tickCounter &lt;= 10" target="shouldGoToChargingStation" />
-        <transition cond="tickCounter &gt; 10" target="failure" />
+        <transition event="destinationChanged" target="updateDestinationState-B" >
+          <assign location="destination" expr="_event.data.destination"/>
+        </transition>
+      </state>
+
+      <state id="updateDestinationState-B">
+        <onentry>
+          <log label="DestinationMonitor/getLevel" expr="'destination = ' + destination"/>
+        </onentry>
+        <transition target="updateDestinationState-A" />
+      </state>
     </state>
-  </state>
-  <state id="failure">
-    <onentry>
-      <log expr="'[DestinationMonitor][failure] batteryLevel = ' + batteryLevel"/>
-      <log expr="'[DestinationMonitor][failure] destination = ' + destination"/>
-      <log expr="'[DestinationMonitor][failure] tickCounter = ' + tickCounter"/>
-    </onentry>
-  </state>
+
+  </parallel>
 
 </scxml>

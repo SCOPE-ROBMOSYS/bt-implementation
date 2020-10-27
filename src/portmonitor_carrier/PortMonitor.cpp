@@ -36,6 +36,7 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
     sourceName = proto.getRoute().getFromName();
     group = getPeers().add(portName,this);
     if (!group) {
+        yCError(PORTMONITORCARRIER) << "Cannot find group";
         return false;
     }
 
@@ -48,6 +49,7 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
     options.put("receiver_side",
              (proto.getContactable()->getName() == portName) ? 1 : 0);
     options.put("carrier", proto.getRoute().getCarrierName());
+    yCTrace(PORTMONITORCARRIER) << "end";
     return configureFromProperty(options);
 }
 
@@ -102,6 +104,7 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options)
     PortMonitor::lock();
     bReady =  binder->load(info);
     PortMonitor::unlock();
+    yCTrace(PORTMONITORCARRIER) << "end";
     return bReady;
 }
 
@@ -110,11 +113,13 @@ void PortMonitor::setCarrierParams(const yarp::os::Property& params)
     yCTrace(PORTMONITORCARRIER);
 
     if(!bReady) {
+        yCError(PORTMONITORCARRIER) << "end";
         return;
     }
     PortMonitor::lock();
     binder->setParams(params);
     PortMonitor::unlock();
+    yCTrace(PORTMONITORCARRIER) << "end";
 }
 
 void PortMonitor::getCarrierParams(yarp::os::Property& params) const
@@ -122,11 +127,13 @@ void PortMonitor::getCarrierParams(yarp::os::Property& params) const
     yCTrace(PORTMONITORCARRIER);
 
     if(!bReady) {
+        yCError(PORTMONITORCARRIER) << "end";
         return;
     }
     PortMonitor::lock();
     binder->getParams(params);
     PortMonitor::unlock();
+    yCTrace(PORTMONITORCARRIER) << "end";
 }
 
 
@@ -136,6 +143,7 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
 
     yCTrace(PORTMONITORCARRIER) << "reader.getWriter()" << reader.getWriter();
     if(!bReady) {
+        yCError(PORTMONITORCARRIER) << "end";
         return reader;
     }
 
@@ -146,6 +154,7 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
     if(!binder->hasUpdate()) {
         localReader->setParentConnectionReader(&reader);
         yCTrace(PORTMONITORCARRIER) << "localReader->getWriter()" << localReader->getWriter();
+        yCTrace(PORTMONITORCARRIER) << "end 1";
         return *localReader;
     }
 
@@ -165,6 +174,7 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
         if (result.getPortReader() != nullptr) {
             cReader.getWriter()->setReplyHandler(*result.getPortReader());
         }
+        yCTrace(PORTMONITORCARRIER) << "end 2";
         return cReader;
 // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -172,6 +182,7 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
     }
 //     yCTrace(PORTMONITORCARRIER) << "localReader->getWriter()" << localReader->getWriter();
 
+    yCTrace(PORTMONITORCARRIER) << "end 3";
     return *localReader;
 }
 
@@ -181,6 +192,7 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
     yCTrace(PORTMONITORCARRIER) << reader.getWriter();
 
     if(!bReady) {
+        yCError(PORTMONITORCARRIER) << "end";
         return false;
     }
 
@@ -196,6 +208,7 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
         result = binder->acceptData(thing);
         PortMonitor::unlock();
         if(!result) {
+            yCTrace(PORTMONITORCARRIER) << "end 1";
             return false;
         }
 
@@ -218,6 +231,7 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
         result = group->acceptIncomingData(this);
         getPeers().unlock();
     }
+    yCTrace(PORTMONITORCARRIER) << "end 2";
     return result;
 }
 
@@ -227,11 +241,13 @@ const yarp::os::PortWriter& PortMonitor::modifyOutgoingData(const yarp::os::Port
     yCTrace(PORTMONITORCARRIER);
 
     if(!bReady) {
+        yCError(PORTMONITORCARRIER) << "end";
         return writer;
     }
 
     // If no update callback avoid calling it
     if(!binder->hasUpdate()) {
+        yCTrace(PORTMONITORCARRIER) << "end 1";
         return writer;
     }
 
@@ -240,6 +256,7 @@ const yarp::os::PortWriter& PortMonitor::modifyOutgoingData(const yarp::os::Port
     thing.setPortWriter(const_cast<yarp::os::PortWriter*>(&writer));
     yarp::os::Things& result = binder->updateData(thing);
     PortMonitor::unlock();
+    yCTrace(PORTMONITORCARRIER) << "end 2";
     return *result.getPortWriter();
 }
 
@@ -248,11 +265,13 @@ bool PortMonitor::acceptOutgoingData(const yarp::os::PortWriter& writer)
     yCTrace(PORTMONITORCARRIER);
 
     if(!bReady) {
+        yCError(PORTMONITORCARRIER) << "end";
         return false;
     }
 
     // If no accept callback avoid calling it
     if(!binder->hasAccept()) {
+        yCTrace(PORTMONITORCARRIER) << "end 1";
         return true;
     }
 
@@ -261,6 +280,7 @@ bool PortMonitor::acceptOutgoingData(const yarp::os::PortWriter& writer)
     thing.setPortWriter(const_cast<yarp::os::PortWriter*>(&writer));
     bool result = binder->acceptData(thing);
     PortMonitor::unlock();
+    yCTrace(PORTMONITORCARRIER) << "end 2";
     return result;
 }
 
@@ -269,11 +289,13 @@ yarp::os::PortReader& PortMonitor::modifyReply(yarp::os::PortReader& reader)
     yCTrace(PORTMONITORCARRIER);
 
     if(!bReady) {
+        yCError(PORTMONITORCARRIER) << "end";
         return reader;
     }
 
     // If no updateReply callback avoid calling it
     if(!binder->hasUpdateReply()) {
+        yCTrace(PORTMONITORCARRIER) << "end 1";
         return reader;
     }
 
@@ -282,6 +304,7 @@ yarp::os::PortReader& PortMonitor::modifyReply(yarp::os::PortReader& reader)
     thing.setPortReader(&reader);
     yarp::os::Things& result = binder->updateReply(thing);
     PortMonitor::unlock();
+    yCTrace(PORTMONITORCARRIER) << "end 2";
     return *result.getPortReader();
 }
 

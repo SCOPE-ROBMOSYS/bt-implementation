@@ -48,7 +48,7 @@
             <script>
             level = batteryReader.level();
             QTimer::singleShot(0, stateMachine(), [=](){
-                stateMachine()->submitEvent((level > 20) ? "STATUS_SUCCESS" : "STATUS_FAILED");
+                stateMachine()->submitEvent((level > 30) ? "STATUS_SUCCESS" : "STATUS_FAILED");
             });
         </script>
     </onentry>

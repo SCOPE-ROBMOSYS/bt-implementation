@@ -55,6 +55,17 @@ EventType stringToEventType(const std::string& s)
     return EventType::Unknown;
 }
 
+
+// FIXME copied from GoToStatus.h
+enum GoToStatus
+{
+    NOT_STARTED = 0,
+    RUNNING = 1,
+    SUCCESS = 2,
+    ABORT = 3
+};
+
+
 // FIXME Maybe use thrift...
 struct MonitorEvent
 {
@@ -145,9 +156,12 @@ bool MonitorReader::read(yarp::os::ConnectionReader &reader)
           && event.source == "/BatteryReaderBatteryLevelClient"
           && event.destination == "/BatteryComponent"
           && event.command == "level") {
-        m_batteryLevel = get(4).asList()->get(1).asDouble();
-        yInfo("level = %f", m_batteryLevel);
-        Q_EMIT batteryLevelChanged(m_batteryLevel);
+        double batteryLevel = get(4).asList()->get(1).asDouble();
+        if (m_batteryLevel != batteryLevel) {
+            m_batteryLevel = batteryLevel;
+            yInfo("level changed %f", m_batteryLevel);
+            Q_EMIT batteryLevelChanged(m_batteryLevel);
+        }
     }
 
     if (event.type == EventType::Command
@@ -158,17 +172,21 @@ bool MonitorReader::read(yarp::os::ConnectionReader &reader)
              event.destination == "/GoToChargingStation/BT_rpc/server")
           )
           && event.command == "send_start") {
-        QString destination = get(4).asList()->get(1).asString().c_str();
-        yInfo("destination change requested = %s", destination.toStdString().c_str());
+        QString destination = ((event.destination == "/GoToDestination/BT_rpc/server") ? "kitchen" : "charging_station");
+        yInfo("destination change requested: %s", destination.toStdString().c_str());
         Q_EMIT destinationChangeRequested(destination.toStdString().c_str());
     }
 
     if (event.type == EventType::Reply
           && event.destination == "/GoToComponent"
-          && event.command == "goTo") {
-        m_destination = get(4).asList()->get(1).asString().c_str();
-        yInfo("destination changed = %s", m_destination.toStdString().c_str());
-        Q_EMIT destinationChanged(m_destination.toStdString().c_str());
+          && event.command == "getStatus") {
+        QString destination = get(4).asList()->get(1).asString().c_str();
+        GoToStatus status = static_cast<GoToStatus>(get(4).asList()->get(2).asInt32());
+        if (m_destination != destination && status == RUNNING) {
+            m_destination = destination;
+            yInfo("destination changed: %s", m_destination.toStdString().c_str());
+            Q_EMIT destinationChanged(m_destination.toStdString().c_str());
+        }
     }
 
     return ret;

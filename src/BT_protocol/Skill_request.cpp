@@ -201,11 +201,9 @@ std::vector<std::string> Skill_request::help(const std::string& functionName)
 // read from ConnectionReader
 bool Skill_request::read(yarp::os::ConnectionReader& connection)
 {
-    yDebug("Skill_request::read() - %d", __LINE__);
     yarp::os::idl::WireReader reader(connection);
     reader.expectAccept();
     if (!reader.readListHeader()) {
-        yDebug("Skill_request::read() - %d", __LINE__);
         reader.fail();
         return false;
     }
@@ -216,16 +214,12 @@ bool Skill_request::read(yarp::os::ConnectionReader& connection)
         tag = reader.readTag();
     }
     while (!reader.isError()) {
-        yDebug("Skill_request::read() - %d", __LINE__);
         if (tag == "request_ack") {
-            yDebug("Skill_request::read() - %d", __LINE__);
             Skill_request_request_ack_helper helper;
             helper.m_return_helper = request_ack();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
-                yDebug("Skill_request::read() - %d", __LINE__);
                 if (!writer.writeListHeader(1)) {
-                    yDebug("Skill_request::read() - %d", __LINE__);
                     return false;
                 }
                 if (!writer.writeI32(static_cast<int32_t>(helper.m_return_helper))) {
@@ -236,13 +230,10 @@ bool Skill_request::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "send_start") {
-            yDebug("Skill_request::read() - %d", __LINE__);
             send_start();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
-                yDebug("Skill_request::read() - %d", __LINE__);
                 if (!writer.writeListHeader(0)) {
-                    yDebug("Skill_request::read() - %d", __LINE__);
                     return false;
                 }
             }
@@ -250,13 +241,10 @@ bool Skill_request::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "send_stop") {
-            yDebug("Skill_request::read() - %d", __LINE__);
             send_stop();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
-                yDebug("Skill_request::read() - %d", __LINE__);
                 if (!writer.writeListHeader(0)) {
-                    yDebug("Skill_request::read() - %d", __LINE__);
                     return false;
                 }
             }

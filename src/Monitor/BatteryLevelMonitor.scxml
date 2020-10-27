@@ -17,16 +17,16 @@
 
   <state id="idle">
     <onentry>
-      <log expr="'[BatteryLevelMonitor][idle] batteryLevel = ' + batteryLevel"/>
+      <log label="BatteryLevelMonitor/idle" expr="'batteryLevel = ' + batteryLevel"/>
     </onentry>
     <transition event="batteryLevelChanged" target="getLevel" >
-      <assign location="batteryLevel" expr="_event.data"/>
+      <assign location="batteryLevel" expr="_event.data.level"/>
     </transition>
   </state>
 
   <state id="getLevel">
     <onentry>
-      <log expr="'[BatteryLevelMonitor][getLevel] batteryLevel = ' + batteryLevel"/>
+      <log label="BatteryLevelMonitor/getLevel" expr="'batteryLevel = ' + batteryLevel"/>
     </onentry>
     <transition cond="batteryLevel &gt;= 20" target="idle" />
     <transition cond="batteryLevel &lt; 20" target="failure" />
@@ -34,7 +34,7 @@
 
   <state id="failure">
     <onentry>
-      <log expr="'[BatteryLevelMonitor][failure] batteryLevel = ' + batteryLevel"/>
+      <log label="BatteryLevelMonitor/failure" expr="'batteryLevel = ' + batteryLevel"/>
     </onentry>
   </state>
 </scxml>

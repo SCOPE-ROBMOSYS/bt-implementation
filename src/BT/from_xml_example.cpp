@@ -140,7 +140,7 @@ int main()
     yarp::os::Network yarp;
     yarp::os::Port port;
 
-    if (!port.openFake("/tick/monitor")) {
+    if (!port.open/*Fake*/("/tick/monitor")) {
         return EXIT_FAILURE;
     }
 

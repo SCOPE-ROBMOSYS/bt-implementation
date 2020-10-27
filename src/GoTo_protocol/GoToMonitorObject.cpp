@@ -39,7 +39,7 @@ bool GoToMonitorObject::create(const yarp::os::Property& options)
     source = options.find("source").asString();
     destination = options.find("destination").asString();
 
-    if (!port.openFake(source + "/monitor")) {
+    if (!port.open/*Fake*/(source + "/monitor")) {
         return false;
     }
 
@@ -52,6 +52,8 @@ bool GoToMonitorObject::create(const yarp::os::Property& options)
 
 yarp::os::Things& GoToMonitorObject::update(yarp::os::Things& thing)
 {
+    std::lock_guard<std::mutex> lock(mutex);
+
     yCTrace(GOTOMONITOR) << "update()";
 
     yarp::os::Bottle msg;
@@ -108,6 +110,8 @@ yarp::os::Things& GoToMonitorObject::update(yarp::os::Things& thing)
 
 yarp::os::Things& GoToMonitorObject::updateReply(yarp::os::Things& thing)
 {
+    std::lock_guard<std::mutex> lock(mutex);
+
     yCTrace(GOTOMONITOR) << "updateReply()";
 
     yarp::os::Bottle msg;

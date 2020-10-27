@@ -46,6 +46,8 @@ bool YARPNode::init()
         return false;
     }
 
+    yarp::os::Network::sync(m_server_port_name, false);
+
     if (!yarp::os::Network::connect(m_client_port_name, m_server_port_name, m_carrier))
     {
         yError() << "Could not connect to port " << m_server_port_name;
