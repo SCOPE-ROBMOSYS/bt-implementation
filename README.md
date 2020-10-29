@@ -1,6 +1,8 @@
-# Behavior Trees Implementation 
+# Simulated Experiments for the paper: Act, Perceive, and Plan in Belief Space for Robot Localization.
 
-Repository containing the software to run the experimental validation's scenario.
+In this repository, you will find the code related to the experiments of the paper: <br>
+"Runtime Verification of Behavior Trees" <br>
+Submitted at ICRA2021 by Michele Colledanchise, Giuseppe Cicala, Daniele Domenichelli, Armando Tacchella, and Lorenzo Natale.
 
 
 
