@@ -1,4 +1,4 @@
-# Simulated Experiments for the paper: Act, Perceive, and Plan in Belief Space for Robot Localization.
+# Simulated Experiments for the paper: Runtime Verification of Behavior Trees.
 
 In this repository, you will find the code related to the experiments of the paper: <br>
 "Runtime Verification of Behavior Trees" <br>
