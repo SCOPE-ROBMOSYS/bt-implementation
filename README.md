@@ -91,3 +91,21 @@ setBatteryCharge X
 with `X` the new value of the battery level (between 0 an 100), as below:
 
 ![ezgif-7-b0a8d90c3f74](https://user-images.githubusercontent.com/8132627/77671740-50cbf280-6f88-11ea-9efb-769de0913f9d.gif)
+
+
+
+## Run Experiment 1
+
+To run Experiment 1 of the paper, change the battery level to 10%
+
+
+
+## Run Experiment 2
+
+To run Experiment 2 of the paper, move to the branch (`git checkout experiment-2`) `Experiment 2` and change the battery level to 25%
+
+
+
+
+
+
