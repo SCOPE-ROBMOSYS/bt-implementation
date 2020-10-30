@@ -1,0 +1,8 @@
+*~
+*.bak
+/build*/
+*kdev*
+*.orig
+/compile_commands.json
+/.clangd/
+CMakeLists.txt.user*
