@@ -172,7 +172,7 @@ bool MonitorReader::read(yarp::os::ConnectionReader &reader)
              event.destination == "/GoToChargingStation/BT_rpc/server")
           )
           && event.command == "send_start") {
-        QString destination = ((event.destination == "/GoToDestination/BT_rpc/server") ? "kitchen" : "charging_station");
+        QString destination = ((event.destination == "/GoToDestination/BT_rpc/server") ? "user" : "charging_station");
         yInfo("destination change requested: %s", destination.toStdString().c_str());
         Q_EMIT destinationChangeRequested(destination.toStdString().c_str());
     }

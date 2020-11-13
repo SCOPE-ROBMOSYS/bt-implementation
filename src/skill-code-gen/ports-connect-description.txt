@@ -61,6 +61,6 @@ that contains the command line commands. In our implementation, this role is acc
 
 As an example, the location variable is parsed (for each GoTo executable) by:
 
-gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --skill-name GoToDestination --location kitchen"
+gammaray /usr/local/src/bt-implementation/build/bin/GoToSkill --skill-name GoToDestination --location user"
 
-In this case "kitchen" is the destination of the skill.
+In this case "user" is the destination of the skill.

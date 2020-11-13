@@ -53,14 +53,14 @@ services:
   yarp-server:
     <<: *base
     container_name: yarp-server
-    command: yarp server --read
+    command: sh -c "yarp namespace /cer02; yarp conf 192.168.100.10 10000"
 
     #gammaray --inject-only --listen tcp://0.0.0.0:40001
   Monitor:
     <<: *base
     container_name: Monitor
     command: sh -c "
-      yarp wait /root;
+      yarp wait /cer02;
       gammaray
         /usr/local/src/bt-implementation/build/bin/monitor"
     depends_on:
@@ -70,123 +70,123 @@ services:
     <<: *base
     container_name: IdComponent
     command: sh -c "
-      yarp wait /root;
+      yarp wait /cer02;
       /usr/local/src/bt-implementation/build/bin/IdComponent"
     depends_on:
       - yarp-server
 
-  transformServer:
-    <<: *base
-    container_name: transformServer
-    command: sh -c "
-      yarp wait /root;
-      yarpdev --device transformServer --ROS \"(enable_ros_publisher 0)\" \"(enable_ros_subscriber 0)\""
-    depends_on:
-      - yarp-server
+  # transformServer:
+  #   <<: *base
+  #   container_name: transformServer
+  #   command: sh -c "
+  #     yarp wait /cer02;
+  #     yarpdev --device transformServer --ROS \"(enable_ros_publisher 0)\" \"(enable_ros_subscriber 0)\""
+  #   depends_on:
+  #     - yarp-server
+  #
+  # fakeMotionControl:
+  #   <<: *base
+  #   container_name: fakeMotionControl
+  #   command: sh -c "
+  #     yarp wait /cer02;
+  #     yarpdev --device fakeMotionControl --name /robot_2wheels/mobile_base --GENERAL::Joints 2"
+  #   depends_on:
+  #     - yarp-server
+  #
+  # baseControl:
+  #   <<: *base
+  #   container_name: baseControl
+  #   command: sh -c "
+  #     yarp wait /cer02;
+  #     yarp wait /robot_2wheels/mobile_base/command:i;
+  #     yarp wait /robot_2wheels/mobile_base/rpc:i;
+  #     yarp wait /robot_2wheels/mobile_base/stateExt:o;
+  #     baseControl --context baseControl_SIM --from robot_2wheels.ini --skip_robot_interface_check"
+  #   depends_on:
+  #     - yarp-server
+  #     - fakeMotionControl
 
-  fakeMotionControl:
-    <<: *base
-    container_name: fakeMotionControl
-    command: sh -c "
-      yarp wait /root;
-      yarpdev --device fakeMotionControl --name /robot_2wheels/mobile_base --GENERAL::Joints 2"
-    depends_on:
-      - yarp-server
+  # map2DServer:
+  #   <<: *base
+  #   container_name: map2DServer
+  #   command: sh -c "
+  #     yarp wait /cer02;
+  #     yarpdev --device map2DServer --mapCollectionContext mapsExample"
+  #   depends_on:
+  #     - yarp-server
+  #
+  # localization2DServer:
+  #   <<: *base
+  #   container_name: localization2DServer
+  #   command: sh -c "
+  #     yarp wait /cer02;
+  #     yarp wait /baseControl/odometry:o;
+  #     yarpdev --device localization2DServer --subdevice odomLocalizer --context robotPathPlannerExamples --from odomLocalizer.ini"
+  #   depends_on:
+  #     - yarp-server
+  #     - baseControl
+  #
+  # Rangefinder2DWrapper:
+  #   <<: *base
+  #   container_name: Rangefinder2DWrapper
+  #   command: sh -c "
+  #     yarp wait /cer02;
+  #     yarp wait /localizationServer/rpc;
+  #     yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /robot_2wheels/laser:o --test use_mapfile --map_file /usr/share/navigation/contexts/mapsExample/map_test.map --localization_client"
+  #   depends_on:
+  #     - yarp-server
+  #     - localization2DServer
+  #
+  # navigation2DServer:
+  #   <<: *base
+  #   container_name: navigation2DServer
+  #   command: sh -c "
+  #     yarp wait /cer02;
+  #     yarp wait /baseControl/control:i;
+  #     yarp wait /localizationServer/rpc;
+  #     yarp wait /robot_2wheels/laser:o;
+  #     yarp wait /robot_2wheels/laser:o/rpc:i;
+  #     yarp wait /mapServer/rpc;
+  #     yarpdev --device navigation2DServer --subdevice robotPathPlannerDev --context robotPathPlannerExamples --from robotPathPlanner_robot_2wheels.ini"
+  #   depends_on:
+  #     - yarp-server
+  #     - baseControl
+  #     - localization2DServer
+  #     - Rangefinder2DWrapper
+  #     - map2DServer
 
-  baseControl:
-    <<: *base
-    container_name: baseControl
-    command: sh -c "
-      yarp wait /root;
-      yarp wait /robot_2wheels/mobile_base/command:i;
-      yarp wait /robot_2wheels/mobile_base/rpc:i;
-      yarp wait /robot_2wheels/mobile_base/stateExt:o;
-      baseControl --context baseControl_SIM --from robot_2wheels.ini --skip_robot_interface_check"
-    depends_on:
-      - yarp-server
-      - fakeMotionControl
-
-  map2DServer:
-    <<: *base
-    container_name: map2DServer
-    command: sh -c "
-      yarp wait /root;
-      yarpdev --device map2DServer --mapCollectionContext mapsExample"
-    depends_on:
-      - yarp-server
-
-  localization2DServer:
-    <<: *base
-    container_name: localization2DServer
-    command: sh -c "
-      yarp wait /root;
-      yarp wait /baseControl/odometry:o;
-      yarpdev --device localization2DServer --subdevice odomLocalizer --context robotPathPlannerExamples --from odomLocalizer.ini"
-    depends_on:
-      - yarp-server
-      - baseControl
-
-  Rangefinder2DWrapper:
-    <<: *base
-    container_name: Rangefinder2DWrapper
-    command: sh -c "
-      yarp wait /root;
-      yarp wait /localizationServer/rpc;
-      yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /robot_2wheels/laser:o --test use_mapfile --map_file /usr/share/navigation/contexts/mapsExample/map_test.map --localization_client"
-    depends_on:
-      - yarp-server
-      - localization2DServer
-
-  navigation2DServer:
-    <<: *base
-    container_name: navigation2DServer
-    command: sh -c "
-      yarp wait /root;
-      yarp wait /baseControl/control:i;
-      yarp wait /localizationServer/rpc;
-      yarp wait /robot_2wheels/laser:o;
-      yarp wait /robot_2wheels/laser:o/rpc:i;
-      yarp wait /mapServer/rpc;
-      yarpdev --device navigation2DServer --subdevice robotPathPlannerDev --context robotPathPlannerExamples --from robotPathPlanner_robot_2wheels.ini"
-    depends_on:
-      - yarp-server
-      - baseControl
-      - localization2DServer
-      - Rangefinder2DWrapper
-      - map2DServer
-
-  navigationGUI:
-    <<: *base
-    container_name: navigationGUI
-    command: sh -c "
-      yarp wait /root;
-      yarp wait /localizationServer/rpc;
-      yarp wait /navigationServer/rpc;
-      yarp wait /robot_2wheels/laser:o/rpc:i;
-      yarp wait /robot_2wheels/laser:o;
-      yarp wait /mapServer/rpc;
-      navigationGUI --context navigationGUI --from navigationGUI_robot_2wheels.ini"
-    depends_on:
-      - yarp-server
-      - localization2DServer
+  # navigationGUI:
+  #   <<: *base
+  #   container_name: navigationGUI
+  #   command: sh -c "
+  #     yarp wait /cer02;
+  #     yarp wait /localizationServer/rpc;
+  #     yarp wait /navigationServer/rpc;
+  #     yarp wait /robot_2wheels/laser:o/rpc:i;
+  #     yarp wait /robot_2wheels/laser:o;
+  #     yarp wait /mapServer/rpc;
+  #     navigationGUI --context navigationGUI --from navigationGUI_robot_2wheels.ini"
+  #   depends_on:
+  #     - yarp-server
+  #     - localization2DServer
 
   yarpview:
     <<: *base
     container_name: yarpview
     command: sh -c "
-      yarp wait /root;
+      yarp wait /cer02;
       yarp wait /navigationGui/map:o;
       yarp wait /navigationGui/yarpviewTarget:i;
-      yarpview --autosize --name /navView:i --out /mapClick:o"
+      yarpview --autosize --name /docker/navView:i --out /docker/mapClick:o"
     depends_on:
       - yarp-server
-      - navigationGUI
+      #- navigationGUI
 
   connect:
     <<: *base
     container_name: connect
     command: sh -c "
-      yarp wait /root;
+      yarp wait /cer02;
       yarp wait /robotGoto/control:o;
       yarp wait /baseControl/control:i;
       yarp wait /navigationGui/map:o;
@@ -197,28 +197,29 @@ services:
       yarp wait /navigationGui/yarpviewTarget:i;
       yarp connect /robotGoto/control:o /baseControl/control:i udp;
       yarp connect /navigationGui/map:o /navView:i udp;
+      yarp connect /navigationGui/map:o /docker/navView:i udp;
       yarp connect /mapClick:o /navigationGui/yarpviewTarget:i tcp;"
     depends_on:
       - yarp-server
-      - navigation2DServer
-      - baseControl
-      - navigationGUI
-      - yarpview
+      # - navigation2DServer
+      # - baseControl
+      # - navigationGUI
+      # - yarpview
 
   GoToComponent:
     <<: *base
     container_name: GoToComponent
     command: sh -c "
-      yarp wait /root;
+      yarp wait /cer02;
       yarp wait /navigationServer/rpc;
       yarp wait /mapServer/rpc;
       yarp wait /localizationServer/rpc;
       /usr/local/src/bt-implementation/build/bin/GoToComponent"
     depends_on:
       - yarp-server
-      - navigation2DServer
-      - map2DServer
-      - localization2DServer
+      # - navigation2DServer
+      # - map2DServer
+      # - localization2DServer
 
       #gammaray --inject-only --listen tcp://0.0.0.0:40002
   GoToDestination:
@@ -226,7 +227,7 @@ services:
     container_name: GoToDestination
     command: sh -c "
       cd /usr/local/src/bt-implementation/conf;
-      yarp wait /root;
+      yarp wait /cer02;
       yarp wait /GoToComponent;
       yarp wait /BlackboardComponent;
       gammaray
@@ -242,7 +243,7 @@ services:
     container_name: GoToChargingStation
     command: sh -c "
       cd /usr/local/src/bt-implementation/conf;
-      yarp wait /root;
+      yarp wait /cer02;
       yarp wait /GoToComponent;
       yarp wait /BlackboardComponent;
       gammaray
@@ -259,7 +260,7 @@ services:
     container_name: IsAtDestination
     command: sh -c "
       cd /usr/local/src/bt-implementation/conf;
-      yarp wait /root;
+      yarp wait /cer02;
       yarp wait /GoToComponent;
         /usr/local/src/bt-implementation/build/bin/IsAtSkill --from IsAtDestination.ini"
     depends_on:
@@ -273,7 +274,7 @@ services:
     container_name: IsAtChargingStation
     command: sh -c "
       cd /usr/local/src/bt-implementation/conf;
-      yarp wait /root;
+      yarp wait /cer02;
       yarp wait /GoToComponent;
         /usr/local/src/bt-implementation/build/bin/IsAtSkill --from IsAtChargingStation.ini"
     depends_on:
@@ -284,7 +285,7 @@ services:
     <<: *base
     container_name: fakeBattery
     command: sh -c "
-      yarp wait /root;
+      yarp wait /cer02;
       yarpdev --device fakeBattery --name /fakeBattery"
     depends_on:
       - yarp-server
@@ -293,7 +294,7 @@ services:
     <<: *base
     container_name: fakeBatteryChargingStation
     command: sh -c "
-      yarp wait /root;
+      yarp wait /cer02;
       yarp wait /navigationServer/rpc;
       yarp wait /mapServer/rpc;
       yarp wait /localizationServer/rpc;
@@ -303,16 +304,16 @@ services:
       /usr/local/src/bt-implementation/build/bin/fakeBatteryChargingStation"
     depends_on:
       - yarp-server
-      - navigation2DServer
-      - map2DServer
-      - localization2DServer
-      - fakeBattery
+      # - navigation2DServer
+      # - map2DServer
+      # - localization2DServer
+      # - fakeBattery
 
   #yarpbatterygui:
     #<<: *base
     #container_name: yarpbatterygui
     #command: sh -c "
-      #yarp wait /root;
+      #yarp wait /cer02;
       #yarp wait /fakeBattery/rpc:i;
       #yarp wait /fakeBattery/data:o;
       #yarpbatterygui --remote /fakeBattery --refresh_period 1.0"
@@ -324,7 +325,7 @@ services:
     <<: *base
     container_name: BatteryComponent
     command: sh -c "
-      yarp wait /root;
+      yarp wait /cer02;
       yarp wait /fakeBattery/rpc:i;
       yarp wait /fakeBattery/data:o;
       /usr/local/src/bt-implementation/build/bin/BatteryComponent"
@@ -338,7 +339,7 @@ services:
     container_name: BatteryLevelSkill
     command: sh -c "
       cd /usr/local/src/bt-implementation/conf;
-      yarp wait /root;
+      yarp wait /cer02;
       yarp wait /monitor;
       yarp wait /BatteryComponent;
       gammaray
@@ -354,7 +355,7 @@ services:
     container_name: BatteryNotChargingSkill
     command: sh -c "
       cd /usr/local/src/bt-implementation/conf;
-      yarp wait /root;
+      yarp wait /cer02;
       yarp wait /BatteryComponent;
       gammaray
         /usr/local/src/bt-implementation/build/bin/BatteryNotChargingSkill --from BatteryNotCharging.ini"
@@ -368,7 +369,7 @@ services:
     container_name: BlackboardComponent
     command: sh -c "
       cd /usr/local/src/bt-implementation/build/bin;
-      yarp wait /root;
+      yarp wait /cer02;
       ./BlackboardComponent"
     depends_on:
       - yarp-server
@@ -379,7 +380,7 @@ services:
     container_name: BehaviorTree
     command: sh -c "
       cd /usr/local/src/bt-implementation/build/bin;
-      yarp wait /root;
+      yarp wait /cer02;
       yarp wait /monitor;
       yarp wait /GoToDestination/BT_rpc/server;
       yarp wait /GoToChargingStation/BT_rpc/server;
