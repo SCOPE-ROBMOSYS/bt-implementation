@@ -60,22 +60,22 @@ SkillAck BatteryLevelSkill::request_ack()
     while (true) {
         for (const auto& state : stateMachine.activeStateNames()) {
             if (state == "idle") {
-                stateMachine.submitEvent("REQUEST_ACK");
+                stateMachine.submitEvent("CMD_OK");
                 yCDebug(BATTERYLEVELSKILL) << "request_ack returning SKILL_IDLE";
                 return SKILL_IDLE;
             }
             if (state == "get") {
-                stateMachine.submitEvent("REQUEST_ACK");
+                stateMachine.submitEvent("CMD_OK");
                 yCDebug(BATTERYLEVELSKILL) << "request_ack returning SKILL_IDLE";
                 return SKILL_IDLE;
             }
             if (state == "success") {
-                stateMachine.submitEvent("REQUEST_ACK");
+                stateMachine.submitEvent("CMD_OK");
                 yCDebug(BATTERYLEVELSKILL) << "request_ack returning SKILL_SUCCESS";
                 return SKILL_SUCCESS;
             }
             if (state == "failure") {
-                stateMachine.submitEvent("REQUEST_ACK");
+                stateMachine.submitEvent("CMD_OK");
                 yCDebug(BATTERYLEVELSKILL) << "request_ack returning SKILL_FAILURE";
                 return SKILL_FAILURE;
             }
