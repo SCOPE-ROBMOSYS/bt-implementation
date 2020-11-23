@@ -67,7 +67,7 @@ find_package(YARP COMPONENTS os idl_tools dev REQUIRED)
 # BehaviorTree.CPP links Boost::coroutine, but does not look for it
 find_package(Boost COMPONENTS coroutine REQUIRED)
 
-find_package(BehaviorTree REQUIRED)
+find_package(BehaviorTreeV3 REQUIRED)
 
 feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES)
 

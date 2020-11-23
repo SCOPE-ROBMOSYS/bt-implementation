@@ -164,7 +164,7 @@ ENV CMAKE_BUILD_PARALLEL_LEVEL=${cmake_parallel}
 
 # Build and install BehaviorTree.CPP
 RUN git clone --branch master https://github.com/BehaviorTree/BehaviorTree.CPP.git /usr/local/src/BehaviorTree.CPP && \
-    git -C /usr/local/src/BehaviorTree.CPP checkout 5e8e2da2d93139fdf5f5d188e6dedf4e8180cf15 && \
+    git -C /usr/local/src/BehaviorTree.CPP checkout f54f6d83e5c06f44eae2b4d9700f5178dbdb4159 && \
     ls -la /usr/local/src/BehaviorTree.CPP/src/decorators && \
     cmake \
         -H/usr/local/src/BehaviorTree.CPP \
@@ -180,6 +180,7 @@ RUN git clone --branch master https://github.com/BehaviorTree/Groot.git /usr/loc
     git -C /usr/local/src/Groot config --local user.email "daniele.domenichelli@iit" && \
     git -C /usr/local/src/Groot config --local user.name "Daniele E. Domenichelli" && \
     git -C /usr/local/src/Groot am /tmp/0001-Always-build-behavior_tree_editor-as-STATIC.patch && \
+    git -C /usr/local/src/Groot am /tmp/0001-rename-BehaviorTree-to-BehaviorTreeV3-in-CMakeLists.patch && \
     git -C /usr/local/src/Groot config --local --remove-section user && \
     cmake \
         -H/usr/local/src/Groot \

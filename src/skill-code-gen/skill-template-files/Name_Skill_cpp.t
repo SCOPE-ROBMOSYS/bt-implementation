@@ -49,6 +49,11 @@ SkillAck @KEY_SKILL_NAME@Skill::request_ack()
     }
 }
 
+void @KEY_SKILL_NAME@Skill::send_ok()
+{
+    stateMachine.submitEvent("CMD_OK");
+}
+
 void @KEY_SKILL_NAME@Skill::send_start()
 {
     stateMachine.submitEvent("CMD_START");

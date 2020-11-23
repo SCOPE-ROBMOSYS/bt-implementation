@@ -303,7 +303,6 @@ void SkillGenerator::generate_Skill_cpp()
             QString result_ack = ListState.SkillAck;
             QString single_state_condit =
                 "            if (state == \"" + actual_state_string + "\") {\n"
-                "                stateMachine.submitEvent(\"REQUEST_ACK\");\n"
                 "                return SKILL_" + result_ack + ";\n"
                 "            }\n";
             all = all + single_state_condit;

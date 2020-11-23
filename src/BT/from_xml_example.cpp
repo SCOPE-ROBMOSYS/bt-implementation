@@ -110,7 +110,7 @@ int main()
 #ifdef ZMQ_FOUND
     PublisherZMQ publisher_zmq(tree);
 #endif
-    printTreeRecursively(tree.root_node);
+    printTreeRecursively(tree.rootNode());
 
 
     //bool is_ok = true;
@@ -161,7 +161,7 @@ int main()
         YARP_UNUSED(bcmd);
         port.write(msg);
 
-        tree.root_node->executeTick();
+        tree.rootNode()->executeTick();
         std::this_thread::sleep_for (std::chrono::milliseconds(1000));
     }
 
