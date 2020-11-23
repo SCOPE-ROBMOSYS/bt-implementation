@@ -52,12 +52,14 @@
     <state id="get" scope:bt_status="SKILL_IDLE">
         <onentry>
             <script>
-            //is_at_dest = IsAt_service.isAtLocation(location);
-            is_at_dest = false;
+            is_at_dest = IsAt_service.isAtLocation(location);
+            //is_at_dest = false;
+            stateMachine()->submitEvent((is_at_dest) ? "STATUS_SUCCESS" : "STATUS_FAILED");
+
             </script>
         </onentry>
-        <transition cond="is_at_dest == true" target="success" />
-        <transition cond="is_at_dest == false" target="failure" />
+        <transition event="STATUS_SUCCESS" target="success" />
+        <transition event="STATUS_FAILED" target="failure" />
     </state>
 
     <state id="success" scope:bt_status="SKILL_SUCCESS">

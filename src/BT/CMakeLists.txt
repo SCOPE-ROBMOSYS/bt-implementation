@@ -41,3 +41,4 @@ target_link_libraries(from_xml_example
 
 file(COPY test_action_BT.xml DESTINATION "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}")
 file(COPY test_battery_BT.xml DESTINATION "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}")
+file(COPY release3_BT.xml DESTINATION "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}")

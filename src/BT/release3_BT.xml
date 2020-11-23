@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!--
+ Copyright (C) 2020 Fondazione Istituto Italiano di Tecnologia (IIT)
+ All Rights Reserved.
+-->
+<root main_tree_to_execute="BehaviorTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="BehaviorTree">
+        <ReactiveSequence>
+            <ReactiveFallback>
+                <ReactiveSequence>
+                    <Condition ID="YARPCondition" name="BatteryLevel" port_name="BatteryLevelSkill"/>
+                    <Condition ID="YARPCondition" name="BatteryNotCharging" port_name="BatteryNotChargingSkill"/>
+                </ReactiveSequence>
+                <ReactiveSequence>
+                  <ReactiveFallback>
+                      <Condition ID="YARPCondition" name="IsAtChargingStation" port_name=""/>
+                       <Action ID="YARPAction" name="GoToChargingStation"/>
+                  </ReactiveFallback>
+                    <Action ID="AlwaysRunning" name="Wait"/>
+                </ReactiveSequence>
+            </ReactiveFallback>
+            <ReactiveFallback>
+                <Condition ID="YARPCondition" name="IsFetched" port_name=""/>
+                <ReactiveSequence>
+                  <ReactiveFallback>
+                      <Condition ID="YARPCondition" name="IsAtUser" port_name=""/>
+                       <Action ID="YARPAction" name="GoToUser" port_name="goTo"/>
+                  </ReactiveFallback>
+                  <Action ID="YARPAction" name="Fetch"/>
+                </ReactiveSequence>
+            </ReactiveFallback>
+            <ReactiveFallback>
+                <Condition ID="YARPCondition" name="IsAtDestination" port_name=""/>
+                 <Action ID="YARPAction" name="GoToDestination" port_name="goTo"/>
+            </ReactiveFallback>
+        </ReactiveSequence>
+    </BehaviorTree>
+    <!-- ////////// -->
+    <TreeNodesModel>
+        <Action ID="AlwaysRunning"/>
+        <Condition ID="FlipFlopCondition"/>
+        <Action ID="YARPAction">
+            <input_port name="port_name" type="std::string"/>
+        </Action>
+        <Condition ID="YARPCondition"/>
+    </TreeNodesModel>
+    <!-- ////////// -->
+</root>

@@ -195,9 +195,9 @@ services:
       yarp wait /robotGoto/rpc;
       yarp wait /mapClick:o;
       yarp wait /navigationGui/yarpviewTarget:i;
+      yarp connect /navigationGui/map:o /docker/navView:i udp;
       yarp connect /robotGoto/control:o /baseControl/control:i udp;
       yarp connect /navigationGui/map:o /navView:i udp;
-      yarp connect /navigationGui/map:o /docker/navView:i udp;
       yarp connect /mapClick:o /navigationGui/yarpviewTarget:i tcp;"
     depends_on:
       - yarp-server
@@ -252,9 +252,24 @@ services:
       - yarp-server
       - GoToComponent
       - BlackboardComponent
-
+  GoToUser:
+    <<: *base
+    container_name: GoToUser
+    command: sh -c "
+      cd /usr/local/src/bt-implementation/conf;
+      yarp wait /cer02;
+      yarp wait /GoToComponent;
+      yarp wait /BlackboardComponent;
+      gammaray
+        /usr/local/src/bt-implementation/build/bin/GoToSkill --from GoToUser.ini"
+    depends_on:
+      - yarp-server
+      - GoToComponent
+      - BlackboardComponent
       #gammaray --inject-only --listen tcp://0.0.0.0:40004
       # WARNING connection randomly fails when injected with gammaray
+
+
   IsAtDestination:
     <<: *base
     container_name: IsAtDestination
@@ -262,7 +277,7 @@ services:
       cd /usr/local/src/bt-implementation/conf;
       yarp wait /cer02;
       yarp wait /GoToComponent;
-        /usr/local/src/bt-implementation/build/bin/IsAtSkill --from IsAtDestination.ini"
+      gammaray  /usr/local/src/bt-implementation/build/bin/IsAtSkill --from IsAtDestination.ini"
     depends_on:
       - yarp-server
       - GoToComponent
@@ -276,10 +291,33 @@ services:
       cd /usr/local/src/bt-implementation/conf;
       yarp wait /cer02;
       yarp wait /GoToComponent;
-        /usr/local/src/bt-implementation/build/bin/IsAtSkill --from IsAtChargingStation.ini"
+      gammaray  /usr/local/src/bt-implementation/build/bin/IsAtSkill --from IsAtChargingStation.ini"
     depends_on:
       - yarp-server
       - GoToComponent
+
+  IsAtUser:
+    <<: *base
+    container_name: IsAtUser
+    command: sh -c "
+      cd /usr/local/src/bt-implementation/conf;
+      yarp wait /cer02;
+      yarp wait /GoToComponent;
+      gammaray  /usr/local/src/bt-implementation/build/bin/IsAtSkill --from IsAtUser.ini"
+    depends_on:
+      - yarp-server
+      - GoToComponent
+
+  IsFetched:
+    <<: *base
+    container_name: IsFetched
+    command: sh -c "
+      yarp wait /ArmComponent;
+      gammaray /usr/local/src/bt-implementation/build/bin/IsFetchedSkill --skill-name IsFetched "
+    depends_on:
+      - yarp-server
+
+
 
   fakeBattery:
     <<: *base
@@ -363,6 +401,15 @@ services:
       - yarp-server
       - BatteryComponent
 
+  FetchSkill:
+    <<: *base
+    container_name: FetchSkill
+    command: sh -c "
+      yarp wait /ArmComponent;
+      gammaray /usr/local/src/bt-implementation/build/bin/FetchSkill"
+    depends_on:
+      - yarp-server
+      - ArmComponent
 
   BlackboardComponent:
     <<: *base
@@ -388,16 +435,28 @@ services:
       yarp wait /BatteryNotCharging/BT_rpc/server;
       yarp wait /IsAtDestination/BT_rpc/server;
       yarp wait /IsAtChargingStation/BT_rpc/server;
+      yarp wait /IsAtUser/BT_rpc/server;
       ./from_xml_example"
     depends_on:
       - yarp-server
       - Monitor
       - GoToDestination
       - GoToChargingStation
+      - GoToUser
       - BatteryLevelSkill
       - BatteryNotChargingSkill
       - IsAtDestination
       - IsAtChargingStation
+      - IsAtUser
+
+  ArmComponent:
+    <<: *base
+    container_name: ArmComponent
+    command: sh -c "
+      /usr/local/src/bt-implementation/build/bin/ArmComponent"
+    depends_on:
+      - yarp-server
+
 
   groot:
     <<: *base

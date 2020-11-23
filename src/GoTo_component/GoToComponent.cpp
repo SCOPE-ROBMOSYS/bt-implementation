@@ -134,13 +134,18 @@ public:
 
     bool isAtLocation(const std::string& destination) override
     {
-        yWarning("checkInsideArea called with destination %s", destination.c_str());
+        yWarning("checkNearToLocation called with destination %s", destination.c_str());
 
-        std::lock_guard<std::mutex> lock(mtx);
+        //std::lock_guard<std::mutex> lock(mtx);
 
-        if (inav->checkInsideArea(destination)){
+        if (inav->checkNearToLocation(destination, 0.3, 10)){
+
+          yWarning("the robot is near %s", destination.c_str());
+
             return true;
         }
+        yWarning("the robot NOT is near %s", destination.c_str());
+
         return false;
     }
 
