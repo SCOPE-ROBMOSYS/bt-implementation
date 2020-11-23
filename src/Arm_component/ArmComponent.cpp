@@ -258,8 +258,8 @@ public:
 
         double value_1 = response.get(2).asDouble();
 
-        std::cout <<  "left thumb " << value_1<< std::endl;
-        bool has_grasped = value_1 < 70 && value_1 > 40;
+        std::cout << value_0 <<  " "<< value_1<< std::endl;
+        bool has_grasped = ( value_1 > 40 && value_1 < 70);
 
         if (has_grasped)
         {
