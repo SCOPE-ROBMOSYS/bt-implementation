@@ -1,0 +1,26 @@
+From 107c7b809edba7a8ff38b948cd5228c8fcad27f5 Mon Sep 17 00:00:00 2001
+From: Michele Colledanchise <michele.colledanchise@gmail.com>
+Date: Mon, 23 Nov 2020 20:39:36 +0100
+Subject: [PATCH] rename BehaviorTree to BehaviorTreeV3 in CMakeLists
+
+---
+ CMakeLists.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index dc99b9e..eb1cc8f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -62,8 +62,8 @@ set(CATKIN_ENABLE_TESTING OFF CACHE BOOL "")
+
+ if(NOT catkin_FOUND)
+     # look for BehaviorTree.CPP on the system
+-    find_package(BehaviorTree)
+-    if (NOT BehaviorTree_FOUND)
++    find_package(BehaviorTreeV3)
++    if (NOT BehaviorTreeV3_FOUND)
+         # use git submodule only if you are not compiling with catkin
+         add_subdirectory( depend/BehaviorTree.CPP )
+         include_directories( depend/BehaviorTree.CPP/include )
+--
+2.25.1
