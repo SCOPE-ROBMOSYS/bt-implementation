@@ -26,7 +26,6 @@ public:
     SkillAck request_ack() override;
     void send_start() override;
     void send_stop() override;
-    void send_ok() override;
 
 private:
     std::string name;
