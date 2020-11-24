@@ -43,12 +43,6 @@ public:
      */
     virtual void send_stop();
 
-    /**
-     * send_stop  Send a CMD_OK tell the skill that a succes/failure state was read.
-     * return              void.
-     */
-    virtual void send_ok();
-
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");
 

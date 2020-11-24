@@ -7,7 +7,7 @@
 
 # Create the BT_protocol C++ Library
 add_library(BT_protocol STATIC)
-yarp_add_idl(IDL_GEN_FILES BT_wrappers.thrift)
+# yarp_add_idl(IDL_GEN_FILES BT_wrappers.thrift)
 target_sources(BT_protocol
   PRIVATE
     Skill_request.cpp

@@ -14,24 +14,18 @@
 #include <Skill_request.h>
 
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/os/Log.h>
 
 class Skill_request_request_ack_helper :
         public yarp::os::Portable
 {
 public:
-    explicit Skill_request_request_ack_helper();
+    explicit Skill_request_request_ack_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static SkillAck s_return_helper;
+    SkillAck m_return_helper {};
 };
-
-thread_local SkillAck Skill_request_request_ack_helper::s_return_helper = {};
-
-Skill_request_request_ack_helper::Skill_request_request_ack_helper()
-{
-    s_return_helper = {};
-}
 
 bool Skill_request_request_ack_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -56,9 +50,9 @@ bool Skill_request_request_ack_helper::read(yarp::os::ConnectionReader& connecti
     if (!reader.readEnum(ecast0, cvrt1)) {
         reader.fail();
         return false;
-    } else {
-        s_return_helper = static_cast<SkillAck>(ecast0);
     }
+
+    m_return_helper = static_cast<SkillAck>(ecast0);
     return true;
 }
 
@@ -130,40 +124,6 @@ bool Skill_request_send_stop_helper::read(yarp::os::ConnectionReader& connection
     return true;
 }
 
-class Skill_request_send_ok_helper :
-        public yarp::os::Portable
-{
-public:
-    explicit Skill_request_send_ok_helper();
-    bool write(yarp::os::ConnectionWriter& connection) const override;
-    bool read(yarp::os::ConnectionReader& connection) override;
-};
-
-Skill_request_send_ok_helper::Skill_request_send_ok_helper()
-{
-}
-
-bool Skill_request_send_ok_helper::write(yarp::os::ConnectionWriter& connection) const
-{
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(2)) {
-        return false;
-    }
-    if (!writer.writeTag("send_ok", 1, 2)) {
-        return false;
-    }
-    return true;
-}
-
-bool Skill_request_send_ok_helper::read(yarp::os::ConnectionReader& connection)
-{
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListReturn()) {
-        return false;
-    }
-    return true;
-}
-
 // Constructor
 Skill_request::Skill_request()
 {
@@ -177,7 +137,7 @@ SkillAck Skill_request::request_ack()
         yError("Missing server method '%s'?", "SkillAck Skill_request::request_ack()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? Skill_request_request_ack_helper::s_return_helper : SkillAck{};
+    return ok ? helper.m_return_helper : SkillAck{};
 }
 
 void Skill_request::send_start()
@@ -198,15 +158,6 @@ void Skill_request::send_stop()
     yarp().write(helper, helper);
 }
 
-void Skill_request::send_ok()
-{
-    Skill_request_send_ok_helper helper{};
-    if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "void Skill_request::send_ok()");
-    }
-    yarp().write(helper, helper);
-}
-
 // help method
 std::vector<std::string> Skill_request::help(const std::string& functionName)
 {
@@ -217,7 +168,6 @@ std::vector<std::string> Skill_request::help(const std::string& functionName)
         helpString.emplace_back("request_ack");
         helpString.emplace_back("send_start");
         helpString.emplace_back("send_stop");
-        helpString.emplace_back("send_ok");
         helpString.emplace_back("help");
     } else {
         if (functionName == "request_ack") {
@@ -233,11 +183,6 @@ std::vector<std::string> Skill_request::help(const std::string& functionName)
         if (functionName == "send_stop") {
             helpString.emplace_back("void send_stop() ");
             helpString.emplace_back("send_stop  Send a CMD_STOP request to the skill. ");
-            helpString.emplace_back("return              void. ");
-        }
-        if (functionName == "send_ok") {
-            helpString.emplace_back("void send_ok() ");
-            helpString.emplace_back("send_stop  Send a CMD_OK tell the skill that a succes/failure state was read. ");
             helpString.emplace_back("return              void. ");
         }
         if (functionName == "help") {
@@ -270,13 +215,14 @@ bool Skill_request::read(yarp::os::ConnectionReader& connection)
     }
     while (!reader.isError()) {
         if (tag == "request_ack") {
-            Skill_request_request_ack_helper::s_return_helper = request_ack();
+            Skill_request_request_ack_helper helper;
+            helper.m_return_helper = request_ack();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeI32(static_cast<int32_t>(Skill_request_request_ack_helper::s_return_helper))) {
+                if (!writer.writeI32(static_cast<int32_t>(helper.m_return_helper))) {
                     return false;
                 }
             }
@@ -296,17 +242,6 @@ bool Skill_request::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == "send_stop") {
             send_stop();
-            yarp::os::idl::WireWriter writer(reader);
-            if (!writer.isNull()) {
-                if (!writer.writeListHeader(0)) {
-                    return false;
-                }
-            }
-            reader.accept();
-            return true;
-        }
-        if (tag == "send_ok") {
-            send_ok();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(0)) {

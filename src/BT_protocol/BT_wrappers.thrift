@@ -39,14 +39,4 @@ service Skill_request {
      * return              void.
      */
      void send_stop();
-
-
-     /**
-      * send_stop  Send a CMD_OK tell the skill that a succes/failure state was read.
-      *
-      * return              void.
-      */
-      void send_ok();
-
-
 }
