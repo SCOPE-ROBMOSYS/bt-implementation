@@ -87,18 +87,16 @@ NodeStatus YARPNode::tick()
 
     switch (status) {
     case SKILL_RUNNING:
-        yDebug() << "Node" << name << "returns running";
+       yDebug() << "Node" << name << "returns running";
         return NodeStatus::RUNNING;// may be two different enums (thrift and BT library). Making sure that the return status are the correct ones
     case SKILL_SUCCESS:
-        m_bt_request.send_ok();
-        yDebug() << "Node" << name << "returns success";
+       yDebug() << "Node" << name << "returns success";
         return NodeStatus::SUCCESS;
     case SKILL_FAILURE:
-        m_bt_request.send_ok();
-        yDebug() << "Node" << name << "returns failure";
+       yDebug() << "Node" << name << "returns failure";
         return NodeStatus::FAILURE;
     default:
-        yError() << "Invalid return status "<< status << "  received by node"   << name;
+       yError() << "Invalid return status "<< status << "  received by node"   << name;
         break;
     }
 
