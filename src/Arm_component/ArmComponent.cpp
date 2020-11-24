@@ -258,7 +258,7 @@ public:
 
         double thumb_position = response.get(2).asDouble();
 
-        std::cout << value_0 <<  " "<< value_1<< std::endl;
+        std::cout << "thumb_position" << thumb_position <<  "thumb_speed" << thumb_speed << std::endl;
         bool has_grasped = ( thumb_position > 40 && thumb_position < 70)
                           && thumb_speed < 0.2 ;
 
