@@ -75,11 +75,11 @@
             });
         </script>
     </onentry>
-    <transition event="OPEN_OK" target="close" />
+    <transition event="OPEN_OK" target="grasp" />
     <transition event="OPEN_KO" target="failure" />
     </state>
 
-    <state id="Grasp" scope:bt_status="SKILL_RUNNING">
+    <state id="grasp" scope:bt_status="SKILL_RUNNING">
         <onentry>
             <script>
             armService.closeHand();

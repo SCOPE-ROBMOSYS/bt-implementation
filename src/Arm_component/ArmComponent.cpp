@@ -243,11 +243,11 @@ public:
 
         Bottle cmd, response;
         cmd.addString("get");
-        cmd.addString("enc");
-        cmd.addInt32(0);
+        cmd.addString("vel");
+        cmd.addInt32(1);
 
         m_client_port_hand.write(cmd,response);
-        double value_0 = response.get(2).asDouble();
+        double thumb_speed = response.get(2).asDouble();
 
         response.clear();
         cmd.addString("get");
@@ -256,10 +256,11 @@ public:
 
         m_client_port_hand.write(cmd,response);
 
-        double value_1 = response.get(2).asDouble();
+        double thumb_position = response.get(2).asDouble();
 
         std::cout << value_0 <<  " "<< value_1<< std::endl;
-        bool has_grasped = ( value_1 > 40 && value_1 < 70);
+        bool has_grasped = ( thumb_position > 40 && thumb_position < 70)
+                          && thumb_speed < 0.2 ;
 
         if (has_grasped)
         {
