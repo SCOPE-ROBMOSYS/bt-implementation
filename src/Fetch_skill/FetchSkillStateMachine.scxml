@@ -45,12 +45,12 @@
             <script>
             is_ok = armService.preGrasp();
             QTimer::singleShot(0, stateMachine(), [=](){
-                stateMachine()->submitEvent(is_ok ? "STATUS_SUCCESS" : "STATUS_FAILED");
+                stateMachine()->submitEvent(is_ok ? "PREGRASP_OK" : "PREGRASP_KO");
             });
         </script>
     </onentry>
-    <transition event="STATUS_SUCCESS" target="extract" />
-    <transition event="STATUS_FAILED" target="failure" />
+    <transition event="PREGRASP_OK" target="extract" />
+    <transition event="PREGRASP_KO" target="failure" />
     </state>
 
     <state id="extract" scope:bt_status="SKILL_RUNNING">
@@ -58,12 +58,12 @@
             <script>
             is_ok = armService.extractHand();
             QTimer::singleShot(0, stateMachine(), [=](){
-                stateMachine()->submitEvent((is_ok) ? "STATUS_SUCCESS" : "STATUS_FAILED");
+                stateMachine()->submitEvent((is_ok) ? "EXTRACT_OK" : "EXTRACT_KO");
             });
         </script>
     </onentry>
-    <transition event="STATUS_SUCCESS" target="open" />
-    <transition event="STATUS_FAILED" target="failure" />
+    <transition event="EXTRACT_OK" target="open" />
+    <transition event="EXTRACT_KO" target="failure" />
     </state>
 
     <state id="open" scope:bt_status="SKILL_RUNNING">
@@ -71,26 +71,26 @@
             <script>
             is_ok = armService.openHand();
             QTimer::singleShot(0, stateMachine(), [=](){
-                stateMachine()->submitEvent((is_ok) ? "STATUS_SUCCESS" : "STATUS_FAILED");
+                stateMachine()->submitEvent((is_ok) ? "OPEN_OK" : "OPEN_KO");
             });
         </script>
     </onentry>
-    <transition event="STATUS_SUCCESS" target="close" />
-    <transition event="STATUS_FAILED" target="failure" />
+    <transition event="OPEN_OK" target="close" />
+    <transition event="OPEN_KO" target="failure" />
     </state>
 
-    <state id="close" scope:bt_status="SKILL_RUNNING">
+    <state id="Grasp" scope:bt_status="SKILL_RUNNING">
         <onentry>
             <script>
             armService.closeHand();
             is_ok = armService.hasGrasped();
             QTimer::singleShot(0, stateMachine(), [=](){
-                stateMachine()->submitEvent((is_ok) ? "STATUS_SUCCESS" : "STATUS_FAILED");
+                stateMachine()->submitEvent((is_ok) ? "GRASP_OK" : "GRASP_KO");
             });
         </script>
     </onentry>
-    <transition event="STATUS_SUCCESS" target="retract" />
-    <transition event="STATUS_FAILED" target="open" />
+    <transition event="GRASP_OK" target="retract" />
+    <transition event="GRASP_KO" target="open" />
     </state>
 
     <state id="retract" scope:bt_status="SKILL_RUNNING">
@@ -100,12 +100,12 @@
 
 
             QTimer::singleShot(0, stateMachine(), [=](){
-                stateMachine()->submitEvent((is_ok) ? "STATUS_SUCCESS" : "STATUS_FAILED");
+                stateMachine()->submitEvent((is_ok) ? "RETRACT_OK" : "RETRACT_KO");
             });
         </script>
     </onentry>
-    <transition event="STATUS_SUCCESS" target="success" />
-    <transition event="STATUS_FAILED" target="failure" />
+    <transition event="RETRACT_OK" target="success" />
+    <transition event="RETRACT_KO" target="failure" />
     </state>
 
 
