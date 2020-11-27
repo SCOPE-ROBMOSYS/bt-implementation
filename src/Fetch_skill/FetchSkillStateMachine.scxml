@@ -19,7 +19,7 @@
 
     <data id="armService"
           scope_yarp:service_type="ArmService"
-          scope_yarp:connect_type="tcp"
+          scope_yarp:connect_type="tcp+send.portmonitor2+file.ArmService+type.dll"
           scope_yarp:thrift_protocol="Arm"
           scope_yarp:service_function="level"
           scope_yarp:port_name_client_attribute="default"
