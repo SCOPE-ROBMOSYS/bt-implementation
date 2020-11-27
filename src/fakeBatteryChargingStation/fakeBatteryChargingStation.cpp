@@ -194,7 +194,6 @@ int main(int argc, char *argv[])
     /* prepare and configure the resource finder */
     yarp::os::ResourceFinder& rf = yarp::os::ResourceFinder::getResourceFinderSingleton();
     rf.configure(argc, argv);
-    rf.setVerbose(true);
     // Create and run our module
     FakeBatteryChargingStation fakeBatteryChargingStation;
     fakeBatteryChargingStation.setName("/fakeBatteryChargingStation");
