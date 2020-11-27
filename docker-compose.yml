@@ -437,7 +437,7 @@ services:
       yarp wait /IsAtDestination/BT_rpc/server;
       yarp wait /IsAtChargingStation/BT_rpc/server;
       yarp wait /IsAtUser/BT_rpc/server;
-      ./from_xml_example"
+      ./run_bt"
     depends_on:
       - yarp-server
       - Monitor

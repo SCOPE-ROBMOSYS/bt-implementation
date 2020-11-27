@@ -9,6 +9,9 @@
  * @authors: Michele Colledanchise <michele.colledanchise@iit.it>
  */
 
+#ifdef ZMQ_FOUND
+#include "behaviortree_cpp_v3/loggers/bt_zmq_publisher.h"
+#endif
 
 #include <iostream>
 #include <behaviortree_cpp_v3/behavior_tree.h>
@@ -17,17 +20,30 @@
 #include <thread>         // std::this_thread::sleep_for
 #include <chrono>         // std::chrono::seconds
 #include <yarp/os/LogStream.h>
+#include <behaviortree_cpp_v3/bt_factory.h>
+#include <behaviortree_cpp_v3/actions/always_failure_node.h>
+#include <behaviortree_cpp_v3/actions/always_success_node.h>
+
+#include <behaviortree_cpp_v3/loggers/bt_cout_logger.h>
+#include <behaviortree_cpp_v3/loggers/bt_minitrace_logger.h>
+#include <behaviortree_cpp_v3/loggers/bt_file_logger.h>
+
+#include <yarp/os/Network.h>
+#include <yarp/os/Port.h>
+
 using namespace std;
 using namespace BT;
 
-class FlipFlopSuccessCondition : public ConditionNode
+
+
+class FlipFlopCondition : public ConditionNode
 {
 
 public:
-    FlipFlopSuccessCondition(const std::string& name) :
+    FlipFlopCondition(const std::string& name) :
         ConditionNode(name, {} )
     {
-        setRegistrationID("AlwaysSuccess");
+        setRegistrationID("FlipFlopCondition");
     }
 
 private:
@@ -49,38 +65,105 @@ private:
 };
 
 
-int main()
+class AlwaysRunning : public ActionNodeBase
 {
-    ReactiveSequence seq("ciao");
-//    YARPCondition yarp_condion("ConditionName", "/ConditionName_skill/Skill_request/server");
-    FlipFlopSuccessCondition ff_condition("FlipFlopCondition");
-    YARPAction yarp_action("ActionName", "/goto_skill/Skill_request/server");
 
-    bool ok = yarp_action.init();
-
-    if(!ok)
+public:
+    AlwaysRunning(const std::string& name) :
+        ActionNodeBase(name, {} )
     {
-        yError() << "Something went wrong.";
-        return 1;
+        setRegistrationID("AlwaysRunning");
     }
 
-//    ok = yarp_condion.init();
+private:
+    virtual BT::NodeStatus tick() override
+    {
+        cout << "Action Ticked" << endl;
+            return NodeStatus::RUNNING;
+    }
 
-//    if(!ok)
+    virtual void halt() override
+    {
+        cout << "Action halted" << endl;
+
+    }
+};
+
+
+int main()
+{
+    BehaviorTreeFactory bt_factory;
+    bt_factory.registerNodeType<YARPAction>("YARPAction");
+    bt_factory.registerNodeType<YARPCondition>("YARPCondition");
+    bt_factory.registerNodeType<AlwaysRunning>("AlwaysRunning");
+
+   // bt_factory.registerNodeType<FlipFlopCondition>("FlipFlopCondition");
+
+    BT::Tree tree = bt_factory.createTreeFromFile("./release3_BT.xml");
+
+
+    // Create some logger
+    StdCoutLogger logger_cout(tree);
+    MinitraceLogger logger_minitrace(tree, "/tmp/bt_trace.json");
+    FileLogger logger_file(tree, "/tmp/bt_trace.fbl");
+
+#ifdef ZMQ_FOUND
+    PublisherZMQ publisher_zmq(tree);
+#endif
+    printTreeRecursively(tree.root_node);
+
+
+    //bool is_ok = true;
+    vector<TreeNode::Ptr> all_nodes_prt = tree.nodes;
+
+    // TODO I will make the code below properly
+//    for (TreeNode::Ptr node_prt : all_nodes_prt)
 //    {
-//        yError() << "Something went wrong.";
-//        return 1;
+//        TreeNode* node = node_prt.get();
+
+//        YARPAction* as_yarp_action = static_cast<YARPAction*>(node);
+//        //YARPCondition* as_yarp_condition = static_cast<YARPCondition*>(node);
+
+//        if(as_yarp_action != NULL)
+//        {
+
+//            is_ok = as_yarp_action->init();
+
+//            if(!is_ok)
+//            {
+//                yError() << "Something went wrong in the node init() of " << as_yarp_action->name();
+//                return 0;
+//            }
+//        }
 //    }
 
-//    seq.addChild(&yarp_condion);
-    seq.addChild(&ff_condition);
-    seq.addChild(&yarp_action);
+    yarp::os::Network yarp;
+    yarp::os::Port port;
+
+    if (!port.open/*Fake*/("/tick/monitor")) {
+        return EXIT_FAILURE;
+    }
+
+    if (!port.addOutput("/monitor")) {
+        return EXIT_FAILURE;
+    }
+
 
     while(true)
     {
-        seq.executeTick();
+        yarp::os::Bottle msg;
+        msg.addDouble(yarp::os::SystemClock::nowSystem());
+        msg.addString("/tick");
+        msg.addString("*");
+        msg.addString("tick");
+        //msg.addBool(sender);
+        auto& bcmd = msg.addList();
+        YARP_UNUSED(bcmd);
+        port.write(msg);
+
+        tree.root_node->executeTick();
         std::this_thread::sleep_for (std::chrono::milliseconds(1000));
     }
+
     return 0;
 }
-
