@@ -13,6 +13,7 @@
 
 #include <GoTo.h>
 
+#include <algorithm>
 #include <iostream>
 
 class GoToComponent : public GoTo
@@ -138,15 +139,23 @@ public:
 
         //std::lock_guard<std::mutex> lock(mtx);
 
-        if (inav->checkNearToLocation(destination, 0.3, 10)){
-
-          yWarning("the robot is near %s", destination.c_str());
-
-            return true;
+        std::vector<std::string> locations;
+        inav->getLocationsList(locations);
+        if(std::find(locations.begin(), locations.end(), destination) != locations.end()) {
+            if (inav->checkNearToLocation(destination, 0.3, 10)) {
+                yInfo("the robot is near %s", destination.c_str());
+                return true;
+            }
+            yInfo("the robot NOT is near %s", destination.c_str());
+            return false;
+        } else {
+            if (inav->checkInsideArea(destination)) {
+                yInfo("the robot is inside %s", destination.c_str());
+                return true;
+            }
+            yInfo("the robot is NOT inside %s", destination.c_str());
+            return false;
         }
-        yWarning("the robot NOT is near %s", destination.c_str());
-
-        return false;
     }
 
 private:
