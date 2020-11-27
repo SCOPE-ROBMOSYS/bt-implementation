@@ -239,7 +239,12 @@ public:
 
     bool hasGrasped() override
     {
-        yInfo("hasGrasped");
+      yInfo("hasGrasped");
+      // checks 3 times
+      bool has_grasped = false;
+      unsigned int i = 0;
+      while (i++<3)
+      {
 
         Bottle cmd, response;
         cmd.addString("get");
@@ -249,27 +254,29 @@ public:
         m_client_port_hand.write(cmd,response);
         double value_0 = response.get(2).asDouble();
 
-        response.clear();
-        cmd.addString("get");
-        cmd.addString("enc");
-        cmd.addInt32(1);
+        // response.clear();
+        // cmd.addString("get");
+        // cmd.addString("vel");
+        // cmd.addInt32(0);
+        //
+        // m_client_port_hand.write(cmd,response);
+        //
+        // double value_1 = response.get(2).asDouble();
 
-        m_client_port_hand.write(cmd,response);
-
-        double value_1 = response.get(2).asDouble();
-
-        std::cout << value_0 <<  " "<< value_1<< std::endl;
-        bool has_grasped = ( value_1 > 40 && value_1 < 70);
-
+        // std::cout << "ARM "<< value_0 <<  " "<< value_1<< std::endl;
+        has_grasped = ( value_0 > 40 && value_0 < 75);
         if (has_grasped)
         {
-          yInfo("something in the hand");
+          yInfo("something in the hand, checking again");
+          std::this_thread::sleep_for(std::chrono::milliseconds(200));
         }
         else
         {
           yInfo("nothing in the hand");
-        }
+          return false;
 
+        }
+      }
 
         return has_grasped;
 
@@ -277,6 +284,46 @@ public:
 
     bool home() override
     {
+      retractHand();
+      closeHand();
+
+      // move arm home
+      Bottle cmd, response;
+      cmd.addString("set");
+      cmd.addString("pos");
+      cmd.addInt32(0);
+      cmd.addDouble(0);
+
+      m_client_port_arm.write(cmd,response);
+
+      // checking with in actually gets there
+      cmd.clear();
+      response.clear();
+
+      cmd.addString("get");
+      cmd.addString("enc");
+      cmd.addInt32(0);
+
+      m_client_port_arm.write(cmd,response);
+
+      double real_value = response.get(2).asDouble();
+
+      while (abs(real_value) > 2)
+      {
+          std::this_thread::sleep_for(std::chrono::milliseconds(100));
+          cmd.clear();
+          response.clear();
+
+          cmd.addString("get");
+          cmd.addString("enc");
+          cmd.addInt32(0);
+
+          m_client_port_arm.write(cmd,response);
+          real_value = response.get(2).asDouble();
+          //yInfo() << "Waiting shuoulder";
+
+      }
+
         yInfo("home");
         return true;
     }
