@@ -11,7 +11,7 @@ x-base: &base
     - YARP_FORWARD_CODEINFO_ENABLE=1
     - QT_X11_NO_MITSHM=1
     - DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
-    - YARP_NAMESPACE=/root
+    - YARP_NAMESPACE=/cer02
   volumes:
     - "/tmp/.X11-unix:/tmp/.X11-unix:rw"
     - "${XAUTHORITY}:/home/scope/.Xauthority:rw"
