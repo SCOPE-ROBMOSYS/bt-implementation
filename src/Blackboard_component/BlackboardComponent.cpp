@@ -380,7 +380,6 @@ int main(int argc, char *argv[])
     }
 
     ResourceFinder rf;
-    rf.setVerbose();
     std::string default_cong_filename = "entries.ini";
     bool file_ok = rf.setDefaultConfigFile(default_cong_filename);
     if (!file_ok)
