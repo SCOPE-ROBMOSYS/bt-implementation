@@ -132,7 +132,7 @@ yarp::os::Things& BatteryReaderMonitorObject::updateReply(yarp::os::Things& thin
     } else if (const auto* reply = thing.cast_as<BatteryReader_charging_status_helper>()) {
         // FIXME ChargingStatusVocab::toString should be static.
         yCDebug(BATTERYREADERMONITOR) << "Received reply to 'charging_status'" << ChargingStatusVocab().toString(reply->m_return_helper);
-        breply.addString("send_stop");
+        breply.addString("charging_status");
         breply.addInt32(reply->m_return_helper);
     } else {
         yCWarning(BATTERYREADERMONITOR) << "Received unknown reply";
