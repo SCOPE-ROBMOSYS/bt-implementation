@@ -11,12 +11,18 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/ResourceFinder.h>
+#include <yarp/os/Vocab.h>
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QScxmlStateMachine>
 #include <QTextStream>
 #include <QIcon>
+
+namespace {
+constexpr yarp::conf::vocab32_t VOCAB_OK = yarp::os::createVocab('o', 'k');
+constexpr yarp::conf::vocab32_t VOCAB_FAIL = yarp::os::createVocab('f', 'a', 'i', 'l');
+}
 
 enum class EventType
 {
@@ -85,6 +91,7 @@ class MonitorReader :
     Q_DISABLE_COPY(MonitorReader)
     Q_PROPERTY(double batteryLevel READ batteryLevel NOTIFY batteryLevelChanged)
     Q_PROPERTY(QString destination READ destination NOTIFY destinationChanged)
+    Q_PROPERTY(bool isGrasping READ isGrasping NOTIFY isGraspingChanged)
 //     QML_ELEMENT
 
     MonitorReader() {}
@@ -105,6 +112,7 @@ public:
 
     double batteryLevel() const { return m_batteryLevel; }
     QString destination() const { return m_destination;  }
+    bool isGrasping() const { return m_isGrasping;  }
 
 Q_SIGNALS:
     void tick();
@@ -112,12 +120,14 @@ Q_SIGNALS:
     void destinationChangeRequested(const QString& destination);
     void destinationChanged(const QString& destination);
     void batteryLevelChanged(double level);
+    void isGraspingChanged(bool isGrasping);
 
 private:
     static QObject* m_instance;
 
     double m_batteryLevel {100.0};
     QString m_destination {""};
+    bool m_isGrasping {false};
 };
 
 QObject* MonitorReader::m_instance = nullptr;
@@ -168,11 +178,16 @@ bool MonitorReader::read(yarp::os::ConnectionReader &reader)
           && (
             (event.source == "/GoToDestination/BT_rpc/client" &&
              event.destination == "/GoToDestination/BT_rpc/server") ||
+            (event.source == "/GoToUser/BT_rpc/client" &&
+             event.destination == "/GoToUser/BT_rpc/server") ||
             (event.source == "/GoToChargingStation/BT_rpc/client" &&
              event.destination == "/GoToChargingStation/BT_rpc/server")
           )
           && event.command == "send_start") {
-        QString destination = ((event.destination == "/GoToDestination/BT_rpc/server") ? "user" : "charging_station");
+        QString destination = ((event.destination == "/GoToDestination/BT_rpc/server") ? "kitchen" :
+                               ((event.destination == "/GoToUser/BT_rpc/server") ? "user" :
+                               ((event.destination == "/GoToChargingStation/BT_rpc/server") ? "charging_station" :
+                               "unknown")));
         yInfo("destination change requested: %s", destination.toStdString().c_str());
         Q_EMIT destinationChangeRequested(destination.toStdString().c_str());
     }
@@ -186,6 +201,18 @@ bool MonitorReader::read(yarp::os::ConnectionReader &reader)
             m_destination = destination;
             yInfo("destination changed: %s", m_destination.toStdString().c_str());
             Q_EMIT destinationChanged(m_destination.toStdString().c_str());
+        }
+    }
+
+    if (event.type == EventType::Reply
+          && event.destination == "/ArmComponent"
+          && event.command == "hasGrasped") {
+        bool isGrasping = get(4).asList()->get(1).asVocab() == VOCAB_OK;
+        yInfo("AAAAAAAAAA %s", get(4).asList()->get(1).asString().c_str());
+        if (m_isGrasping != isGrasping) {
+            m_isGrasping = isGrasping;
+            yInfo("isGrasping changed: %s", m_isGrasping ? "true" : "false");
+            Q_EMIT isGraspingChanged(m_isGrasping);
         }
     }
 
@@ -229,6 +256,7 @@ int main (int argc, char *argv[])
     QObject::connect(monitorReader, &MonitorReader::batteryLevelChanged, [](double level){ yWarning("SIGNAL RECEIVED: batteryLevelChanged(level = %f)", level); });
     QObject::connect(monitorReader, &MonitorReader::destinationChangeRequested, [](const QString& destination){ yWarning("SIGNAL RECEIVED: destinationChangeRequested(destination = %s)", destination.toStdString().c_str()); });
     QObject::connect(monitorReader, &MonitorReader::destinationChanged, [](const QString& destination){ yWarning("SIGNAL RECEIVED: destinationChanged(destination = %s)", destination.toStdString().c_str()); });
+    QObject::connect(monitorReader, &MonitorReader::isGraspingChanged, [](bool isGrasping){ yWarning("SIGNAL RECEIVED: isGraspingChanged(destination = %s)", isGrasping ? "true" : "false"); });
 
     return app.exec();
 }

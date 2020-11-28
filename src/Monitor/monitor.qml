@@ -18,6 +18,7 @@ Window {
     ColumnLayout {
         spacing: 2
 
+        // BatteryLevelMonitor
         Rectangle {
             Layout.minimumWidth: 100
             Layout.margins: 2
@@ -49,8 +50,12 @@ Window {
                 onDestinationChanged: loader_01.stateMachine.submitEvent("destinationChanged", { "destination": destination })
             }
 
+            Connections {
+                target: MonitorReader
+                onDestinationChanged: loader_01.stateMachine.submitEvent("isGraspingChanged", { "isGrasping": isGrasping })
+            }
+
             RowLayout {
-                id: layout_01
                 anchors.fill: parent
                 spacing: 2
 
@@ -63,7 +68,6 @@ Window {
                     border.color: "black"
                     border.width: 1
                     Text {
-                        id: label_01
                         anchors.centerIn: parent
                         text: "[Battery level > 20] (" + MonitorReader.batteryLevel + ")"
                     }
@@ -117,6 +121,7 @@ Window {
             } // RowLayout
         } // Rectangle
 
+        // DestinationMonitor
         Rectangle {
             Layout.minimumWidth: 100
             Layout.margins: 2
@@ -148,9 +153,13 @@ Window {
                 onDestinationChanged: loader_02.stateMachine.submitEvent("destinationChanged", { "destination": destination })
             }
 
+            Connections {
+                target: MonitorReader
+                onDestinationChanged: loader_02.stateMachine.submitEvent("isGraspingChanged", { "isGrasping": isGrasping })
+            }
+
 
             RowLayout {
-                id: layout_02
                 anchors.fill: parent
                 spacing: 2
 
@@ -164,7 +173,6 @@ Window {
                     border.color: "black"
                     border.width: 1
                     Text {
-                        id: label_02
                         anchors.centerIn: parent
                         text: "[Destination] (" + MonitorReader.destination + ")"
                     }
@@ -209,6 +217,217 @@ Window {
 
                             PropertyChanges {
                                 target: light_02
+                                color: "red"
+                            }
+                        }
+                    ]
+
+                }
+
+            } // RowLayout
+        } // Rectangle
+
+        // ChargingStationMonitor
+        Rectangle {
+            Layout.minimumWidth: 100
+            Layout.margins: 2
+            Layout.preferredWidth: root.width - 2 * Layout.margins
+            Layout.preferredHeight: 40
+
+            StateMachineLoader {
+                id: loader_03
+                source: "qrc:///ChargingStationMonitor.scxml"
+            }
+
+            Connections {
+                target: MonitorReader
+                onTick: loader_03.stateMachine.submitEvent("tick")
+            }
+
+            Connections {
+                target: MonitorReader
+                onBatteryLevelChanged: loader_03.stateMachine.submitEvent("batteryLevelChanged", { "level": level })
+            }
+
+            Connections {
+                target: MonitorReader
+                onDestinationChangeRequested: loader_03.stateMachine.submitEvent("destinationChangeRequested", { "destination": destination })
+            }
+
+            Connections {
+                target: MonitorReader
+                onDestinationChanged: loader_03.stateMachine.submitEvent("destinationChanged", { "destination": destination })
+            }
+
+            Connections {
+                target: MonitorReader
+                onDestinationChanged: loader_03.stateMachine.submitEvent("isGraspingChanged", { "isGrasping": isGrasping })
+            }
+
+
+            RowLayout {
+                anchors.fill: parent
+                spacing: 2
+
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: 50
+                    Layout.preferredWidth: 300
+                    Layout.minimumHeight: 30
+                    Layout.margins: 2
+                    border.color: "black"
+                    border.width: 1
+                    Text {
+                        anchors.centerIn: parent
+                        text: "[Destination] (" + MonitorReader.destination + ")"
+                    }
+                }
+
+                Rectangle {
+                    id: light_03
+                    Layout.minimumWidth: 30
+                    Layout.preferredWidth: 30
+                    Layout.maximumWidth: 30
+                    Layout.minimumHeight: width
+                    Layout.maximumHeight: width
+                    Layout.preferredHeight: width
+                    Layout.margins: 2
+                    color: "green"
+                    border.color: "black"
+                    border.width: 1
+                    radius: width * 0.5
+
+                    states: [
+                        State {
+                            name: "Ok"
+                            when: loader_03.stateMachine.idleState
+
+                            PropertyChanges {
+                                target: light_03
+                                color: "green"
+                            }
+                        },
+                        State {
+                            name: "Warning"
+                            when: loader_03.stateMachine.warning
+
+                            PropertyChanges {
+                                target: light_03
+                                color: "yellow"
+                            }
+                        },
+                        State {
+                            name: "Error"
+                            when: loader_03.stateMachine.failure
+
+                            PropertyChanges {
+                                target: light_03
+                                color: "red"
+                            }
+                        }
+                    ]
+
+                }
+
+            } // RowLayout
+        } // Rectangle
+
+        // GraspMonitor
+        Rectangle {
+            Layout.minimumWidth: 100
+            Layout.margins: 2
+            Layout.preferredWidth: root.width - 2 * Layout.margins
+            Layout.preferredHeight: 40
+
+            StateMachineLoader {
+                id: loader_04
+                source: "qrc:///GraspMonitor.scxml"
+            }
+
+            Connections {
+                target: MonitorReader
+                onTick: loader_04.stateMachine.submitEvent("tick")
+            }
+
+            Connections {
+                target: MonitorReader
+                onBatteryLevelChanged: loader_04.stateMachine.submitEvent("batteryLevelChanged", { "level": level })
+            }
+
+            Connections {
+                target: MonitorReader
+                onDestinationChangeRequested: loader_04.stateMachine.submitEvent("destinationChangeRequested", { "destination": destination })
+            }
+
+            Connections {
+                target: MonitorReader
+                onDestinationChanged: loader_04.stateMachine.submitEvent("destinationChanged", { "destination": destination })
+            }
+
+            Connections {
+                target: MonitorReader
+                onDestinationChanged: loader_04.stateMachine.submitEvent("isGraspingChanged", { "isGrasping": isGrasping })
+            }
+
+            RowLayout {
+                anchors.fill: parent
+                spacing: 2
+
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: 50
+                    Layout.preferredWidth: 300
+                    Layout.minimumHeight: 30
+                    Layout.margins: 2
+                    border.color: "black"
+                    border.width: 1
+                    Text {
+                        anchors.centerIn: parent
+                        text: "[Grasping] (" + MonitorReader.isGrasping + ")"
+                    }
+                }
+
+                Rectangle {
+                    id: light_04
+                    Layout.minimumWidth: 30
+                    Layout.preferredWidth: 30
+                    Layout.maximumWidth: 30
+                    Layout.minimumHeight: width
+                    Layout.maximumHeight: width
+                    Layout.preferredHeight: width
+                    Layout.margins: 2
+                    color: "green"
+                    border.color: "black"
+                    border.width: 1
+                    radius: width * 0.5
+
+                    states: [
+                        State {
+                            name: "Ok"
+                            when: loader_04.stateMachine.idleState
+
+                            PropertyChanges {
+                                target: light_04
+                                color: "green"
+                            }
+                        },
+                        State {
+                            name: "Warning"
+                            when: loader_04.stateMachine.warning
+
+                            PropertyChanges {
+                                target: light_04
+                                color: "yellow"
+                            }
+                        },
+                        State {
+                            name: "Error"
+                            when: loader_04.stateMachine.failure
+
+                            PropertyChanges {
+                                target: light_04
                                 color: "red"
                             }
                         }
