@@ -3,5 +3,7 @@
     <file>monitor.qml</file>
     <file>BatteryLevelMonitor.scxml</file>
     <file>DestinationMonitor.scxml</file>
+    <file>TargetMonitor.scxml</file>
+    <file>GraspMonitor.scxml</file>
 </qresource>
 </RCC>

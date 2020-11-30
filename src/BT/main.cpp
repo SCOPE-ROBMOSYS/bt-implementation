@@ -157,8 +157,10 @@ int main()
         msg.addString("*");
         msg.addString("tick");
         //msg.addBool(sender);
-        auto& bcmd = msg.addList();
-        YARP_UNUSED(bcmd);
+        msg.addString("Tick");
+        auto& bcmd [[maybe_unused]] = msg.addList();
+        auto& bargs [[maybe_unused]] = msg.addList();
+        auto& breply [[maybe_unused]] = msg.addList();
         port.write(msg);
 
         tree.root_node->executeTick();

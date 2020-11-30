@@ -42,7 +42,7 @@ Window {
 
             Connections {
                 target: MonitorReader
-                onDestinationChangeRequested: loader_01.stateMachine.submitEvent("destinationChangeRequested", { "destination": destination })
+                onDestinationChangeCommandSent: loader_01.stateMachine.submitEvent("destinationChangeCommandSent", { "destination": destination })
             }
 
             Connections {
@@ -52,7 +52,72 @@ Window {
 
             Connections {
                 target: MonitorReader
-                onDestinationChanged: loader_01.stateMachine.submitEvent("isGraspingChanged", { "isGrasping": isGrasping })
+                onIsGraspingChanged: loader_01.stateMachine.submitEvent("isGraspingChanged", { "isGrasping": isGrasping })
+            }
+
+            Connections {
+                target: MonitorReader
+                onPreGraspCommandSent: loader_01.stateMachine.submitEvent("preGraspCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onExtractHandCommandSent: loader_01.stateMachine.submitEvent("extractHandCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onRetractHandCommandSent: loader_01.stateMachine.submitEvent("retractHandCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onCloseHandCommandSent: loader_01.stateMachine.submitEvent("closeHandCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onOpenHandCommandSent: loader_01.stateMachine.submitEvent("openHandCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onHasGraspedCommandSent: loader_01.stateMachine.submitEvent("hasGraspedCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onPreGraspReplyReceived: loader_01.stateMachine.submitEvent("preGraspReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onExtractHandReplyReceived: loader_01.stateMachine.submitEvent("extractHandReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onRetractHandReplyReceived: loader_01.stateMachine.submitEvent("retractHandReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onCloseHandReplyReceived: loader_01.stateMachine.submitEvent("closeHandReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onOpenHandReplyReceived: loader_01.stateMachine.submitEvent("openHandReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onHasGraspedReplyReceived: loader_01.stateMachine.submitEvent("hasGraspedReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onHomeReplyReceived: loader_01.stateMachine.submitEvent("homeReplyReceived", { "ret": ret })
             }
 
             RowLayout {
@@ -145,7 +210,7 @@ Window {
 
             Connections {
                 target: MonitorReader
-                onDestinationChangeRequested: loader_02.stateMachine.submitEvent("destinationChangeRequested", { "destination": destination })
+                onDestinationChangeCommandSent: loader_02.stateMachine.submitEvent("destinationChangeCommandSent", { "destination": destination })
             }
 
             Connections {
@@ -155,9 +220,78 @@ Window {
 
             Connections {
                 target: MonitorReader
-                onDestinationChanged: loader_02.stateMachine.submitEvent("isGraspingChanged", { "isGrasping": isGrasping })
+                onPreGraspCommandSent: loader_02.stateMachine.submitEvent("preGraspCommandSent")
             }
 
+            Connections {
+                target: MonitorReader
+                onExtractHandCommandSent: loader_02.stateMachine.submitEvent("extractHandCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onRetractHandCommandSent: loader_02.stateMachine.submitEvent("retractHandCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onCloseHandCommandSent: loader_02.stateMachine.submitEvent("closeHandCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onOpenHandCommandSent: loader_02.stateMachine.submitEvent("openHandCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onHasGraspedCommandSent: loader_02.stateMachine.submitEvent("hasGraspedCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onHomeCommandSent: loader_02.stateMachine.submitEvent("homeCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onPreGraspReplyReceived: loader_02.stateMachine.submitEvent("preGraspReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onExtractHandReplyReceived: loader_02.stateMachine.submitEvent("extractHandReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onRetractHandReplyReceived: loader_02.stateMachine.submitEvent("retractHandReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onCloseHandReplyReceived: loader_02.stateMachine.submitEvent("closeHandReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onOpenHandReplyReceived: loader_02.stateMachine.submitEvent("openHandReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onHasGraspedReplyReceived: loader_02.stateMachine.submitEvent("hasGraspedReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onHomeReplyReceived: loader_02.stateMachine.submitEvent("homeReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onIsGraspingChanged: loader_02.stateMachine.submitEvent("isGraspingChanged", { "isGrasping": isGrasping })
+            }
 
             RowLayout {
                 anchors.fill: parent
@@ -227,7 +361,7 @@ Window {
             } // RowLayout
         } // Rectangle
 
-        // ChargingStationMonitor
+        // TargetMonitor
         Rectangle {
             Layout.minimumWidth: 100
             Layout.margins: 2
@@ -236,7 +370,7 @@ Window {
 
             StateMachineLoader {
                 id: loader_03
-                source: "qrc:///ChargingStationMonitor.scxml"
+                source: "qrc:///TargetMonitor.scxml"
             }
 
             Connections {
@@ -251,7 +385,7 @@ Window {
 
             Connections {
                 target: MonitorReader
-                onDestinationChangeRequested: loader_03.stateMachine.submitEvent("destinationChangeRequested", { "destination": destination })
+                onDestinationChangeCommandSent: loader_03.stateMachine.submitEvent("destinationChangeCommandSent", { "destination": destination })
             }
 
             Connections {
@@ -261,7 +395,77 @@ Window {
 
             Connections {
                 target: MonitorReader
-                onDestinationChanged: loader_03.stateMachine.submitEvent("isGraspingChanged", { "isGrasping": isGrasping })
+                onIsGraspingChanged: loader_03.stateMachine.submitEvent("isGraspingChanged", { "isGrasping": isGrasping })
+            }
+
+            Connections {
+                target: MonitorReader
+                onPreGraspCommandSent: loader_03.stateMachine.submitEvent("preGraspCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onExtractHandCommandSent: loader_03.stateMachine.submitEvent("extractHandCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onRetractHandCommandSent: loader_03.stateMachine.submitEvent("retractHandCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onCloseHandCommandSent: loader_03.stateMachine.submitEvent("closeHandCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onOpenHandCommandSent: loader_03.stateMachine.submitEvent("openHandCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onHasGraspedCommandSent: loader_03.stateMachine.submitEvent("hasGraspedCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onHomeCommandSent: loader_03.stateMachine.submitEvent("homeCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onPreGraspReplyReceived: loader_03.stateMachine.submitEvent("preGraspReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onExtractHandReplyReceived: loader_03.stateMachine.submitEvent("extractHandReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onRetractHandReplyReceived: loader_03.stateMachine.submitEvent("retractHandReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onCloseHandReplyReceived: loader_03.stateMachine.submitEvent("closeHandReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onOpenHandReplyReceived: loader_03.stateMachine.submitEvent("openHandReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onHasGraspedReplyReceived: loader_03.stateMachine.submitEvent("hasGraspedReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onHomeReplyReceived: loader_03.stateMachine.submitEvent("homeReplyReceived", { "ret": ret })
             }
 
 
@@ -357,7 +561,7 @@ Window {
 
             Connections {
                 target: MonitorReader
-                onDestinationChangeRequested: loader_04.stateMachine.submitEvent("destinationChangeRequested", { "destination": destination })
+                onDestinationChangeCommandSent: loader_04.stateMachine.submitEvent("destinationChangeCommandSent", { "destination": destination })
             }
 
             Connections {
@@ -367,7 +571,77 @@ Window {
 
             Connections {
                 target: MonitorReader
-                onDestinationChanged: loader_04.stateMachine.submitEvent("isGraspingChanged", { "isGrasping": isGrasping })
+                onPreGraspCommandSent: loader_04.stateMachine.submitEvent("preGraspCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onExtractHandCommandSent: loader_04.stateMachine.submitEvent("extractHandCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onRetractHandCommandSent: loader_04.stateMachine.submitEvent("retractHandCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onCloseHandCommandSent: loader_04.stateMachine.submitEvent("closeHandCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onOpenHandCommandSent: loader_04.stateMachine.submitEvent("openHandCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onHasGraspedCommandSent: loader_04.stateMachine.submitEvent("hasGraspedCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onHomeCommandSent: loader_04.stateMachine.submitEvent("homeCommandSent")
+            }
+
+            Connections {
+                target: MonitorReader
+                onPreGraspReplyReceived: loader_04.stateMachine.submitEvent("preGraspReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onExtractHandReplyReceived: loader_04.stateMachine.submitEvent("extractHandReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onRetractHandReplyReceived: loader_04.stateMachine.submitEvent("retractHandReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onCloseHandReplyReceived: loader_04.stateMachine.submitEvent("closeHandReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onOpenHandReplyReceived: loader_04.stateMachine.submitEvent("openHandReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onHasGraspedReplyReceived: loader_04.stateMachine.submitEvent("hasGraspedReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onHomeReplyReceived: loader_04.stateMachine.submitEvent("homeReplyReceived", { "ret": ret })
+            }
+
+            Connections {
+                target: MonitorReader
+                onIsGraspingChanged: loader_04.stateMachine.submitEvent("isGraspingChanged", { "isGrasping": isGrasping })
             }
 
             RowLayout {

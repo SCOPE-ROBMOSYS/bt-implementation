@@ -61,9 +61,11 @@ yarp::os::Things& Skill_requestMonitorObject::update(yarp::os::Things& thing)
     msg.addString(source);
     msg.addString(destination);
     msg.addString("command");
+    msg.addString("Skill_request");
     //msg.addBool(sender);
     auto& bcmd = msg.addList();
-
+    auto& bargs [[maybe_unused]] = msg.addList();
+    auto& breply [[maybe_unused]] = msg.addList();
 
 #if 0
     if (!sender) {
@@ -113,7 +115,10 @@ yarp::os::Things& Skill_requestMonitorObject::updateReply(yarp::os::Things& thin
     msg.addString(destination);
     msg.addString("reply");
     //msg.addBool(sender);
-    auto& breply = msg.addList();
+    msg.addString("Skill_request");
+    auto& bcmd = msg.addList();
+    auto& bargs [[maybe_unused]] = msg.addList();
+    auto& breply [[maybe_unused]] = msg.addList();
 
 #if 0
     if (!sender) {
@@ -130,17 +135,17 @@ yarp::os::Things& Skill_requestMonitorObject::updateReply(yarp::os::Things& thin
     // FIXME SkillAckVocab::toString should be static.
     if (const auto* reply = thing.cast_as<Skill_request_request_ack_helper>()) {
         yCDebug(SKILLREQUESTMONITOR) << "Received reply to 'request_ack':" << SkillAckVocab().toString(reply->m_return_helper);
-        breply.addString("request_ack");
+        bcmd.addString("request_ack");
         breply.addInt32(static_cast<int32_t>(reply->m_return_helper));
     } else if (/*const auto* reply = */thing.cast_as<Skill_request_send_start_helper>()) {
         yCDebug(SKILLREQUESTMONITOR) << "Received reply to 'send_start'";
-        breply.addString("send_start");
+        bcmd.addString("send_start");
     } else if (/*const auto* reply = */thing.cast_as<Skill_request_send_stop_helper>()) {
         yCDebug(SKILLREQUESTMONITOR) << "Received reply to 'send_stop'";
-        breply.addString("send_stop");
+        bcmd.addString("send_stop");
     } else {
         yCWarning(SKILLREQUESTMONITOR) << "Received unknown reply";
-        breply.addString("[unknown]");
+        bcmd.addString("[unknown]");
     }
 
     yCDebug(SKILLREQUESTMONITOR, "Writing: %s", msg.toString().c_str());

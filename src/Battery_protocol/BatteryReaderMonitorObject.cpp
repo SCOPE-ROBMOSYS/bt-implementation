@@ -62,7 +62,10 @@ yarp::os::Things& BatteryReaderMonitorObject::update(yarp::os::Things& thing)
     msg.addString(destination);
     msg.addString("command");
     //msg.addBool(sender);
+    msg.addString("BatteryReader");
     auto& bcmd = msg.addList();
+    auto& bargs [[maybe_unused]] = msg.addList();
+    auto& breply [[maybe_unused]] = msg.addList();
 
 #if 0
     if (!sender) {
@@ -111,7 +114,10 @@ yarp::os::Things& BatteryReaderMonitorObject::updateReply(yarp::os::Things& thin
     msg.addString(destination);
     msg.addString("reply");
     //b.addBool(sender);
-    auto& breply = msg.addList();
+    msg.addString("BatteryReader");
+    auto& bcmd = msg.addList();
+    auto& bargs [[maybe_unused]] = msg.addList();
+    auto& breply [[maybe_unused]] = msg.addList();
 
 #if 0
     if (!sender) {
@@ -127,16 +133,16 @@ yarp::os::Things& BatteryReaderMonitorObject::updateReply(yarp::os::Things& thin
 
     if (const auto* reply = thing.cast_as<BatteryReader_level_helper>()) {
         yCDebug(BATTERYREADERMONITOR) << "Received reply to 'level':" << reply->m_return_helper;
-        breply.addString("level");
+        bcmd.addString("level");
         breply.addFloat64(reply->m_return_helper);
     } else if (const auto* reply = thing.cast_as<BatteryReader_charging_status_helper>()) {
         // FIXME ChargingStatusVocab::toString should be static.
         yCDebug(BATTERYREADERMONITOR) << "Received reply to 'charging_status'" << ChargingStatusVocab().toString(reply->m_return_helper);
-        breply.addString("charging_status");
+        bcmd.addString("charging_status");
         breply.addInt32(reply->m_return_helper);
     } else {
         yCWarning(BATTERYREADERMONITOR) << "Received unknown reply";
-        breply.addString("[unknown]");
+        bcmd.addString("[unknown]");
     }
 
     yCDebug(BATTERYREADERMONITOR, "Writing: %s", msg.toString().c_str());

@@ -159,7 +159,7 @@ public:
         }
 #else
         std::lock_guard<std::mutex> lock(mutex);
-        std::this_thread::sleep_for(4s);
+        std::this_thread::sleep_for(8s);
         extracted = true;
 #endif
 
@@ -207,7 +207,7 @@ public:
         }
 #else
         std::lock_guard<std::mutex> lock(mutex);
-        std::this_thread::sleep_for(4s);
+        std::this_thread::sleep_for(8s);
         extracted = false;
 #endif
 
@@ -241,7 +241,7 @@ public:
 
 #else
         std::lock_guard<std::mutex> lock(mutex);
-        std::this_thread::sleep_for(2s);
+        std::this_thread::sleep_for(4s);
         if (extracted && opened) {
             grasped = true;
         }
@@ -276,7 +276,7 @@ public:
         std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 #else
         std::lock_guard<std::mutex> lock(mutex);
-        std::this_thread::sleep_for(2s);
+        std::this_thread::sleep_for(4s);
         opened = true;
         grasped = false;
 #endif
@@ -380,7 +380,7 @@ public:
         }
 #else
         std::lock_guard<std::mutex> lock(mutex);
-        std::this_thread::sleep_for(5s);
+        std::this_thread::sleep_for(10s);
 #endif
 
         return true;

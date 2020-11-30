@@ -79,8 +79,10 @@ struct MonitorEvent
     std::string source;
     std::string destination;
     EventType type;
+    std::string protocol;
     std::string command;
     std::string arguments;
+    std::string reply;
 };
 
 class MonitorReader :
@@ -117,9 +119,26 @@ public:
 Q_SIGNALS:
     void tick();
 
-    void destinationChangeRequested(const QString& destination);
+    void destinationChangeCommandSent(const QString& destination);
     void destinationChanged(const QString& destination);
     void batteryLevelChanged(double level);
+
+    void preGraspCommandSent();
+    void extractHandCommandSent();
+    void retractHandCommandSent();
+    void closeHandCommandSent();
+    void openHandCommandSent();
+    void hasGraspedCommandSent();
+    void homeCommandSent();
+
+    void preGraspReplyReceived(bool ret);
+    void extractHandReplyReceived(bool ret);
+    void retractHandReplyReceived(bool ret);
+    void closeHandReplyReceived(bool ret);
+    void openHandReplyReceived(bool ret);
+    void hasGraspedReplyReceived(bool ret);
+    void homeReplyReceived(bool ret);
+
     void isGraspingChanged(bool isGrasping);
 
 private:
@@ -143,18 +162,28 @@ bool MonitorReader::read(yarp::os::ConnectionReader &reader)
         /*.source =*/ get(1).asString(),
         /*.destination =*/ get(2).asString(),
         /*.type =*/ stringToEventType(get(3).asString()),
-        /*.command =*/ (get(4).asList()->size() > 0 ? get(4).asList()->get(0).asString() : ""),
-        /*.arguments =*/ (get(4).asList()->size() > 1 ? get(4).asList()->toString().substr(get(4).asList()->get(0).asString().size() + 1) : "")
+        /*.protocol =*/ get(4).asString(),
+        /*.command =*/ (get(5).asList()->size() > 0 ? get(5).asList()->get(0).asString() : ""),
+        /*.arguments =*/ (get(6).asList()->size() > 0 ? get(6).asList()->get(0).toString() : ""),
+        /*.reply =*/ (get(7).asList()->size() > 0 ? get(7).asList()->get(0).toString() : ""),
     };
 
-    yDebugExternalTime(event.timestamp, "Message received:\n  From     : %s\n  To       : %s\n  %s: %s\n  Arguments: %s",
-        event.type == EventType::Reply ? event.destination.c_str() : event.source.c_str(),
-        event.type == EventType::Reply ? event.source.c_str() : event.destination.c_str(),
+    yDebugExternalTime(event.timestamp, "%s intercepted:\n"
+                                        "  From      : %s\n"
+                                        "  To        : %s\n"
+                                        "  Protocol  : %s\n"
+                                        "  Command   : %s\n"
+                                        "  Arguments : %s\n"
+                                        "  Reply     : %s",
         (event.type == EventType::Reply ? "Reply    " : (
          event.type == EventType::Command ? "Command  " : (
          event.type == EventType::Tick ? "Tick     " : "Unknown  "))),
+        event.type == EventType::Reply ? event.destination.c_str() : event.source.c_str(),
+        event.type == EventType::Reply ? event.source.c_str() : event.destination.c_str(),
+        event.protocol.c_str(),
         event.command.c_str(),
-        event.arguments.c_str()
+        event.arguments.c_str(),
+        event.reply.c_str()
     );
 
     if (event.type == EventType::Tick) {
@@ -166,7 +195,7 @@ bool MonitorReader::read(yarp::os::ConnectionReader &reader)
           && event.source == "/BatteryReaderBatteryLevelClient"
           && event.destination == "/BatteryComponent"
           && event.command == "level") {
-        double batteryLevel = get(4).asList()->get(1).asDouble();
+        double batteryLevel = get(7).asList()->get(0).asDouble();
         if (m_batteryLevel != batteryLevel) {
             m_batteryLevel = batteryLevel;
             yInfo("level changed %f", m_batteryLevel);
@@ -189,14 +218,14 @@ bool MonitorReader::read(yarp::os::ConnectionReader &reader)
                                ((event.destination == "/GoToChargingStation/BT_rpc/server") ? "charging_station" :
                                "unknown")));
         yInfo("destination change requested: %s", destination.toStdString().c_str());
-        Q_EMIT destinationChangeRequested(destination.toStdString().c_str());
+        Q_EMIT destinationChangeCommandSent(destination.toStdString().c_str());
     }
 
     if (event.type == EventType::Reply
           && event.destination == "/GoToComponent"
           && event.command == "getStatus") {
-        QString destination = get(4).asList()->get(1).asString().c_str();
-        GoToStatus status = static_cast<GoToStatus>(get(4).asList()->get(2).asInt32());
+        QString destination = get(6).asList()->get(0).asString().c_str();
+        GoToStatus status = static_cast<GoToStatus>(get(7).asList()->get(0).asInt32());
         if (m_destination != destination && status == RUNNING) {
             m_destination = destination;
             yInfo("destination changed: %s", m_destination.toStdString().c_str());
@@ -204,11 +233,61 @@ bool MonitorReader::read(yarp::os::ConnectionReader &reader)
         }
     }
 
+    if (event.type == EventType::Command
+          && event.destination == "/ArmComponent") {
+        if (event.command == "preGrasp") {
+            Q_EMIT preGraspCommandSent();
+        } else if (event.command == "extractHand") {
+            Q_EMIT extractHandCommandSent();
+        } else if (event.command == "retractHand") {
+            Q_EMIT retractHandCommandSent();
+        } else if (event.command == "closeHand") {
+            Q_EMIT closeHandCommandSent();
+        } else if (event.command == "openHand") {
+            Q_EMIT openHandCommandSent();
+        } else if (event.command == "hasGrasped") {
+            Q_EMIT hasGraspedCommandSent();
+        } else if (event.command == "home") {
+            Q_EMIT homeCommandSent();
+        }
+    }
+
+    if (event.type == EventType::Reply
+          && event.destination == "/ArmComponent") {
+        if (event.command == "preGrasp") {
+            bool ret = get(7).asList()->get(0).asVocab() == VOCAB_OK;
+            Q_EMIT preGraspReplyReceived(ret);
+        } else if (event.command == "extractHand") {
+            bool ret = get(7).asList()->get(0).asVocab() == VOCAB_OK;
+            Q_EMIT extractHandReplyReceived(ret);
+        } else if (event.command == "retractHand") {
+            bool ret = get(7).asList()->get(0).asVocab() == VOCAB_OK;
+            Q_EMIT retractHandReplyReceived(ret);
+        } else if (event.command == "closeHand") {
+            bool ret = get(7).asList()->get(0).asVocab() == VOCAB_OK;
+            Q_EMIT closeHandReplyReceived(ret);
+        } else if (event.command == "openHand") {
+            bool ret = get(7).asList()->get(0).asVocab() == VOCAB_OK;
+            Q_EMIT openHandReplyReceived(ret);
+        } else if (event.command == "hasGrasped") {
+            bool ret = get(7).asList()->get(0).asVocab() == VOCAB_OK;
+            Q_EMIT hasGraspedReplyReceived(ret);
+        } else if (event.command == "home") {
+            bool ret = get(7).asList()->get(0).asVocab() == VOCAB_OK;
+            Q_EMIT homeReplyReceived(ret);
+        }
+    }
+    if (event.type == EventType::Reply
+          && event.destination == "/ArmComponent"
+          && event.command == "retractHand") {
+            yInfo("grasp started");
+        Q_EMIT retractHandCommandSent();
+    }
+
     if (event.type == EventType::Reply
           && event.destination == "/ArmComponent"
           && event.command == "hasGrasped") {
-        bool isGrasping = get(4).asList()->get(1).asVocab() == VOCAB_OK;
-        yInfo("AAAAAAAAAA %s", get(4).asList()->get(1).asString().c_str());
+        bool isGrasping = get(7).asList()->get(0).asVocab() == VOCAB_OK;
         if (m_isGrasping != isGrasping) {
             m_isGrasping = isGrasping;
             yInfo("isGrasping changed: %s", m_isGrasping ? "true" : "false");
@@ -232,6 +311,8 @@ int main (int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon::fromTheme("gnome-power-manager"));
+    app.setApplicationVersion("0.1");
+    app.setApplicationName("Monitor");
 
     QQmlApplicationEngine engine;
 
@@ -254,9 +335,26 @@ int main (int argc, char *argv[])
     // Just for testing that signals work
     QObject::connect(monitorReader, &MonitorReader::tick, [](){ yWarning("SIGNAL RECEIVED: tick"); });
     QObject::connect(monitorReader, &MonitorReader::batteryLevelChanged, [](double level){ yWarning("SIGNAL RECEIVED: batteryLevelChanged(level = %f)", level); });
-    QObject::connect(monitorReader, &MonitorReader::destinationChangeRequested, [](const QString& destination){ yWarning("SIGNAL RECEIVED: destinationChangeRequested(destination = %s)", destination.toStdString().c_str()); });
+    QObject::connect(monitorReader, &MonitorReader::destinationChangeCommandSent, [](const QString& destination){ yWarning("SIGNAL RECEIVED: destinationChangeCommandSent(destination = %s)", destination.toStdString().c_str()); });
     QObject::connect(monitorReader, &MonitorReader::destinationChanged, [](const QString& destination){ yWarning("SIGNAL RECEIVED: destinationChanged(destination = %s)", destination.toStdString().c_str()); });
-    QObject::connect(monitorReader, &MonitorReader::isGraspingChanged, [](bool isGrasping){ yWarning("SIGNAL RECEIVED: isGraspingChanged(destination = %s)", isGrasping ? "true" : "false"); });
+
+    QObject::connect(monitorReader, &MonitorReader::preGraspCommandSent, [](){ yWarning("SIGNAL RECEIVED: preGraspCommandSent()"); });
+    QObject::connect(monitorReader, &MonitorReader::extractHandCommandSent, [](){ yWarning("SIGNAL RECEIVED: extractHandCommandSent()"); });
+    QObject::connect(monitorReader, &MonitorReader::retractHandCommandSent, [](){ yWarning("SIGNAL RECEIVED: retractHandCommandSent()"); });
+    QObject::connect(monitorReader, &MonitorReader::closeHandCommandSent, [](){ yWarning("SIGNAL RECEIVED: closeHandCommandSent()"); });
+    QObject::connect(monitorReader, &MonitorReader::openHandCommandSent, [](){ yWarning("SIGNAL RECEIVED: openHandCommandSent()"); });
+    QObject::connect(monitorReader, &MonitorReader::hasGraspedCommandSent, [](){ yWarning("SIGNAL RECEIVED: hasGraspedCommandSent()"); });
+    QObject::connect(monitorReader, &MonitorReader::homeCommandSent, [](){ yWarning("SIGNAL RECEIVED: homeCommandSent()"); });
+
+    QObject::connect(monitorReader, &MonitorReader::preGraspReplyReceived, [](bool ret){ yWarning("SIGNAL RECEIVED: preGraspReplyReceived(ret = %s)", (ret ? "true" : "false")); });
+    QObject::connect(monitorReader, &MonitorReader::extractHandReplyReceived, [](bool ret){ yWarning("SIGNAL RECEIVED: extractHandReplyReceived(ret = %s)", (ret ? "true" : "false")); });
+    QObject::connect(monitorReader, &MonitorReader::retractHandReplyReceived, [](bool ret){ yWarning("SIGNAL RECEIVED: retractHandReplyReceived(ret = %s)", (ret ? "true" : "false")); });
+    QObject::connect(monitorReader, &MonitorReader::closeHandReplyReceived, [](bool ret){ yWarning("SIGNAL RECEIVED: closeHandReplyReceived(ret = %s)", (ret ? "true" : "false")); });
+    QObject::connect(monitorReader, &MonitorReader::openHandReplyReceived, [](bool ret){ yWarning("SIGNAL RECEIVED: openHandReplyReceived(ret = %s)", (ret ? "true" : "false")); });
+    QObject::connect(monitorReader, &MonitorReader::hasGraspedReplyReceived, [](bool ret){ yWarning("SIGNAL RECEIVED: hasGraspedReplyReceived(ret = %s)", (ret ? "true" : "false")); });
+    QObject::connect(monitorReader, &MonitorReader::homeReplyReceived, [](bool ret){ yWarning("SIGNAL RECEIVED: homeReplyReceived(ret = %s)", (ret ? "true" : "false")); });
+
+    QObject::connect(monitorReader, &MonitorReader::isGraspingChanged, [](bool isGrasping){ yWarning("SIGNAL RECEIVED: isGraspingChanged(isGrasping = %s)", isGrasping ? "true" : "false"); });
 
     return app.exec();
 }

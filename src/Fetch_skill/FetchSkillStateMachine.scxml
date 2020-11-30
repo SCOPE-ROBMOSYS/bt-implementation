@@ -43,7 +43,9 @@
     <state id="pregrasp" scope:bt_status="SKILL_RUNNING">
         <onentry>
             <script>
+            qDebug() &lt;&lt; "calling armService.preGrasp()";
             is_ok = armService.preGrasp();
+            qDebug() &lt;&lt; "armService.preGrasp() returned " &lt;&lt; is_ok;
             QTimer::singleShot(0, stateMachine(), [=](){
                 stateMachine()->submitEvent(is_ok ? "PREGRASP_OK" : "PREGRASP_KO");
             });

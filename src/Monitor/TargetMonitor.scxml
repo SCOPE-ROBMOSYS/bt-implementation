@@ -6,7 +6,7 @@
 <scxml
     xmlns="http://www.w3.org/2005/07/scxml"
     version="1.0"
-    name="ChargingStationMonitorStateMachine"
+    name="TargetMonitorStateMachine"
     initial="run"
     datamodel="ecmascript"
 >
@@ -30,14 +30,14 @@
         </onentry>
         <transition event="destinationChanged" target="idleState-b" >
           <assign location="destination" expr="_event.data.destination"/>
-          <log label="ChargingStationMonitor/destinationChanged" expr="'destination updated: ' + destination"/>
+          <log label="TargetMonitor/destinationChanged" expr="'destination updated: ' + destination"/>
         </transition>
       </state>
 
       <!-- I (B) -->
       <state id="idleState-b">
           <onentry>
-            <log label="ChargingStationMonitor/idleState-b" expr="'destination = ' + destination"/>
+            <log label="TargetMonitor/idleState-b" expr="'destination = ' + destination"/>
           </onentry>
           <transition cond="destination == 'charging_station'" target="idleState" />
           <transition target="waitForBatteryLevelState" />
@@ -98,7 +98,7 @@
     <state id="updateBatteryLevelState">
       <state id="updateBatteryLevelState-A">
         <onentry>
-          <log label="ChargingStationMonitor/updateBatteryLevelState-A" expr="'batteryLevel: ' + batteryLevel"/>
+          <log label="TargetMonitor/updateBatteryLevelState-A" expr="'batteryLevel: ' + batteryLevel"/>
         </onentry>
         <transition event="batteryLevelChanged" target="updateBatteryLevelState-B" >
           <assign location="batteryLevel" expr="_event.data.level"/>
@@ -116,7 +116,7 @@
     <state id="updateDestinationState">
       <state id="updateDestinationState-A">
         <onentry>
-          <log label="ChargingStationMonitor/updateDestinationState-A" expr="'destination: ' + destination"/>
+          <log label="TargetMonitor/updateDestinationState-A" expr="'destination: ' + destination"/>
         </onentry>
         <transition event="destinationChanged" target="updateDestinationState-B" >
           <assign location="destination" expr="_event.data.destination"/>
@@ -125,7 +125,7 @@
 
       <state id="updateDestinationState-B">
         <onentry>
-          <log label="ChargingStationMonitor/getLevel" expr="'destination = ' + destination"/>
+          <log label="TargetMonitor/getLevel" expr="'destination = ' + destination"/>
         </onentry>
         <transition target="updateDestinationState-A" />
       </state>

@@ -62,8 +62,10 @@ yarp::os::Things& GoToMonitorObject::update(yarp::os::Things& thing)
     msg.addString(destination);
     msg.addString("command");
     //msg.addBool(sender);
+    msg.addString("GoTo");
     auto& bcmd = msg.addList();
-
+    auto& bargs [[maybe_unused]] = msg.addList();
+    auto& breply [[maybe_unused]] = msg.addList();
 
 #if 0
     if (!sender) {
@@ -82,19 +84,19 @@ yarp::os::Things& GoToMonitorObject::update(yarp::os::Things& thing)
     if (const auto* cmd = thing.cast_as<GoTo_goTo_helper>()) {
         yCDebug(GOTOMONITOR) << "Sending command 'goTo'" << cmd->m_destination;
         bcmd.addString("goTo");
-        bcmd.addString(cmd->m_destination);
+        bargs.addString(cmd->m_destination);
     } else if (const auto* cmd = thing.cast_as<GoTo_getStatus_helper>()) {
         yCDebug(GOTOMONITOR) << "Sending command 'getStatus'" << cmd->m_destination;
         bcmd.addString("getStatus");
-        bcmd.addString(cmd->m_destination);
+        bargs.addString(cmd->m_destination);
     } else if (const auto* cmd = thing.cast_as<GoTo_halt_helper>()) {
         yCDebug(GOTOMONITOR) << "Sending command 'halt'" << cmd->m_destination;
         bcmd.addString("halt");
-        bcmd.addString(cmd->m_destination);
+        bargs.addString(cmd->m_destination);
     } else if (const auto* cmd = thing.cast_as<GoTo_isAtLocation_helper>()) {
         yCDebug(GOTOMONITOR) << "Sending command 'isAtLocation'" << cmd->m_destination;
         bcmd.addString("isAtLocation");
-        bcmd.addString(cmd->m_destination);
+        bargs.addString(cmd->m_destination);
     } else {
         yCWarning(GOTOMONITOR) << "Sending unknown command";
         bcmd.addString("[unknown]");
@@ -120,7 +122,10 @@ yarp::os::Things& GoToMonitorObject::updateReply(yarp::os::Things& thing)
     msg.addString(destination);
     msg.addString("reply");
     //msg.addBool(sender);
-    auto& breply = msg.addList();
+    msg.addString("GoTo");
+    auto& bcmd = msg.addList();
+    auto& bargs [[maybe_unused]] = msg.addList();
+    auto& breply [[maybe_unused]] = msg.addList();
 
 #if 0
     if (!sender) {
@@ -137,25 +142,25 @@ yarp::os::Things& GoToMonitorObject::updateReply(yarp::os::Things& thing)
     // FIXME GoToStatusVocab::toString should be static.
     if (const auto* reply = thing.cast_as<GoTo_goTo_helper>()) {
         yCDebug(GOTOMONITOR) << "Received reply to 'goTo'" << reply->m_destination;
-        breply.addString("goTo");
+        bcmd.addString("goTo");
         breply.addString(reply->m_destination);
     } else if (const auto* reply = thing.cast_as<GoTo_getStatus_helper>()) {
         yCDebug(GOTOMONITOR) << "Received reply to 'getStatus'" << reply->m_destination << GoToStatusVocab().toString(reply->m_return_helper);
-        breply.addString("getStatus");
-        breply.addString(reply->m_destination);
+        bcmd.addString("getStatus");
+        bargs.addString(reply->m_destination);
         breply.addInt32(static_cast<int32_t>(reply->m_return_helper));
     } else if (const auto* reply = thing.cast_as<GoTo_halt_helper>()) {
         yCDebug(GOTOMONITOR) << "Received reply to 'halt'" << reply->m_destination;
-        breply.addString("halt");
-        breply.addString(reply->m_destination);
+        bcmd.addString("halt");
+        bargs.addString(reply->m_destination);
     } else if (const auto* reply = thing.cast_as<GoTo_isAtLocation_helper>()) {
         yCDebug(GOTOMONITOR) << "Received reply to 'isAtLocation'" << reply->m_destination << reply->m_return_helper;
-        breply.addString("isAtLocation");
-        breply.addString(reply->m_destination);
+        bcmd.addString("isAtLocation");
+        bargs.addString(reply->m_destination);
         breply.addInt32(static_cast<int32_t>(reply->m_return_helper));
     } else {
         yCWarning(GOTOMONITOR) << "Received unknown reply";
-        breply.addString("[unknown]");
+        bcmd.addString("[unknown]");
     }
 
     yCDebug(GOTOMONITOR, "Writing: %s", msg.toString().c_str());

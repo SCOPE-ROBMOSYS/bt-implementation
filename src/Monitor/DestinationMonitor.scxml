@@ -87,7 +87,7 @@
           <transition target="checkDestinationState" />
         </state>-->
 
-<!--        <transition event="destinationChangeRequested" cond="_event.data.destination == 'charging_station'" target="idleState" />-->
+<!--        <transition event="destinationChangeCommandSent" cond="_event.data.destination == 'charging_station'" target="idleState" />-->
       </state> <!-- warning -->
       <!-- END LOW BATTERY -->
 

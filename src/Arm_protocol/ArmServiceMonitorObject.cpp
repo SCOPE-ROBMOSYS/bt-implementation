@@ -62,8 +62,11 @@ yarp::os::Things& ArmServiceMonitorObject::update(yarp::os::Things& thing)
     msg.addString(source);
     msg.addString(destination);
     msg.addString("command");
+    msg.addString("ArmService");
     //msg.addBool(sender);
     auto& bcmd = msg.addList();
+    auto& bargs [[maybe_unused]] = msg.addList();
+    auto& breply [[maybe_unused]] = msg.addList();
 
 #if 0
     if (!sender) {
@@ -127,7 +130,10 @@ yarp::os::Things& ArmServiceMonitorObject::updateReply(yarp::os::Things& thing)
     msg.addString(destination);
     msg.addString("reply");
     //b.addBool(sender);
-    auto& breply = msg.addList();
+    msg.addString("ArmService");
+    auto& bcmd = msg.addList();
+    auto& bargs [[maybe_unused]] = msg.addList();
+    auto& breply [[maybe_unused]] = msg.addList();
 
 #if 0
     if (!sender) {
@@ -143,35 +149,35 @@ yarp::os::Things& ArmServiceMonitorObject::updateReply(yarp::os::Things& thing)
 
     if (const auto* reply = thing.cast_as<ArmService_preGrasp_helper>()) {
         yCDebug(ARMSERVICEMONITOR) << "Received reply to 'preGrasp'";
-        breply.addString("preGrasp");
+        bcmd.addString("preGrasp");
         breply.addInt32(reply->m_return_helper ? VOCAB_OK : VOCAB_FAIL);
     } else if (const auto* reply = thing.cast_as<ArmService_extractHand_helper>()) {
         yCDebug(ARMSERVICEMONITOR) << "Received reply to 'extractHand'";
-        breply.addString("extractHand");
+        bcmd.addString("extractHand");
         breply.addInt32(reply->m_return_helper ? VOCAB_OK : VOCAB_FAIL);
     } else if (const auto* reply = thing.cast_as<ArmService_retractHand_helper>()) {
         yCDebug(ARMSERVICEMONITOR) << "Received reply to 'retractHand'";
-        breply.addString("retractHand");
+        bcmd.addString("retractHand");
         breply.addInt32(reply->m_return_helper ? VOCAB_OK : VOCAB_FAIL);
     } else if (const auto* reply = thing.cast_as<ArmService_closeHand_helper>()) {
         yCDebug(ARMSERVICEMONITOR) << "Received reply to 'closeHand'";
-        breply.addString("closeHand");
+        bcmd.addString("closeHand");
         breply.addInt32(reply->m_return_helper ? VOCAB_OK : VOCAB_FAIL);
     } else if (const auto* reply = thing.cast_as<ArmService_openHand_helper>()) {
         yCDebug(ARMSERVICEMONITOR) << "Received reply to 'openHand'";
-        breply.addString("openHand");
+        bcmd.addString("openHand");
         breply.addInt32(reply->m_return_helper ? VOCAB_OK : VOCAB_FAIL);
     } else if (const auto* reply = thing.cast_as<ArmService_hasGrasped_helper>()) {
         yCDebug(ARMSERVICEMONITOR) << "Received reply to 'hasGrasped'";
-        breply.addString("hasGrasped");
+        bcmd.addString("hasGrasped");
         breply.addInt32(reply->m_return_helper ? VOCAB_OK : VOCAB_FAIL);
     } else if (const auto* reply = thing.cast_as<ArmService_home_helper>()) {
         yCDebug(ARMSERVICEMONITOR) << "Received reply to 'home'";
-        breply.addString("home");
+        bcmd.addString("home");
         breply.addInt32(reply->m_return_helper ? VOCAB_OK : VOCAB_FAIL);
     } else {
         yCWarning(ARMSERVICEMONITOR) << "Received unknown reply";
-        breply.addString("[unknown]");
+        bcmd.addString("[unknown]");
     }
 
     yCDebug(ARMSERVICEMONITOR, "Writing: %s", msg.toString().c_str());
