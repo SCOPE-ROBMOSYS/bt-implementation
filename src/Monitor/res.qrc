@@ -1,6 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
     <file>monitor.qml</file>
+    <file>MonitorWidget.qml</file>
     <file>BatteryLevelMonitor.scxml</file>
     <file>DestinationMonitor.scxml</file>
     <file>TargetMonitor.scxml</file>
