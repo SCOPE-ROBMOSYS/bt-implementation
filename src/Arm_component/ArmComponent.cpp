@@ -36,6 +36,7 @@ YARP_LOG_COMPONENT(ARMCOMPONENT,
 }
 
 #define FAKE_ARM
+#define FAKE_ARM_FAILURES 3
 
 class ArmComponent : public ArmService
 {
@@ -243,7 +244,11 @@ public:
         std::lock_guard<std::mutex> lock(mutex);
         std::this_thread::sleep_for(4s);
         if (extracted && opened) {
-            grasped = true;
+            if (failures >= FAKE_ARM_FAILURES) {
+                grasped = true;
+            } else {
+                ++failures;
+            }
         }
         opened = false;
 #endif
@@ -278,6 +283,9 @@ public:
         std::lock_guard<std::mutex> lock(mutex);
         std::this_thread::sleep_for(4s);
         opened = true;
+        if (grasped) {
+            failures = 0;
+        }
         grasped = false;
 #endif
 
@@ -413,6 +421,7 @@ private:
     bool extracted {false};
     bool opened {false};
     bool grasped {false};
+    int failures {0};
 #endif
 
 };
