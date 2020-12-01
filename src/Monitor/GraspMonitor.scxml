@@ -7,20 +7,20 @@
     xmlns="http://www.w3.org/2005/07/scxml"
     version="1.0"
     name="GraspMonitorStateMachine"
-    initial="idleState"
+    initial="idle"
     datamodel="ecmascript"
 >
 
   <datamodel>
+    <!-- constants -->
     <data id="tickCounterTheta" expr="10"/>
-    <data id="tickCounter" expr="tickCounterTheta"/>
+
+    <!-- variables -->
+    <data id="tickCounter" expr="0"/>
   </datamodel>
 
   <!-- I + I1 -->
-  <state id="idleState">
-    <onentry>
-      <assign location="tickCounter" expr="tickCounterTheta"/>
-    </onentry>
+  <state id="idle">
     <transition event="openHandReplyReceived" cond="_event.data.ret == true" target="graspingState" />
   </state>
 
@@ -29,8 +29,11 @@
 
     <!-- C -->
     <state id="graspingState">
+      <onentry>
+        <assign location="tickCounter" expr="tickCounterTheta"/>
+      </onentry>
       <transition event="tick" target="checkTickCounterState" />
-      <transition event="retractHandCommandSent" target="idleState" />
+      <transition event="retractHandCommandSent" target="idle" />
     </state>
 
     <!-- T + D -->
@@ -38,7 +41,7 @@
       <transition cond="tickCounter &gt; 0" target="graspingState">
         <assign location="tickCounter" expr="tickCounter - 1"/>
       </transition>
-      <transition target="failure" />
+      <transition cond="tickCounter &lt;= 0" target="failure" />
     </state>
   </state>
 

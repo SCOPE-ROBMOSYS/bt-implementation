@@ -12,6 +12,10 @@
 >
 
   <datamodel>
+    <!-- constants -->
+    <data id="batteryLevelCritical" expr="20.0"/>
+
+    <!-- variables -->
     <data id="batteryLevel" expr="0.0"/>
   </datamodel>
 
@@ -24,12 +28,14 @@
     </transition>
   </state>
 
-  <state id="checkLevel">
-    <onentry>
-      <log label="BatteryLevelMonitor/checkLevel" expr="'batteryLevel = ' + batteryLevel"/>
-    </onentry>
-    <transition cond="batteryLevel &gt;= 20" target="idle" />
-    <transition cond="batteryLevel &lt; 20" target="failure" />
+  <state id="warning">
+    <state id="checkLevel">
+      <onentry>
+        <log label="BatteryLevelMonitor/checkLevel" expr="'batteryLevel = ' + batteryLevel"/>
+      </onentry>
+      <transition cond="batteryLevel &gt;= batteryLevelCritical" target="idle" />
+      <transition cond="batteryLevel &lt; batteryLevelCritical" target="failure" />
+    </state>
   </state>
 
   <state id="failure">

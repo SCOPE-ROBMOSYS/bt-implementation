@@ -7,54 +7,76 @@
     xmlns="http://www.w3.org/2005/07/scxml"
     version="1.0"
     name="DestinationMonitorStateMachine"
-    initial="run"
+    initial="idle"
     datamodel="ecmascript"
 >
 
   <datamodel>
-    <data id="batteryLevel" expr="0.0"/>
-    <data id="destination" expr=""/>
+    <!-- constants -->
+    <data id="navigationTarget" expr="'kitchen'"/>
+    <data id="lowBatteryTarget" expr="'charging_station'"/>
     <data id="tickCounterTheta" expr="10"/>
-    <data id="tickCounter" expr="tickCounterTheta"/>
+    <data id="batteryLevelLow" expr="30.0"/>
+
+    <!-- variables -->
+    <data id="batteryLevel" expr="100.0"/>
+    <data id="destination" expr="''"/>
+    <data id="tickCounter" expr="0"/>
   </datamodel>
 
   <parallel id="run">
 
-
+    <!-- BEGIN MONITOR -->
     <state id="monitor">
+      <onentry>
+        <log label="DestinationMonitor/monitor" expr="'navigationTarget = ' + navigationTarget"/>
+        <log label="DestinationMonitor/monitor" expr="'lowBatteryTarget = ' + lowBatteryTarget"/>
+        <log label="DestinationMonitor/monitor" expr="'tickCounterTheta = ' + tickCounterTheta"/>
+        <log label="DestinationMonitor/monitor" expr="'batteryLevelLow = ' + batteryLevelLow"/>
+        <log label="DestinationMonitor/monitor" expr="'batteryLevel = ' + batteryLevel"/>
+        <log label="DestinationMonitor/monitor" expr="'destination = ' + destination"/>
+        <log label="DestinationMonitor/monitor" expr="'tickCounter = ' + tickCounter"/>
+      </onentry>
 
-      <!-- I (A) -->
-      <state id="idleState">
-        <onentry>
-          <assign location="tickCounter" expr="tickCounterTheta"/>
-        </onentry>
-        <transition event="destinationChanged" target="idleState-b" >
-          <assign location="destination" expr="_event.data.destination"/>
-          <log label="DestinationMonitor/destinationChanged" expr="'destination updated: ' + destination"/>
-        </transition>
-      </state>
-
-      <!-- I (B) -->
-      <state id="idleState-b">
+      <!-- I -->
+      <state id="idle">
+        <!-- I (A) -->
+        <state id="idleState-a">
           <onentry>
-            <log label="DestinationMonitor/idleState-b" expr="'destination = ' + destination"/>
+            <log label="DestinationMonitor/idleState-a" expr="'batteryLevel = ' + batteryLevel + ' - destination = ' + destination"/>
           </onentry>
-          <transition cond="destination == 'charging_station'" target="idleState" />
-          <transition target="waitForBatteryLevelState" />
-      </state>
+          <transition event="destinationChanged" target="waitForBatteryLevelState" >
+            <assign location="destination" expr="_event.data.destination"/>
+          </transition>
+        </state>
 
-      <!-- I2 -->
-      <state id="waitForBatteryLevelState">
-        <transition event="batteryLevelChanged" target="checkBatteryLevelState" />
+        <!-- I (B) -->
+        <state id="idleState-b">
+          <onentry>
+            <log label="DestinationMonitor/idleState-b" expr="'batteryLevel = ' + batteryLevel + ' - destination = ' + destination"/>
+          </onentry>
+          <transition cond="destination == navigationTarget" target="waitForBatteryLevelState" />
+          <transition cond="destination != navigationTarget" target="idleState-a" />
+        </state>
+
+        <!-- I2 -->
+        <state id="waitForBatteryLevelState">
+          <onentry>
+            <log label="DestinationMonitor/waitForBatteryLevelState" expr="'batteryLevel = ' + batteryLevel + ' - destination = ' + destination"/>
+          </onentry>
+          <transition event="batteryLevelChanged" target="checkBatteryLevelState" />
+        </state>
       </state>
 
       <!-- C1 -->
       <state id="checkBatteryLevelState">
         <onentry>
-          <log label="BatteryLevelMonitor/checkBatteryLevelState" expr="'batteryLevel = ' + batteryLevel"/>
+          <log label="DestinationMonitor/checkBatteryLevelState" expr="'batteryLevel = ' + batteryLevel + ' - destination = ' + destination"/>
         </onentry>
-        <transition cond="batteryLevel &gt;= 30" target="waitForBatteryLevelState" />
-        <transition cond="batteryLevel &lt; 30" target="checkDestinationState" />
+        <transition cond="batteryLevel &gt;= batteryLevelLow" target="waitForBatteryLevelState" />
+        <transition cond="batteryLevel &lt; batteryLevelLow" target="checkDestinationState">
+          <assign location="tickCounter" expr="tickCounterTheta"/>
+        </transition>
       </state>
 
       <!-- BEGIN LOW BATTERY -->
@@ -62,74 +84,85 @@
 
         <!-- C2 (A) -->
         <state id="checkDestinationState">
-          <transition cond="destination == 'charging_station'" target="idleState" />
-          <transition target="waitForTickState" />
+          <onentry>
+            <log label="DestinationMonitor/checkDestinationState" expr="'batteryLevel = ' + batteryLevel + ' - destination = ' + destination + ' xxx ' + destination === lowBatteryTarget"/>
+          </onentry>
+          <transition cond="destination != lowBatteryTarget" target="waitForTickState" />
+          <transition cond="destination == lowBatteryTarget" target="idleState-b" />
         </state>
 
         <!-- C2 (B) -->
         <state id="waitForTickState">
+          <onentry>
+            <log label="DestinationMonitor/waitForTickState" expr="'batteryLevel = ' + batteryLevel + ' - destination = ' + destination"/>
+          </onentry>
           <transition event="tick" target="checkTickCounterState" />
         </state>
 
         <!-- T + D -->
         <state id="checkTickCounterState">
+            <onentry>
+              <log label="DestinationMonitor/checkTickCounterState" expr="'batteryLevel = ' + batteryLevel + ' - destination = ' + destination"/>
+            </onentry>
           <transition cond="tickCounter &gt; 0" target="checkDestinationState">
             <assign location="tickCounter" expr="tickCounter - 1"/>
           </transition>
-          <transition target="failure" />
+          <transition cond="tickCounter &lt;= 0" target="failure" />
         </state>
 
-        <!-- D -->
-<!--        <state id="decrTickCounterState">
-          <onentry>
-            <assign location="tickCounter" expr="tickCounter - 1"/>
-          </onentry>
-          <transition target="checkDestinationState" />
-        </state>-->
-
-<!--        <transition event="destinationChangeCommandSent" cond="_event.data.destination == 'charging_station'" target="idleState" />-->
       </state> <!-- warning -->
       <!-- END LOW BATTERY -->
 
       <!-- Err -->
       <state id="failure" />
-    </state> <!-- monitor -->
+    </state>
+    <!-- END MONITOR -->
 
+    <!-- BEGIN VAR UPDATE -->
     <state id="updateBatteryLevelState">
       <state id="updateBatteryLevelState-A">
+<!--
         <onentry>
           <log label="DestinationMonitor/updateBatteryLevelState-A" expr="'batteryLevel: ' + batteryLevel"/>
         </onentry>
+-->
         <transition event="batteryLevelChanged" target="updateBatteryLevelState-B" >
           <assign location="batteryLevel" expr="_event.data.level"/>
         </transition>
       </state>
 
       <state id="updateBatteryLevelState-B">
+<!--
         <onentry>
-          <log label="BatteryLevelMonitor/getLevel" expr="'batteryLevel = ' + batteryLevel"/>
+          <log label="DestinationMonitor/updateBatteryLevelState-B" expr="'batteryLevel = ' + batteryLevel"/>
         </onentry>
+-->
         <transition target="updateBatteryLevelState-A" />
       </state>
     </state>
 
     <state id="updateDestinationState">
       <state id="updateDestinationState-A">
+<!--
         <onentry>
           <log label="DestinationMonitor/updateDestinationState-A" expr="'destination: ' + destination"/>
         </onentry>
+-->
         <transition event="destinationChanged" target="updateDestinationState-B" >
           <assign location="destination" expr="_event.data.destination"/>
         </transition>
       </state>
 
       <state id="updateDestinationState-B">
+<!--
         <onentry>
-          <log label="DestinationMonitor/getLevel" expr="'destination = ' + destination"/>
+          <log label="DestinationMonitor/updateDestinationState-B" expr="'destination = ' + destination"/>
         </onentry>
+-->
         <transition target="updateDestinationState-A" />
       </state>
     </state>
+    <!-- END VAR UPDATE -->
 
   </parallel>
 

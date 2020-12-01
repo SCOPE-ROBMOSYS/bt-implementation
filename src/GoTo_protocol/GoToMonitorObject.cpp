@@ -26,6 +26,9 @@ YARP_LOG_COMPONENT(GOTOMONITOR,
                    yarp::os::Log::LogTypeReserved,
                    yarp::os::Log::printCallback(),
                    nullptr)
+
+constexpr yarp::conf::vocab32_t VOCAB_OK = yarp::os::createVocab('o', 'k');
+constexpr yarp::conf::vocab32_t VOCAB_FAIL = yarp::os::createVocab('f', 'a', 'i', 'l');
 }
 
 bool GoToMonitorObject::create(const yarp::os::Property& options)
@@ -157,7 +160,7 @@ yarp::os::Things& GoToMonitorObject::updateReply(yarp::os::Things& thing)
         yCDebug(GOTOMONITOR) << "Received reply to 'isAtLocation'" << reply->m_destination << reply->m_return_helper;
         bcmd.addString("isAtLocation");
         bargs.addString(reply->m_destination);
-        breply.addInt32(static_cast<int32_t>(reply->m_return_helper));
+        breply.addInt32(reply->m_return_helper ? VOCAB_OK : VOCAB_FAIL);
     } else {
         yCWarning(GOTOMONITOR) << "Received unknown reply";
         bcmd.addString("[unknown]");

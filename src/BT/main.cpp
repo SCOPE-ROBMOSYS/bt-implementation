@@ -149,17 +149,19 @@ int main()
     }
 
 
+    uint64_t tick_cnt = 0;
     while(true)
     {
         yarp::os::Bottle msg;
         msg.addDouble(yarp::os::SystemClock::nowSystem());
-        msg.addString("/tick");
-        msg.addString("*");
+        msg.addString("/tick/monitor");
+        msg.addString("/monitor");
         msg.addString("tick");
         //msg.addBool(sender);
         msg.addString("Tick");
         auto& bcmd [[maybe_unused]] = msg.addList();
-        auto& bargs [[maybe_unused]] = msg.addList();
+        auto& bargs = msg.addList();
+        bargs.addInt64(static_cast<int64_t>(++tick_cnt));
         auto& breply [[maybe_unused]] = msg.addList();
         port.write(msg);
 

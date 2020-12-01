@@ -4,16 +4,16 @@ import QtScxml 5.8
 
 import scope.monitor.MonitorReader 1.0
 
-
 Rectangle {
     property alias source: loader.source
     property alias stateMachine: loader.stateMachine
-    property alias text: label.text
 
-    Layout.minimumWidth: 100
-    Layout.margins: 2
-    Layout.preferredWidth: root.width - 2 * Layout.margins
-    Layout.preferredHeight: 40
+
+    anchors.left: parent.left
+    anchors.right: parent.right
+
+    height: 40
+    color: "light gray"
 
     StateMachineLoader {
         id: loader
@@ -31,12 +31,17 @@ Rectangle {
 
     Connections {
         target: MonitorReader
-        onDestinationChangeCommandSent: stateMachine.submitEvent("destinationChangeCommandSent", { "destination": destination })
+        onSend_startCommandSent: stateMachine.submitEvent("send_startCommandSent", { "destination": destination })
     }
 
     Connections {
         target: MonitorReader
         onDestinationChanged: stateMachine.submitEvent("destinationChanged", { "destination": destination })
+    }
+
+    Connections {
+        target: MonitorReader
+        onDestinationChanged: stateMachine.submitEvent("destinationReached", { "destination": destination })
     }
 
     Connections {
@@ -111,6 +116,16 @@ Rectangle {
 
     Connections {
         target: MonitorReader
+        onIsArmExtractedChanged: stateMachine.submitEvent("isArmExtractedChanged", { "isArmExtracted": isArmExtracted })
+    }
+
+    Connections {
+        target: MonitorReader
+        onIsHandOpenChanged: stateMachine.submitEvent("isHandOpenChanged", { "isHandOpen": isHandOpen })
+    }
+
+    Connections {
+        target: MonitorReader
         onIsGraspingChanged: stateMachine.submitEvent("isGraspingChanged", { "isGrasping": isGrasping })
     }
 
@@ -120,17 +135,56 @@ Rectangle {
 
 
         Rectangle {
+            id: labelbg
             Layout.fillWidth: true
             Layout.minimumWidth: 50
             Layout.preferredWidth: 300
             Layout.minimumHeight: 30
-            Layout.margins: 2
-            border.color: "black"
+            Layout.topMargin: 2
+            Layout.bottomMargin: 2
+            Layout.leftMargin: 4
+            Layout.rightMargin: 4
+
+            color: "#b0ffb0"
+
+            border.color: "dark grey"
             border.width: 1
+            radius: height * 0.25
+
             Text {
                 id: label
                 anchors.centerIn: parent
+                text: stateMachine.name
             }
+            states: [
+                State {
+                    name: "Idle"
+                    when: stateMachine.idle
+
+                    PropertyChanges {
+                        target: labelbg
+                        color: "#efefef"
+                    }
+                },
+                State {
+                    name: "Warning"
+                    when: stateMachine.warning
+
+                    PropertyChanges {
+                        target: labelbg
+                        color: "#ffffb0"
+                    }
+                },
+                State {
+                    name: "Failure"
+                    when: stateMachine.failure
+
+                    PropertyChanges {
+                        target: labelbg
+                        color: "#ffb0b0"
+                    }
+                }
+            ]
         }
 
         Rectangle {
@@ -143,20 +197,11 @@ Rectangle {
             Layout.preferredHeight: width
             Layout.margins: 2
             color: "green"
-            border.color: "black"
+            border.color: "dark grey"
             border.width: 1
             radius: width * 0.5
 
             states: [
-                State {
-                    name: "Ok"
-                    when: stateMachine.idleState
-
-                    PropertyChanges {
-                        target: light
-                        color: "green"
-                    }
-                },
                 State {
                     name: "Warning"
                     when: stateMachine.warning
