@@ -19,9 +19,14 @@
     <data id="tickCounter" expr="0"/>
   </datamodel>
 
-  <!-- I + I1 -->
+  <!-- I + I1 + S -->
   <state id="idle">
-    <transition event="openHandReplyReceived" cond="_event.data.ret == true" target="graspingState" />
+    <onentry>
+      <log label="GraspMonitorStateMachine/checkTickCounterState"/>
+    </onentry>
+    <transition event="openHandReplyReceived" cond="_event.data.ret == true" target="graspingState">
+      <assign location="tickCounter" expr="tickCounterTheta"/>
+    </transition>
   </state>
 
   <!-- BEGIN GRASPING -->
@@ -30,7 +35,7 @@
     <!-- C -->
     <state id="graspingState">
       <onentry>
-        <assign location="tickCounter" expr="tickCounterTheta"/>
+        <log label="GraspMonitorStateMachine/graspingState" expr="'tickCounter = ' + tickCounter"/>
       </onentry>
       <transition event="tick" target="checkTickCounterState" />
       <transition event="retractHandCommandSent" target="idle" />
@@ -38,6 +43,9 @@
 
     <!-- T + D -->
     <state id="checkTickCounterState">
+      <onentry>
+        <log label="GraspMonitorStateMachine/checkTickCounterState" expr="'tickCounter = ' + tickCounter"/>
+      </onentry>
       <transition cond="tickCounter &gt; 0" target="graspingState">
         <assign location="tickCounter" expr="tickCounter - 1"/>
       </transition>
