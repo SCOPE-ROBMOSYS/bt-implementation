@@ -245,7 +245,7 @@ public:
         std::this_thread::sleep_for(4s);
         if (extracted && opened) {
             if (failures >= FAKE_ARM_FAILURES) {
-                grasped = true;
+              //  grasped = true;
             } else {
                 ++failures;
             }
@@ -295,7 +295,6 @@ public:
     bool hasGrasped() override
     {
       yCInfo(ARMCOMPONENT, "hasGrasped");
-
 #if !defined(FAKE_ARM)
       // checks 3 times
       bool has_grasped = false;
