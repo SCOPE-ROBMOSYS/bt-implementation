@@ -61,7 +61,7 @@ public:
         yWarning("goTo called with destination %s", destination.c_str());
 
         std::lock_guard<std::mutex> lock(mtx);
-        if(!inav->checkInsideArea(destination)) {
+        if(!inav->checkNearToLocation(destination, 0.3, 10)) {
             inav->gotoTargetByLocationName(destination);
         }
         running = true;
@@ -91,7 +91,7 @@ public:
         switch(status) {
         case yarp::dev::Nav2D::navigation_status_idle:
             if (running) {
-                if(inav->checkInsideArea(destination)) {
+                if(inav->checkNearToLocation(destination, 0.3, 10)) {
                     return SUCCESS;
                 }
                 return RUNNING;
@@ -109,6 +109,7 @@ public:
         case yarp::dev::Nav2D::navigation_status_failing: [[fallthrough]];
         case yarp::dev::Nav2D::navigation_status_error: [[fallthrough]];
         default:
+        //inav->stopNavigation();
             return ABORT;
         }
     }
@@ -141,21 +142,21 @@ public:
 
         std::vector<std::string> locations;
         inav->getLocationsList(locations);
-        if(std::find(locations.begin(), locations.end(), destination) != locations.end()) {
+        // if(std::find(locations.begin(), locations.end(), destination) != locations.end()) {
             if (inav->checkNearToLocation(destination, 0.3, 10)) {
                 yInfo("the robot is near %s", destination.c_str());
                 return true;
             }
             yInfo("the robot NOT is near %s", destination.c_str());
             return false;
-        } else {
-            if (inav->checkInsideArea(destination)) {
-                yInfo("the robot is inside %s", destination.c_str());
-                return true;
-            }
-            yInfo("the robot is NOT inside %s", destination.c_str());
-            return false;
-        }
+        // } else {
+        //     if (inav->isNearL(destination)) {
+        //         yInfo("the robot is inside %s", destination.c_str());
+        //         return true;
+        //     }
+        //     yInfo("the robot is NOT inside %s", destination.c_str());
+        //     return false;
+        // }
     }
 
 private:

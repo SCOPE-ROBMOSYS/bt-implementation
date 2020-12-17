@@ -35,7 +35,7 @@ YARP_LOG_COMPONENT(ARMCOMPONENT,
                    nullptr)
 }
 
-#define FAKE_ARM
+// #define FAKE_ARM 
 #define FAKE_ARM_FAILURES 3
 
 class ArmComponent : public ArmService
